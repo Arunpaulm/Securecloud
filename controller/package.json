@@ -1,0 +1,25 @@
+{
+  "name": "controller",
+  "version": "1.0.0",
+  "description": "",
+  "main": "test.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "Arunpaul M",
+  "license": "ISC",
+  "dependencies": {
+    "archiver": "^5.3.1",
+    "compression": "^1.7.4",
+    "connect-busboy": "^1.0.0",
+    "cookie-parser": "^1.4.6",
+    "crypto-js": "^4.1.1",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "mysql2": "^3.5.2",
+    "sequelize": "^6.32.1"
+  }
+}
