@@ -18,13 +18,19 @@ class UsersScreen extends Component {
                 { id: 1, "Name": "Ken Brown", phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" },
                 { id: 2, "Name": "Martin Charteris frfwefw", phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" },
                 { id: 3, "Name": "Timmy Marvel", phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" },
+                { id: 4, "Name": "Timmy Marvel", phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" },
+                { id: 5, "Name": "Timmy Marvel", phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" },
+                { id: 6, "Name": "Timmy Marvel", phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" },
+                { id: 7, "Name": "Timmy Marvel", phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" },
+                { id: 8, "Name": "Timmy Marvel", phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" },
+                { id: 9, "Name": "Timmy Marvel", phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" },
+                { id: 10, "Name": "Timmy Marvel", phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" },
             ],
             placeholder: "Search",
             searchBarActive: false,
-            searchTextBoxValue: "",
             from: 0,
             to: 1,
-            itemsPerPage: 2,
+            itemsPerPage: 15,
             page: 0,
             numberOfItemsPerPageList: [2, 3, 4],
             allowedOuterTableHeadings: ["", "Name", "Role"],
@@ -39,7 +45,6 @@ class UsersScreen extends Component {
     }
 
     componentDidUpdate() {
-        console.log("updating")
         console.log(this.state.searchBarActive)
     }
 
@@ -61,8 +66,7 @@ class UsersScreen extends Component {
     }
 
     _alertIndex(index, data) {
-        // Alert.alert(`This is row ${index + 1} data`, JSON.stringify(data));
-        this.setState({ modalVisible: true, selectedTableRow: JSON.stringify(data), selectedTableRowIndex: index })
+        this.setState({ modalVisible: true, selectedTableRow: data, selectedTableRowIndex: index })
     }
 
     generateButton(data, index) {
@@ -81,15 +85,11 @@ class UsersScreen extends Component {
         for (const key in item) {
             const tdData = item[key]
             if (this.state.allowedOuterTableHeadings.indexOf(key) > -1)
-                uielements.push(<DataTable.Cell style={{ flex: this.state.tableWidthFlex[cellIndex] }}>{tdData?.toString()?.trim()}</DataTable.Cell>)
+                uielements.push(<DataTable.Cell key={index + "" + key + item.id} style={{ flex: this.state.tableWidthFlex[cellIndex] }}>{tdData?.toString()?.trim()}</DataTable.Cell>)
             cellIndex += 1
         }
-        uielements.push(<DataTable.Cell style={{ flex: 0.8, justifyContent: "flex-end" }}>{this.generateButton.call(this, item, index)}</DataTable.Cell>)
+        uielements.push(<DataTable.Cell key={index + "button" + item.id} style={{ flex: 0.8, justifyContent: "flex-end" }}>{this.generateButton.call(this, item, index)}</DataTable.Cell>)
         return uielements
-    }
-
-    setModalVisible(value) {
-        this.setState({ modalVisible: value })
     }
 
     selectedTableRow() {
@@ -105,26 +105,6 @@ class UsersScreen extends Component {
             <SafeAreaView flex>
                 <View style={styles.container}>
                     <StatusBar style="auto" />
-
-                    {/* <View style={styles.searchBarContainer}>
-                        <View style={styles.searchBar}>
-                            <Icon style={styles.searchIcon} name={'search-outline'} size={22} color={"#8E8E93"} />
-                            <TextInput
-                                style={styles.searchField}
-                                ref={(input) => { this.searchTextBox = input; }}
-                                selectionColor={"black"}
-                                onChangeText={(inputValue) => this.onChangeInText(inputValue)}
-                                onPressIn={() => { this.setState({ searchBarActive: true }) }}
-                                value={this.state.searchTextBoxValue}
-                                onSubmitEditing={() => this.onSubmit}
-                                placeholder={this.state.placeholder}
-                            />
-                            <TouchableOpacity onPress={() => this.onPressSearchBarRightButton()}>
-                                {this.state.searchBarActive ? <Icon style={styles.micIcon} name={"close-circle"} size={22} color={"#8E8E93"} />
-                                    : <Icon style={styles.micIcon} name={'mic'} size={22} color={"#8E8E93"} />}
-                            </TouchableOpacity>
-                        </View>
-                    </View> */}
 
                     <View style={{ flex: 0.2 }} />
 
@@ -146,8 +126,8 @@ class UsersScreen extends Component {
                                         <DataTable.Header style={styles.tableHeader}>
                                             {
                                                 [...Object.keys(this.state.clientList[0])
-                                                    .map((listKey, index) => { if (this.state.allowedOuterTableHeadings.indexOf(listKey) > -1) return (<DataTable.Title style={{ flex: this.state.tableWidthFlex[index] }}>{listKey?.toString()?.trim()}</DataTable.Title>) })
-                                                    , <DataTable.Title style={{ flex: 0.8 }}> </DataTable.Title>]
+                                                    .map((listKey, index) => { if (this.state.allowedOuterTableHeadings.indexOf(listKey) > -1) return (<DataTable.Title key={index} style={{ flex: this.state.tableWidthFlex[index] }}>{listKey?.toString()?.trim()}</DataTable.Title>) })
+                                                    , <DataTable.Title key={"lastbutton"} style={{ flex: 0.8 }}> </DataTable.Title>]
                                             }
                                         </DataTable.Header>
 
@@ -156,7 +136,7 @@ class UsersScreen extends Component {
                                             data={this.state.clientList.slice(this.state.from, this.state.to)}
                                             keyExtractor={(item) => item.id.toString()}
                                             renderItem={({ item, index }) => (
-                                                <DataTable.Row >
+                                                <DataTable.Row key={index}>
                                                     {this.generateTableCells.call(this, item, index)}
                                                 </DataTable.Row>
                                             )}
@@ -167,7 +147,7 @@ class UsersScreen extends Component {
                             </View>
 
 
-                            <View style={{ flex: 2 }}>
+                            <View style={{ flex: 3 }}>
                                 <DataTable.Pagination
                                     page={this.state.page}
                                     numberOfPages={Math.ceil(this.state.clientList.length / this.state.itemsPerPage)}
@@ -182,16 +162,11 @@ class UsersScreen extends Component {
                             </View>
                         </DataTable>
                     </View>
-                    {/* <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={modalVisible}
-                        onRequestClose={() => {
-                            Alert.alert('Modal has been closed.');
-                            setModalVisible(!modalVisible);
-                        }}></Modal> */}
                 </View>
-                <ModelComponent modalVisible={this.state.modalVisible} selectedTableRow={this.state.searchTextBoxValue} selectedTableRowIndex={this.state.selectedTableRowIndex} setModalVisible={this.setModalVisible.bind(this)} />
+                {
+                    this.state.modalVisible ?
+                        <ModelComponent modalVisible={this.state.modalVisible} setModalVisible={(value) => { this.setState({ modalVisible: value }) }} editable={true} selectedTableRow={this.state.selectedTableRow} selectedTableRowIndex={this.state.selectedTableRowIndex} /> : null
+                }
             </SafeAreaView >
         );
     }
@@ -202,32 +177,6 @@ const styles = StyleSheet.create({
         height: "100%",
         backgroundColor: '#fff',
         alignItems: 'center',
-    },
-    searchIcon: {
-        flex: 1,
-        alignSelf: "flex-start"
-    },
-    micIcon: {
-        flex: 1,
-        alignSelf: "flex-end"
-    },
-    searchField: {
-        flex: 11,
-        fontWeight: "500",
-        fontSize: 15
-    },
-    searchBar: {
-        padding: 10,
-        backgroundColor: "#EBEBEF",
-        borderRadius: 10,
-        flexDirection: "row",
-    },
-    searchBarContainer: {
-        // flex: 2,
-        paddingTop: 60,
-        paddingBottom: 10,
-        paddingHorizontal: 20,
-        width: "100%"
     },
     clientListContainer: {
         flex: 20,

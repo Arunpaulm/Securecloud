@@ -9,6 +9,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 
 import ProfileScreen from './ProfileScreen';
 import UsersScreen from './UsersScreen';
+import DriveScreen from './DriveScreen';
 
 
 const Tab = createBottomTabNavigator();
@@ -68,7 +69,7 @@ class HomeScreen extends Component {
                     tabBarInactiveTintColor: "#D9D9D9",
                 })}>
                     <Tab.Screen name="Dashboard" component={this.DashboardScreen} options={{ headerShown: false, headerBackTitle: "Back" }} />
-                    <Tab.Screen name="Drive" component={this.SettingsScreen} options={{ headerShown: false, headerBackTitle: "Back" }} />
+                    <Tab.Screen name="Drive" component={DriveScreen} options={{ headerShown: false, headerBackTitle: "Back" }} />
                     <Tab.Screen name="Feed" component={this.SettingsScreen} options={{ headerShown: false, headerBackTitle: "Back" }} />
                     <Tab.Screen name="Users" component={UsersScreen} options={{ headerShown: false, headerBackTitle: "Back" }} />
                     {/* initialParams={{ editable: false }} */}
