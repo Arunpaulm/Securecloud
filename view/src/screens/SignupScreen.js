@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { SafeAreaView, StyleSheet, Text, View, Image, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Image, FlatList, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import Icon from "react-native-vector-icons/Ionicons";
 
@@ -52,7 +52,6 @@ class SignupScreen extends Component {
     render() {
         return (
             <View style={styles.container}>
-                <StatusBar style="auto" />
 
                 <>
                     <View style={{ flex: 0.2 }} />

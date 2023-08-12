@@ -37,7 +37,7 @@ class TextFieldComponent extends Component {
 
     render() {
         return (
-            <View style={styles.textBox}>
+            <View style={styles.textBox} key={this.state.id + this.state.title + this.state.value}>
                 {this.state.title ? <Text style={[styles.textCaption, { color: this.state.active ? this.state.themeColorActive : this.state.themeColorIdle }]}>{this.state.title}</Text> : null}
                 <TextInput
                     style={[styles.textInput, { color: this.state.active ? this.state.themeColorActive : this.state.themeColorIdle, borderColor: this.state.active ? this.state.themeColorActive : this.state.themeColorIdle }]}
@@ -50,6 +50,7 @@ class TextFieldComponent extends Component {
                     value={this.state.value}
                     placeholder={this.state.placeholder}
                     editable={this.state.editable}
+                    key={this.state.id + this.state.title + this.state.value}
                 />
             </View>
         )

@@ -1,95 +1,115 @@
 import React, { Component } from "react";
-import { SafeAreaView, StyleSheet, Text, Button, View } from 'react-native';
-// import { StatusBar } from 'expo-status-bar';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import Icon from "react-native-vector-icons/Ionicons";
+import { StyleSheet, Text, TextInput, View, Image, FlatList, TouchableOpacity, Alert, Modal } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import { Avatar, List, ProgressBar, MD3Colors } from 'react-native-paper';
 
+import * as Animatable from 'react-native-animatable';
+import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import Ionicons from "react-native-vector-icons/Ionicons";
 
+import DocumentList from "../components/DocumentList";
 
-import ProfileScreen from './ProfileScreen';
-import UsersScreen from './UsersScreen';
-import DriveScreen from './DriveScreen';
+import Logo from "../assets/logo.png"
 
-
-const Tab = createBottomTabNavigator();
-Icon.loadFont();
+MaterialIcons.loadFont();
+Ionicons.loadFont();
 
 class HomeScreen extends Component {
     constructor (props) {
         super(props);
         this.state = {
-
+            color: "#0077B5",
+            internetIcon: "wifi",
+            uploadIcon: "cloud-upload",
+            internetIconColors: { disconnected: "red", warning: "orange", connected: "green" },
+            intervalID: "",
+            directory: [
+                { "exists": true, "id": "1", "isDirectory": false, "modificationTime": 1691592905.7390752, "name": "ExponentAsset-9456fa40117c9472546b15f9e7e91a19.otf", "size": 186664, "uri": "file:///Users/Hash/Library/Developer/CoreSimulator/Devices/AE282950-5ADC-4AD2-8BFD-67903F95387C/data/Containers/Data/Application/4859E6D1-6B7A-405B-B92D-24D85C75DBE5/Library/Caches/ExponentExperienceData/%2540anonymous%252FSecureCloud-bc0aa9c2-df66-4895-be03-d191a79471f4/ExponentAsset-9456fa40117c9472546b15f9e7e91a19.otf" },
+                { "exists": true, "id": "0", "isDirectory": false, "modificationTime": 1691592718.068173, "name": "ExponentAsset-b3263095df30cb7db78c613e73f9499a.ttf", "size": 247192, "uri": "file:///Users/Hash/Library/Developer/CoreSimulator/Devices/AE282950-5ADC-4AD2-8BFD-67903F95387C/data/Containers/Data/Application/4859E6D1-6B7A-405B-B92D-24D85C75DBE5/Library/Caches/ExponentExperienceData/%2540anonymous%252FSecureCloud-bc0aa9c2-df66-4895-be03-d191a79471f4/ExponentAsset-b3263095df30cb7db78c613e73f9499a.ttf" }
+            ]
         };
     }
 
-
-    DashboardScreen() {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text>Dashboard!</Text>
-            </View>
-        );
-    }
-
-    SettingsScreen() {
-        return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <Text>Settings!</Text>
-            </View>
-        );
-    }
-
     componentDidMount() {
+        let turn = 0
+        const intervalID = setInterval(() => {
+            const state = {}
+            if (this.state.internetIcon?.match("-outline")) {
+                state.internetIcon = this.state.internetIcon?.replace("-outline", "")
+                this.pulse()
+            } else {
+                state.internetIcon = `${this.state.internetIcon}-outline`
+                this.pulse()
+            }
+
+            if (turn && this.state.uploadIcon?.match("-outline")) {
+                state.uploadIcon = this.state.uploadIcon?.replace("-outline", "")
+            } else if (turn) {
+                state.uploadIcon = `${this.state.uploadIcon}-outline`
+            }
+
+            turn = 1
+            this.setState(state)
+        }, 500)
+        this.setState({ intervalID })
     }
+
+    componentWillUnmount() {
+        clearInterval(this.state.intervalID);
+    }
+
+    componentDidUpdate() {
+
+    }
+
+    handleViewRef = ref => { this.setState({ pulseAnimateRef: ref }) }
+
+    pulse = () => this.state.pulseAnimateRef.pulse();
 
     render() {
         return (
-            <SafeAreaView flex>
-                <Tab.Navigator screenOptions={({ route }) => ({
-                    tabBarIcon: ({ focused, color, size }) => {
-                        let iconName;
+            <View style={styles.container}>
 
-                        if (route.name === 'Dashboard') {
-                            iconName = focused ? 'home' : 'home-outline';
-                        } else if (route.name === 'Drive') {
-                            iconName = focused ? 'folder-open' : 'folder-open-outline';
-                        } else if (route.name === 'Feed') {
-                            iconName = focused ? 'notifications' : 'notifications-outline';
-                        } else if (route.name === 'Profile') {
-                            iconName = focused ? 'person' : 'person-outline';
-                        } else if (route.name === 'Users') {
-                            iconName = focused ? 'people' : 'people-outline';
-                        }
+                <View style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
+                    <MaterialIcons style={{ padding: 10, width: 70, height: 70, color: this.state.color }} name={'cloud-lock'} size={50} ></MaterialIcons>
+                    <View style={{ flex: 1, marginLeft: 8, flexDirection: "row" }}>
+                        <Text style={{ color: this.state.color, fontSize: 20, fontWeight: 700 }}>Secure</Text>
+                        <Text style={{ fontSize: 20, fontWeight: 500, paddingLeft: 1, fontFamily: 'Roboto' }}>cloud</Text>
+                    </View>
+                    <Animatable.View ref={this.handleViewRef}
+                        duration={1100}>
+                        <Ionicons style={{ padding: 20, fontWeight: 300, color: this.state.internetIconColors["disconnected"] }} name={this.state.internetIcon} size={25} ></Ionicons>
+                    </Animatable.View>
+                </View>
 
-                        // You can return any component that you like here!
-                        return <Icon name={iconName} size={size} color={focused ? "#6A6EEE" : "#D9D9D9"} />;
-                    },
-                    tabBarActiveTintColor: "#6A6EEE",
-                    tabBarInactiveTintColor: "#D9D9D9",
-                })}>
-                    <Tab.Screen name="Dashboard" component={this.DashboardScreen} options={{ headerShown: false, headerBackTitle: "Back" }} />
-                    <Tab.Screen name="Drive" component={DriveScreen} options={{ headerShown: false, headerBackTitle: "Back" }} />
-                    <Tab.Screen name="Feed" component={this.SettingsScreen} options={{ headerShown: false, headerBackTitle: "Back" }} />
-                    <Tab.Screen name="Users" component={UsersScreen} options={{ headerShown: false, headerBackTitle: "Back" }} />
-                    {/* initialParams={{ editable: false }} */}
-                    <Tab.Screen name="Profile" children={() => <ProfileScreen editable={false} />} options={{
-                        title: "My Profile", headerBackTitle: "Back", headerRight: () => (
-                            <Button
-                                onPress={() => {
-                                    this.props.navigation.navigate("Profile", { editable: true })
-                                }}
-                                title="Edit"
-                            />)
-                    }} />
-                </Tab.Navigator>
-            </SafeAreaView >
+                <View style={{ flex: 1, paddingHorizontal: 20, flexDirection: "row", alignItems: "center", backgroundColor: "lightgrey" }}>
+                    <Text style={{ flex: 0.06, fontSize: 18 }}>Hi</Text>
+                    <Text style={{ flex: 1, fontSize: 18 }}>"UserName"</Text>
+                    <Avatar.Text size={40} label="UN" style={{ backgroundColor: "grey" }} />
+                </View>
+
+                <View style={{ flex: 1, padding: 20 }}>
+                    <View style={{ flex: 1, flexDirection: "row", backgroundColor: "#eee", borderWidth: 1, borderRadius: 5, borderColor: "grey", justifyContent: "center", alignItems: "center" }}>
+                        <MaterialIcons style={{ paddingRight: 5, fontWeight: 300, color: "#555" }} name={this.state.uploadIcon} size={25} ></MaterialIcons>
+                        <Text style={{ fontWeight: 500, color: "#555" }} >Upload files</Text>
+                    </View>
+                </View>
+
+                <View style={{ flex: 10, backgroundColor: "blue" }}>
+                    <DocumentList directory={this.state.directory} />
+                </View>
+
+
+            </View >
         );
     }
 }
 
 const styles = StyleSheet.create({
-
+    container: {
+        flex: 1,
+        backgroundColor: '#fff',
+    }
 })
 
 

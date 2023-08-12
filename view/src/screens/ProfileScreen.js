@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { SafeAreaView, StyleSheet, Text, TextInput, View, Image, FlatList, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TextInput, View, Image, FlatList, TouchableOpacity } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import Icon from "react-native-vector-icons/Ionicons";
 
@@ -55,34 +55,31 @@ class ProfileScreen extends Component {
 
     render() {
         return (
-            <SafeAreaView flex>
-                <View style={styles.container}>
-                    <StatusBar style="auto" />
-                    <View style={{ flex: 0.2 }} />
+            <View style={styles.container}>
+                <View style={{ flex: 0.2 }} />
 
-                    <View style={styles.loginTextBoxContainer}>
-                        <FlatList
-                            style={styles.loginTextBox}
-                            data={this.state.form}
-                            // scrollEnabled={false}
-                            keyExtractor={(item) => item.id.toString()}
-                            renderItem={({ item, index }) => <TextFieldComponent field={item} getActiveTextBox={this.getActiveTextBox.bind(this)} editable={this.state.editable} />}
-                            ItemSeparatorComponent={() => (<View style={styles.loginTextBoxSeperator}></View>)}
-                        />
-                    </View>
-                    {this.state.editable ? <>
-                        <View style={{ flex: 0.2 }} />
-                        <View style={styles.loginButtonContainer}>
-                            <TouchableOpacity
-                                style={styles.loginButton}
-                                onPress={() => this.onSubmit()}
-                            >
-                                <Text style={styles.loginButtonText}>{this.state.loginButtonText}</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </> : null}
+                <View style={styles.loginTextBoxContainer}>
+                    <FlatList
+                        style={styles.loginTextBox}
+                        data={this.state.form}
+                        // scrollEnabled={false}
+                        keyExtractor={(item) => item.id.toString()}
+                        renderItem={({ item, index }) => <TextFieldComponent field={item} getActiveTextBox={this.getActiveTextBox.bind(this)} editable={this.state.editable} />}
+                        ItemSeparatorComponent={() => (<View style={styles.loginTextBoxSeperator}></View>)}
+                    />
                 </View>
-            </SafeAreaView>
+                {this.state.editable ? <>
+                    <View style={{ flex: 0.2 }} />
+                    <View style={styles.loginButtonContainer}>
+                        <TouchableOpacity
+                            style={styles.loginButton}
+                            onPress={() => this.onSubmit()}
+                        >
+                            <Text style={styles.loginButtonText}>{this.state.loginButtonText}</Text>
+                        </TouchableOpacity>
+                    </View>
+                </> : null}
+            </View>
         );
     }
 }

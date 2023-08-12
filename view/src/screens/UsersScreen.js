@@ -1,5 +1,5 @@
-import React, { Component } from "react";
-import { SafeAreaView, StyleSheet, Text, TextInput, View, Image, FlatList, TouchableOpacity, Alert, Modal } from 'react-native';
+import React from "react";
+import { StyleSheet, Text, TextInput, View, Image, FlatList, TouchableOpacity, Alert, Modal } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { DataTable } from 'react-native-paper';
 
@@ -10,166 +10,158 @@ import ModelComponent from "../components/ModelComponent";
 
 Icon.loadFont();
 
-class UsersScreen extends Component {
-    constructor (props) {
-        super(props);
-        this.state = {
-            clientList: [
-                { id: 1, "Name": "Ken Brown", phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" },
-                { id: 2, "Name": "Martin Charteris frfwefw", phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" },
-                { id: 3, "Name": "Timmy Marvel", phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" },
-                { id: 4, "Name": "Timmy Marvel", phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" },
-                { id: 5, "Name": "Timmy Marvel", phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" },
-                { id: 6, "Name": "Timmy Marvel", phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" },
-                { id: 7, "Name": "Timmy Marvel", phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" },
-                { id: 8, "Name": "Timmy Marvel", phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" },
-                { id: 9, "Name": "Timmy Marvel", phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" },
-                { id: 10, "Name": "Timmy Marvel", phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" },
-            ],
-            placeholder: "Search",
-            searchBarActive: false,
-            from: 0,
-            to: 1,
-            itemsPerPage: 15,
-            page: 0,
-            numberOfItemsPerPageList: [2, 3, 4],
-            allowedOuterTableHeadings: ["", "Name", "Role"],
-            tableWidthFlex: [2, 2, 1],
-            modalVisible: false
-        };
-    }
+const UsersScreen = (props) => {
 
-    componentDidMount() {
-        // this.searchTextBox.focus()
-        this.setState({ from: (this.state.page * this.state.itemsPerPage), to: Math.min((this.state.page + 1) * this.state.itemsPerPage, this.state.clientList.length) })
-    }
+    const [clientList, setClientList] = React.useState([])
+    const placeholder = "Search"
+    const [searchBarActive, setSearchBarActive] = React.useState(false)
+    const [page, setPage] = React.useState(0);
+    const [numberOfItemsPerPageList] = React.useState([10, 15, 20]);
+    const [itemsPerPage, setItemsPerPage] = React.useState(
+        numberOfItemsPerPageList[0]
+    );
+    const [selectedTableRow, setSelectedTableRow] = React.useState([])
+    const [selectedTableRowIndex, setSelectedTableRowIndex] = React.useState(0)
 
-    componentDidUpdate() {
-        console.log(this.state.searchBarActive)
-    }
+    const from = page * itemsPerPage;
+    const to = Math.min((page + 1) * itemsPerPage, clientList.length);
 
-    onChangeInText(inputValue) {
-        this.setState({ searchTextBoxValue: inputValue })
-    }
+    const allowedOuterTableHeadings = ["", "Name", "Role"]
+    const tableWidthFlex = [2, 2, 1]
+    const [modalVisible, setModalVisible] = React.useState(false)
 
-    onSubmit() {
+
+    React.useEffect(() => {
+        setPage(0);
+        const dummyclientList = []
+        for (let i = 1; i <= 44; i++) {
+            dummyclientList.push({ id: i, "Name": "Timmy Marvel " + i, phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" })
+        }
+
+        setClientList(dummyclientList)
+    }, [itemsPerPage]);
+
+
+    function onSubmit() {
         console.log("clicked")
-        this.setState({ searchBarActive: false })
+        // setSearchBarActive(false)
     }
 
-    onPressSearchBarRightButton() {
-        if (this.state.searchBarActive) {
-            this.searchTextBox.blur()
-            this.setState({ searchBarActive: false })
+    function onPressSearchBarRightButton() {
+        if (searchBarActive) {
+            // searchTextBox.blur()
+            setSearchBarActive(false)
             return
         }
     }
 
-    _alertIndex(index, data) {
-        this.setState({ modalVisible: true, selectedTableRow: data, selectedTableRowIndex: index })
+    function _alertIndex(index, data) {
+        setModalVisible(true)
+        setSelectedTableRow(data)
+        setSelectedTableRowIndex(index)
+        // this.setState({ modalVisible: true, selectedTableRow: data, selectedTableRowIndex: index })
     }
 
-    generateButton(data, index) {
+    function generateButton(data, index) {
         return (
-            <TouchableOpacity onPress={() => this._alertIndex(index, data)}>
-                <View style={styles.button}>
-                    <Text style={styles.buttonText}>Edit</Text>
+            <TouchableOpacity key={'button' + index} onPress={() => _alertIndex(index, data)}>
+                <View key={'View' + index} style={styles.button}>
+                    <Text key={'Text' + index} style={styles.buttonText}>Edit</Text>
                 </View>
             </TouchableOpacity>
         )
     }
 
-    generateTableCells(item, index) {
+    function generateTableCells(item, index) {
         const uielements = []
         let cellIndex = 0
         for (const key in item) {
             const tdData = item[key]
-            if (this.state.allowedOuterTableHeadings.indexOf(key) > -1)
-                uielements.push(<DataTable.Cell key={index + "" + key + item.id} style={{ flex: this.state.tableWidthFlex[cellIndex] }}>{tdData?.toString()?.trim()}</DataTable.Cell>)
+            if (allowedOuterTableHeadings.indexOf(key) > -1)
+                uielements.push(<DataTable.Cell key={index + "" + key + item.id} style={{ flex: tableWidthFlex[cellIndex] }}>{tdData?.toString()?.trim()}</DataTable.Cell>)
             cellIndex += 1
         }
-        uielements.push(<DataTable.Cell key={index + "button" + item.id} style={{ flex: 0.8, justifyContent: "flex-end" }}>{this.generateButton.call(this, item, index)}</DataTable.Cell>)
+        uielements.push(<DataTable.Cell key={index + "button" + item.id} style={{ flex: 0.8, justifyContent: "flex-end" }}>{generateButton(item, index)}</DataTable.Cell>)
         return uielements
     }
 
-    selectedTableRow() {
-
+    function onItemsPerPageChange(value) {
+        const to = Math.min(page * value, clientList.length)
+        setItemsPerPage(value)
+        // this.setState({ itemsPerPage: value, from: from * value, to: to > clientList.length ? clientList.length : to })
     }
 
-    onItemsPerPageChange(value) {
-        this.setState({ itemsPerPage: value })
-    }
+    return (
+        <View style={styles.container}>
+            <StatusBar style="auto" />
 
-    render() {
-        return (
-            <SafeAreaView flex>
-                <View style={styles.container}>
-                    <StatusBar style="auto" />
+            <View style={{ flex: 0.2 }} />
 
-                    <View style={{ flex: 0.2 }} />
+            <View style={styles.clientListContainer}>
+                {clientList.length > 0 ?
+                    <DataTable style={{ flex: 1 }}>
+                        <View style={{ flex: 15 }}>
+                            <ScrollView
+                                horizontal
+                                showsHorizontalScrollIndicator={false}
+                                contentContainerStyle={{
+                                    flex: 1,
+                                    flexGrow: 1,
+                                    justifyContent: 'center',
+                                    width: '100%',
+                                }}
+                            >
 
-                    <View style={styles.clientListContainer}>
-                        <DataTable style={{ flex: 1 }}>
-                            <View style={{ flex: 18 }}>
-                                <ScrollView
-                                    horizontal
-                                    showsHorizontalScrollIndicator={false}
-                                    contentContainerStyle={{
-                                        flex: 1,
-                                        flexGrow: 1,
-                                        justifyContent: 'center',
-                                        width: '100%',
-                                    }}
-                                >
+                                <View style={{ flex: 1 }}>
+                                    <DataTable.Header style={styles.tableHeader}>
+                                        {
+                                            [...Object.keys(clientList[0])
+                                                .map((listKey, index) => { if (allowedOuterTableHeadings.indexOf(listKey) > -1) return (<DataTable.Title key={index} style={{ flex: tableWidthFlex[index] }}>{listKey?.toString()?.trim()}</DataTable.Title>) })
+                                                , <DataTable.Title key={"lastbutton"} style={{ flex: 0.8 }}> </DataTable.Title>]
+                                        }
+                                    </DataTable.Header>
 
-                                    <View style={{ flex: 1 }}>
-                                        <DataTable.Header style={styles.tableHeader}>
-                                            {
-                                                [...Object.keys(this.state.clientList[0])
-                                                    .map((listKey, index) => { if (this.state.allowedOuterTableHeadings.indexOf(listKey) > -1) return (<DataTable.Title key={index} style={{ flex: this.state.tableWidthFlex[index] }}>{listKey?.toString()?.trim()}</DataTable.Title>) })
-                                                    , <DataTable.Title key={"lastbutton"} style={{ flex: 0.8 }}> </DataTable.Title>]
-                                            }
-                                        </DataTable.Header>
+                                    <FlatList
+                                        style={styles.clientList}
+                                        data={clientList.slice(from, to)}
+                                        keyExtractor={(item) => item.id.toString()}
+                                        renderItem={({ item, index }) => (
+                                            <DataTable.Row key={index}>
+                                                {generateTableCells(item, index)}
+                                            </DataTable.Row>
+                                        )}
+                                    />
+                                </View>
 
-                                        <FlatList
-                                            style={styles.clientList}
-                                            data={this.state.clientList.slice(this.state.from, this.state.to)}
-                                            keyExtractor={(item) => item.id.toString()}
-                                            renderItem={({ item, index }) => (
-                                                <DataTable.Row key={index}>
-                                                    {this.generateTableCells.call(this, item, index)}
-                                                </DataTable.Row>
-                                            )}
-                                        />
-                                    </View>
-
-                                </ScrollView>
-                            </View>
+                            </ScrollView>
+                        </View>
 
 
-                            <View style={{ flex: 3 }}>
-                                <DataTable.Pagination
-                                    page={this.state.page}
-                                    numberOfPages={Math.ceil(this.state.clientList.length / this.state.itemsPerPage)}
-                                    onPageChange={(page) => { this.setState({ page }) }}
-                                    label={`${this.state.from + 1}-${this.state.to} of ${this.state.clientList.length}`}
-                                    numberOfItemsPerPageList={this.state.numberOfItemsPerPageList}
-                                    numberOfItemsPerPage={this.state.itemsPerPage}
-                                    onItemsPerPageChange={this.onItemsPerPageChange}
-                                    showFastPaginationControls
-                                    selectPageDropdownLabel={'Rows per page'}
-                                />
-                            </View>
-                        </DataTable>
-                    </View>
-                </View>
-                {
-                    this.state.modalVisible ?
-                        <ModelComponent modalVisible={this.state.modalVisible} setModalVisible={(value) => { this.setState({ modalVisible: value }) }} editable={true} selectedTableRow={this.state.selectedTableRow} selectedTableRowIndex={this.state.selectedTableRowIndex} /> : null
-                }
-            </SafeAreaView >
-        );
-    }
+                        <View style={{ flex: 6 }}>
+                            <DataTable.Pagination
+                                page={page}
+                                numberOfPages={Math.ceil(clientList.length / itemsPerPage)}
+                                onPageChange={(page) => {
+                                    console.log("page - ", page)
+                                    setPage(page)
+                                }}
+                                label={`${from + 1}-${to} of ${clientList.length}`}
+                                numberOfItemsPerPageList={numberOfItemsPerPageList}
+                                numberOfItemsPerPage={itemsPerPage}
+                                onItemsPerPageChange={onItemsPerPageChange}
+                                showFastPaginationControls
+                                selectPageDropdownLabel={'Rows per page'}
+                            />
+                        </View>
+                    </DataTable>
+                    : null}
+            </View>
+            {
+                modalVisible ?
+                    <ModelComponent modalVisible={modalVisible} setModalVisible={(value) => { setModalVisible(value) }} editable={true} selectedTableRow={selectedTableRow} selectedTableRowIndex={selectedTableRowIndex} /> : null
+            }
+        </View>
+    );
 }
 
 const styles = StyleSheet.create({

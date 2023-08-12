@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Alert, Modal, StyleSheet, Text, Pressable, View, SafeAreaView, FlatList, TouchableOpacity } from 'react-native';
+import { Alert, Modal, StyleSheet, Text, Pressable, View, FlatList, TouchableOpacity } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
 import TextFieldComponent from "../components/TextFieldComponent"
@@ -36,12 +36,17 @@ class ModelComponent extends Component {
             Object.keys(field.selectedTableRow).map(index => {
                 if (form.title === index) {
                     form.placeholder = field.selectedTableRow[index]
+                    form.value = field.selectedTableRow[index]
                 }
             })
             return form
         })
 
         this.setState(field)
+    }
+
+    componentDidUpdate() {
+        console.log("updated")
     }
 
     onSubmit() {
@@ -60,64 +65,61 @@ class ModelComponent extends Component {
     }
 
     render() {
-
-
         return (
-            <SafeAreaView>
-                <View style={{ flex: 1 }}>
-                    <Modal
-                        animationType="slide"
-                        transparent={true}
-                        visible={this.state.modalVisible}
-                        onRequestClose={() => {
-                            Alert.alert('Modal has been closed.');
-                            this.setState({ modalVisible: false })
-                        }}>
-                        <View style={styles.centeredView}>
-                            <View style={styles.modalView}>
+            <View style={{ flex: 1 }}>
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={this.state.modalVisible}
+                    onRequestClose={() => {
+                        Alert.alert('Modal has been closed.');
+                        this.setState({ modalVisible: false })
+                    }}>
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
 
-                                <View style={{ flex: 5, justifyContent: "center", alignItems: "center" }} >
-                                    <Text>Edit User</Text>
-                                </View>
-
-                                <View style={styles.loginTextBoxContainer}>
-                                    <FlatList
-                                        style={styles.loginTextBox}
-                                        data={this.state.form}
-                                        // scrollEnabled={false}
-                                        keyExtractor={(item) => item.id.toString()}
-                                        renderItem={({ item, index }) => {
-                                            switch (item.type) {
-                                                case "picker":
-                                                    return <PickerComponent field={item} getActiveTextBox={this.getActiveTextBox.bind(this)} editable={true} />
-                                                case "checkbox":
-                                                    return <CheckboxComponent field={item} getActiveTextBox={this.getActiveTextBox.bind(this)} editable={true} />
-                                                default:
-                                                    return <TextFieldComponent field={item} getActiveTextBox={this.getActiveTextBox.bind(this)} editable={true} />
-                                            }
-                                        }}
-                                        ItemSeparatorComponent={() => (<View style={styles.loginTextBoxSeperator}></View>)}
-                                    />
-                                </View>
-
-
-                                {this.state.editable ? <>
-                                    <View style={{ flex: 0.2 }} />
-                                    <View style={styles.loginButtonContainer}>
-                                        <TouchableOpacity
-                                            style={styles.loginButton}
-                                            onPress={() => this.onSubmit()}
-                                        >
-                                            <Text style={styles.loginButtonText}>{this.state.loginButtonText}</Text>
-                                        </TouchableOpacity>
-                                    </View>
-                                </> : null}
-
+                            <View style={{ flex: 5, justifyContent: "center", alignItems: "center" }} >
+                                <Text>Edit User</Text>
                             </View>
+
+                            <View style={styles.loginTextBoxContainer}>
+                                <FlatList
+                                    style={styles.loginTextBox}
+                                    data={this.state.form}
+                                    // scrollEnabled={false}
+                                    keyExtractor={(item) => item.id.toString()}
+                                    renderItem={({ item, index }) => {
+                                        switch (item.type) {
+                                            case "picker":
+                                                return <PickerComponent field={item} getActiveTextBox={this.getActiveTextBox.bind(this)} editable={true} />
+                                            case "checkbox":
+                                                return <CheckboxComponent field={item} getActiveTextBox={this.getActiveTextBox.bind(this)} editable={true} />
+                                            default:
+                                                // return TextFieldComponent({ field: item, getActiveTextBox: this.getActiveTextBox.bind(this), editable: true })
+                                                return <TextFieldComponent field={item} getActiveTextBox={this.getActiveTextBox.bind(this)} editable={true} />
+                                        }
+                                    }}
+                                    ItemSeparatorComponent={() => (<View style={styles.loginTextBoxSeperator}></View>)}
+                                />
+                            </View>
+
+
+                            {this.state.editable ? <>
+                                <View style={{ flex: 0.2 }} />
+                                <View style={styles.loginButtonContainer}>
+                                    <TouchableOpacity
+                                        style={styles.loginButton}
+                                        onPress={() => this.onSubmit()}
+                                    >
+                                        <Text style={styles.loginButtonText}>{this.state.loginButtonText}</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            </> : null}
+
                         </View>
-                    </Modal>
-                </View>
-            </SafeAreaView >
+                    </View>
+                </Modal>
+            </View>
         );
     }
 };
