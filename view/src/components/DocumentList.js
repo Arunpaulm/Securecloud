@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, TextInput, View, FlatList, TouchableOpacity, Dimensions } from 'react-native';
+import { StyleSheet, Text, TextInput, View, FlatList, TouchableOpacity, Dimensions, Modal, Alert } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -19,7 +19,9 @@ class DocumentList extends Component {
             placeholder: "Search",
             searchTextBoxValue: "",
             directorydisplay: this.props?.directory || [],
-            directory: this.props?.directory || []
+            directory: this.props?.directory || [],
+            refreshPage: 1,
+            modalVisible: true
         };
     }
 
@@ -87,9 +89,16 @@ class DocumentList extends Component {
             return <MaterialCommunityIcons style={styles.searchIcon} name={'file'} size={71} color={"#00007b"} />
         }
     }
+
+    refreshPage() {
+        this.setState({ refreshPage: this.state.refreshPage + 1 })
+    }
+
     render() {
         return (
-            <View style={styles.container}>
+            <View style={styles.container} onTouchStart={() => {
+                console.log("hello")
+            }}>
                 <View style={styles.searchBarContainer}>
                     <View style={styles.searchBar}>
                         <Ionicons style={styles.searchIcon} name={'search-outline'} size={22} color={"#8E8E93"} />
@@ -108,24 +117,46 @@ class DocumentList extends Component {
 
                 <View style={styles.folderContainer}>
                     <FlatList
-                        style={{
-                            flex: 1,
-                            width: SCREENWIDTH,
-                        }}
+                        style={{ flex: 1, width: SCREENWIDTH }}
                         data={this.state.directorydisplay}
                         keyExtractor={(item) => item?.id?.toString()}
                         renderItem={({ item, index }) => (
-                            <View style={{ height: 130, margin: 18, paddingVertical: 6, justifyContent: "center", alignItems: "center" }}>
-                                <View style={{ flex: 1 }}>{this.generateIcon(item)}</View>
-                                <Text style={{ flex: 0.4, height: 20, width: 65, textAlign: "center" }}
-                                    adjustsFontSizeToFit={false}
-                                    numberOfLines={2}
-                                >{item?.name?.trim()}</Text>
-                            </View>
+                            <>
+                                <TouchableOpacity style={{ zIndex: -1, height: 130, margin: 18, paddingVertical: 6, justifyContent: "center", alignItems: "center" }}
+                                    onLongPress={() => {
+                                        item.option = true
+                                        this.refreshPage()
+                                    }}>
+                                    <View style={{ flex: 1 }}>{this.generateIcon(item)}</View>
+                                    <Text style={{ flex: 0.4, height: 20, width: 65, textAlign: "center" }}
+                                        adjustsFontSizeToFit={false}
+                                        numberOfLines={2}
+                                    >{item?.name?.trim()}</Text>
+                                </TouchableOpacity>
+                                {item.option ?
+                                    <View style={{ position: "absolute", top: 100, backgroundColor: "#eee", borderWidth: 1, borderRadius: 5, borderColor: "#eee" }}>
+                                        <TouchableOpacity style={styles.optionButtons}><Text style={{ fontSize: 17 }}>Rename</Text></TouchableOpacity>
+                                        <TouchableOpacity style={styles.optionButtons}><Text style={{ fontSize: 17 }}>Get Info</Text></TouchableOpacity>
+                                        <TouchableOpacity style={styles.bottomOptionButtons}><Text style={{ fontSize: 17, color: "red" }}>Delete</Text></TouchableOpacity>
+                                    </View>
+                                    : null}
+                            </>
                         )}
                         numColumns={4}
                     />
                 </View>
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={this.state.modalVisible}
+                    onRequestClose={() => {
+                        Alert.alert('Modal has been closed.');
+                        this.setState({ modalVisible: false })
+                    }}>
+                    <View style={styles.centeredView}>
+
+                    </View>
+                </Modal>
             </View>
         );
     }
@@ -166,8 +197,26 @@ const styles = StyleSheet.create({
     },
     folderContainer: {
         flex: 1
+    },
+    optionButtons: {
+        paddingVertical: 10,
+        paddingHorizontal: 10,
+        borderBottomWidth: 0.5,
+        borderColor: "#888",
+        zIndex: 1
+    },
+    bottomOptionButtons: {
+        paddingVertical: 10,
+        paddingHorizontal: 10,
+        zIndex: 100
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        // marginTop: 35,
+        padding: 30
     }
-
 })
 
 
