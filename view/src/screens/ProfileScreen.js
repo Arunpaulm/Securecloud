@@ -3,7 +3,7 @@ import { StyleSheet, Text, TextInput, View, Image, FlatList, TouchableOpacity } 
 import { StatusBar } from 'expo-status-bar';
 import Icon from "react-native-vector-icons/Ionicons";
 
-import TextFieldComponent from '../components/TextFieldComponent';
+import FormComponents from '../components/FormComponents';
 
 Icon.loadFont();
 
@@ -12,15 +12,16 @@ class ProfileScreen extends Component {
         super(props);
         this.state = {
             form: [
-                { id: 1, title: "Name", placeholder: "Enter your name", value: "", active: false },
+                { id: 1, title: "Name", placeholder: "Enter your name", value: "Some value", active: false },
                 { id: 2, title: "Date of birth", placeholder: "Date of birth", value: "", active: false },
                 { id: 3, title: "Phone number", placeholder: "Enter your phone number", value: "", active: false },
                 { id: 4, title: "E-Mail", placeholder: "example@mail.com", value: "", active: false },
-                { id: 5, title: "Password", placeholder: "password", value: "", active: false },
+                { id: 5, type: "text", title: "Password", placeholder: "password", value: "", active: false },
                 { id: 6, title: "Confirm Password", placeholder: "password", value: "", active: false }
             ],
             loginButtonText: "Confirm changes",
-            editable: this.props?.route?.params?.editable === undefined ? this.props.editable : this.props?.route?.params?.editable
+            editable: this.props?.route?.params?.editable === undefined ? this.props.editable : this.props?.route?.params?.editable,
+            refresh: 0
         };
     }
 
@@ -43,15 +44,24 @@ class ProfileScreen extends Component {
             frm.active = false
             if (frm.id === activeid) frm.active = true
         })
-        this.refresh += 1
         this.setState({ form: form })
     }
 
     onSubmit() {
         console.log("clicked")
         this.setState({ searchBarActive: false })
+        console.log(this.state.form)
     }
 
+    editFormValues = (field, value) => {
+        this.state.form.forEach(formData => {
+            if ((formData.id === field.id) && (formData.title === field.title)) {
+                formData.value = value
+            }
+        })
+
+        this.setState({ form: this.state.form })
+    }
 
     render() {
         return (
@@ -64,10 +74,11 @@ class ProfileScreen extends Component {
                         data={this.state.form}
                         // scrollEnabled={false}
                         keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item, index }) => <TextFieldComponent field={item} getActiveTextBox={this.getActiveTextBox.bind(this)} editable={this.state.editable} />}
+                        renderItem={({ item, index }) => FormComponents({ field: item, index, getActiveTextBox: this.getActiveTextBox.bind(this), editable: this.state.editable, editFormValues: this.editFormValues.bind(this) })}
                         ItemSeparatorComponent={() => (<View style={styles.loginTextBoxSeperator}></View>)}
                     />
                 </View>
+
                 {this.state.editable ? <>
                     <View style={{ flex: 0.2 }} />
                     <View style={styles.loginButtonContainer}>

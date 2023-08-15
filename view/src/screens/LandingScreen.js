@@ -55,7 +55,6 @@ class LandingScreen extends Component {
                 <Tab.Screen name="Vault" component={VaultScreen} options={{ title: "Private Vault" }} />
                 <Tab.Screen name="Notification" component={NotificationScreen} options={{ title: "Notification log" }} />
                 <Tab.Screen name="Users" component={UsersScreen} options={{ title: "All Users" }} />
-                {/* initialParams={{ editable: false }} */}
                 <Tab.Screen name="Profile" children={() => <ProfileScreen editable={false} />} options={{
                     title: "My Profile", headerBackTitle: "Back", headerRight: () => (
                         <Button
@@ -65,6 +64,7 @@ class LandingScreen extends Component {
                             title="Edit"
                         />)
                 }} />
+                {/* initialParams={{ editable: false }} */}
             </Tab.Navigator>
         );
     }

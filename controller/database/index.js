@@ -1,4 +1,5 @@
-const Sequelize = require("sequelize");
+require('dotenv').config();
+const { Sequelize, DataTypes } = require("sequelize")
 
 const sequelize = new Sequelize(
     process.env.DATABASE,
@@ -10,8 +11,12 @@ const sequelize = new Sequelize(
     }
 );
 
-sequelize.authenticate().then(() => {
-    console.log('Connection has been established successfully.');
-}).catch((error) => {
-    console.error('Unable to connect to the database: ', error);
-});
+function dbConnect() {
+    sequelize.authenticate().then(() => {
+        console.log('Connection has been established successfully.');
+    }).catch((error) => {
+        console.error('Unable to connect to the database: ', error);
+    });
+}
+
+module.exports = { dbConnect, sequelize, Sequelize, DataTypes }

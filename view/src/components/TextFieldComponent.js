@@ -31,13 +31,13 @@ class TextFieldComponent extends Component {
     }
 
     onChangeInText(inputValue) {
+        // this.props.field.value = inputValue
         this.setState({ value: inputValue })
-        this.props.field.value = inputValue
     }
 
     render() {
         return (
-            <View style={styles.textBox} key={this.state.id + this.state.title + this.state.value}>
+            <View style={styles.textBox} key={this.state.id + this.state.title}>
                 {this.state.title ? <Text style={[styles.textCaption, { color: this.state.active ? this.state.themeColorActive : this.state.themeColorIdle }]}>{this.state.title}</Text> : null}
                 <TextInput
                     style={[styles.textInput, { color: this.state.active ? this.state.themeColorActive : this.state.themeColorIdle, borderColor: this.state.active ? this.state.themeColorActive : this.state.themeColorIdle }]}
@@ -50,7 +50,7 @@ class TextFieldComponent extends Component {
                     value={this.state.value}
                     placeholder={this.state.placeholder}
                     editable={this.state.editable}
-                    key={this.state.id + this.state.title + this.state.value}
+                    key={this.state.id + this.state.title}
                 />
             </View>
         )

@@ -89,10 +89,10 @@ class HomeScreen extends Component {
                 </View>
 
                 <View style={{ flex: 1, padding: 20 }}>
-                    <View style={{ flex: 1, flexDirection: "row", backgroundColor: "#eee", borderWidth: 1, borderRadius: 5, borderColor: "grey", justifyContent: "center", alignItems: "center" }}>
+                    <TouchableOpacity style={{ flex: 1, flexDirection: "row", backgroundColor: "#eee", borderWidth: 1, borderRadius: 5, borderColor: "grey", justifyContent: "center", alignItems: "center" }}>
                         <MaterialIcons style={{ paddingRight: 5, fontWeight: 300, color: "#555" }} name={this.state.uploadIcon} size={25} ></MaterialIcons>
                         <Text style={{ fontWeight: 500, color: "#555" }} >Upload files</Text>
-                    </View>
+                    </TouchableOpacity>
                 </View>
 
                 <View style={{ flex: 10, backgroundColor: "blue" }}>

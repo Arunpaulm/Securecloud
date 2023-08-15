@@ -1,72 +1,37 @@
-const { Sequelize, DataTypes } = require("sequelize");
-require('dotenv').config();
+const { dbConnect, sequelize, DataTypes } = require('./index')
+const usersModel = require('./model/users')
+const roleModel = require('./model/role')
 
-const sequelize = new Sequelize(
-    process.env.DATABASE,
-    process.env.USERNAME,
-    '',
-    {
-        host: process.env.HOST,
-        dialect: process.env.DIALECT
-    }
-);
-
-sequelize.authenticate().then(() => {
-    console.log('Connection has been established successfully.');
-}).catch((error) => {
-    console.error('Unable to connect to the database: ', error);
-});
+dbConnect()
 
 console.log('Initiating migration script');
 
-const users = sequelize.define("users", {
-    user_id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true,
-    },
-    username: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    password: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    email: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    phone: {
-        type: DataTypes.STRING
-    },
-    type: {
-        type: DataTypes.STRING,
-        defaultValue: "client",
-    },
-    is_active: {
-        type: DataTypes.BOOLEAN,
-        defaultValue: true,
-    },
-    profile_photo: {
-        type: DataTypes.STRING,
-    }
-});
 
-const role = sequelize.define("role", {
-    id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true,
-    },
-    name: {
-        type: DataTypes.STRING,
-        allowNull: false
-    }
-});
+
 
 sequelize.sync().then(() => {
     console.log('users table created successfully!');
 }).catch((error) => {
     console.error('Unable to create table : ', error);
 });
+
+
+// const grade_data = [{ grade: 9 }, { grade: 10 }, { grade: 11 }]
+
+// const student_data = [
+//     { name: "John Baker", gradeId: 2 },
+//     { name: "Max Butler", gradeId: 1 },
+//     { name: "Ryan Fisher", gradeId: 3 },
+//     { name: "Robert Gray", gradeId: 2 },
+//     { name: "Sam Lewis", gradeId: 1 }
+// ]
+
+// sequelize.sync({ force: true }).then(() => {
+//     Grade.bulkCreate(grade_data, { validate: true }).then(() => {
+//         Student.bulkCreate(student_data, { validate: true }).then(() => {
+//            …
+//         }).catch((err) => { console.log(err); });
+//     }).catch((err) => { console.log(err); });
+// }).catch((error) => {
+//     console.error('Unable to create the table : ', error);
+// });

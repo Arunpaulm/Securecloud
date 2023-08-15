@@ -2,23 +2,29 @@ import React, { Component } from "react";
 import { StyleSheet, Text, TextInput, View, FlatList, TouchableOpacity, Dimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as FileSystem from 'expo-file-system';
+import { StorageAccessFramework } from 'expo-file-system';
 
-import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import * as DocumentPicker from 'expo-document-picker';
+
+
+import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import DocumentList from "../components/DocumentList";
 
 
-const cacheDir = FileSystem.cacheDirectory + "securecloud/"
+const cacheDir = FileSystem.cacheDirectory + "securecloud"
 
-MaterialCommunityIcons.loadFont();
+MaterialIcons.loadFont();
 Ionicons.loadFont();
 
 class VaultScreen extends Component {
     constructor (props) {
         super(props);
         this.state = {
-            directory: []
+            directory: [],
+            uploadIcon: "cloud-upload",
+            fontColor: "#555"
         };
     }
 
@@ -27,7 +33,7 @@ class VaultScreen extends Component {
         console.log(FileSystem.cacheDirectory)
         console.log("---")
 
-        // console.log(FileSystem.readDirectoryAsync(FileSystem.documentDirectory))
+        console.log(FileSystem.readDirectoryAsync(FileSystem.cacheDirectory))
         console.log()
         console.log()
 
@@ -55,14 +61,18 @@ class VaultScreen extends Component {
         }
     }
 
-    async getDirectoryInfo() {
-        const dir = await FileSystem.readDirectoryAsync(FileSystem.cacheDirectory);
+    async getDirectoryInfo(path) {
+        const fileDir = path ? cacheDir + path : cacheDir
+        const dir = await FileSystem.readDirectoryAsync(fileDir);
         const dirInfo = []
+        console.log(dir)
         for (const drr in dir) {
             const val = dir[drr]
             // console.log("-  ", drr)
 
-            const drin = await FileSystem.getInfoAsync(FileSystem.cacheDirectory + val)
+            const drin = await FileSystem.getInfoAsync(fileDir + "/" + val)
+
+            console.log(drin)
 
             dirInfo.push({ name: val, id: drr, ...drin })
 
@@ -92,9 +102,31 @@ class VaultScreen extends Component {
         // })
     }
 
+    async handleDocumentSelection() {
+        console.log("called")
+        try {
+            const response = await DocumentPicker.getDocumentAsync()
+            console.log(response)
+            this.setState({ documentPicked: response })
+        } catch (err) {
+            console.warn(err);
+        }
+    }
+
     render() {
         return (
             <View style={styles.container}>
+
+                <View style={{ flex: 0.1, padding: 20 }}>
+                    <TouchableOpacity
+                        style={{ flex: 1, flexDirection: "row", backgroundColor: "#eee", borderWidth: 1, borderRadius: 5, borderColor: this.state.fontColor, justifyContent: "center", alignItems: "center" }}
+                        onPress={this.handleDocumentSelection.bind(this)}
+                    >
+                        <MaterialIcons style={{ paddingRight: 5, color: this.state.fontColor }} name={this.state.uploadIcon} size={25} />
+                        <Text style={{ color: this.state.fontColor }} >Upload files</Text>
+                    </TouchableOpacity>
+                </View>
+
                 <DocumentList directory={this.state.directory} />
             </View>
         );
@@ -103,7 +135,8 @@ class VaultScreen extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
+        backgroundColor: "#fff"
     }
 })
 
