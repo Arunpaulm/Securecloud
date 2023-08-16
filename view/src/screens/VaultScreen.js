@@ -25,7 +25,9 @@ class VaultScreen extends Component {
             uploadIcon: "cloud-upload",
             fontColor: "#555",
             currentPath: cacheDir,
-            reloadPage: 0
+            reloadPage: 0,
+            reloadDocumentView: true,
+            isRootDir: true
         };
     }
 
@@ -37,19 +39,6 @@ class VaultScreen extends Component {
         console.log(FileSystem.readDirectoryAsync(FileSystem.cacheDirectory))
         console.log()
         console.log()
-
-        // let dir = await FileSystem.readDirectoryAsync(FileSystem.cacheDirectory);
-
-        // dir.forEach(async (val) => {
-
-        //     console.log("-  ", val)
-
-        //     console.log(await FileSystem.getInfoAsync(FileSystem.cacheDirectory + val))
-
-        //     // this.state.docsList.push(FileSystem.documentDirectory + 'app_docs/' + val);
-
-        //     // this.ensureDirExists()
-        // })
 
         await this.getDirectoryInfo(this.state.currentPath)
     }
@@ -63,7 +52,14 @@ class VaultScreen extends Component {
     }
 
     async getDirectoryInfo(path) {
+        console.log()
+        console.log()
+        console.log()
+        console.log()
+        console.log()
+        this.setState({ reloadDocumentView: false })
         console.log("path - ", path)
+        console.log("cacheDir - ", cacheDir)
         // const fileDir = path ? cacheDir + path : cacheDir
         const dir = await FileSystem.readDirectoryAsync(path);
         const dirInfo = []
@@ -74,7 +70,7 @@ class VaultScreen extends Component {
 
             const drin = await FileSystem.getInfoAsync(path + "/" + val)
 
-            console.log(drin)
+            // console.log(drin)
 
             dirInfo.push({ name: val, id: drr, ...drin })
         }
@@ -85,14 +81,23 @@ class VaultScreen extends Component {
             return 0;
         }).sort((a, b) => b.isDirectory - a.isDirectory)
 
-
-
+        let isRootDir = true
+        const ifConditionForRootDir = path?.toString().replace(cacheDir.replace(/\/+/, "/"), "")
+        console.log("this.state?.currentPath?.toString().replace(cacheDir,) - ", ifConditionForRootDir)
+        if (ifConditionForRootDir !== "") {
+            isRootDir = false
+        }
+        console.log("isRootDir - ", isRootDir)
         this.setState({
+            currentPath: path,
             directory: dirInfo,
-            reloadPage: this.state.reloadPage + 1
+            reloadPage: this.state.reloadPage + 1,
+            isRootDir
         })
 
-        console.log("dirInfo - ", dirInfo)
+        this.setState({ reloadDocumentView: true })
+
+        // console.log("dirInfo - ", dirInfo)
         // dir.forEach(async (val) => {
 
         //     console.log("-  ", val)
@@ -130,7 +135,7 @@ class VaultScreen extends Component {
                     </TouchableOpacity>
                 </View>
 
-                <DocumentList directory={this.state.directory} getDirectoryInfo={this.getDirectoryInfo.bind(this)} />
+                {this.state.reloadDocumentView ? <DocumentList isRootDir={this.state.isRootDir} currentPath={this.state.currentPath} directory={this.state.directory} getDirectoryInfo={this.getDirectoryInfo.bind(this)} /> : null}
             </View>
         );
     }

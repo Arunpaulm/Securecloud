@@ -36,7 +36,7 @@ class DocumentList extends Component {
         console.log("---------------")
 
         // console.log(FileSystem.readDirectoryAsync(FileSystem.documentDirectory))
-        console.log("this.props - ", this.props)
+        // console.log("this.props - ", this.props)
 
         // let dir = await FileSystem.readDirectoryAsync(FileSystem.cacheDirectory);
 
@@ -50,23 +50,60 @@ class DocumentList extends Component {
 
         //     // this.ensureDirExists()
         // })
+        if (!this.props.isRootDir) {
+            let dir = this.props.currentPath?.split('/')?.filter(i => i)
+            if (dir?.length) {
+                dir.pop()
+                dir = dir.join('/')
+            }
+            const goBack = {
+                isDirectory: true,
+                name: "Go Back",
+                uri: dir
+            }
+            const directory = [goBack, ...this.props?.directory]
+            this.setState({ directory: directory, directorydisplay: directory })
+        } else {
+            this.setState({ directory: this.props?.directory, directorydisplay: this.props?.directory })
+        }
 
     }
 
     componentDidUpdate() {
-        const objectCompare = (prevProp, currentProp, callback = (a, b) => a.name === b.name && a.uri === b.uri) =>
-            prevProp.filter(preValue =>
-                !currentProp.some(currentValue =>
-                    callback(preValue, currentValue)));
+        // console.log("updating")
+        // console.log("this.state?.currentPath - ", this.state.currentPath)
+        // console.log("this.state.isRootDir - ", this.state.isRootDir)
 
-        const newProps = objectCompare(this.props?.directory, this.state.directory);
+        // const objectCompare = (prevProp, currentProp, callback = (a, b) => a.name === b.name && a.uri === b.uri) =>
+        //     prevProp.filter(preValue =>
+        //         !currentProp.some(currentValue =>
+        //             callback(preValue, currentValue)));
 
-        if (newProps.length) {
-            console.log(" not equal ")
-            this.setState({ directory: this.props?.directory, directorydisplay: this.props?.directory })
-        }
+        // const newProps = objectCompare(this.props?.directory, this.state.directory);
+        // const oldProps = objectCompare(this.state.directory, this.props?.directory);
+
+        // console.log("newProps - ", newProps)
+        // console.log(" this.props.currentPath - ", this.props.params.currentPath)
+        // console.log(" this.state.isRootDir - ", this.state.isRootDir)
+
+        // if ((this.props?.directory.length === 0 && oldProps.length) || newProps.length) {
+        //     console.log(" not equal ")
+        //     if (this.state?.currentPath?.toString().replace(cacheDir, "") !== "") {
+        //         let dir = this.state.currentPath.split('/')?.filter(i => i)
+        //         dir.pop()
+        //         dir = dir.join('/')
+        //         const goBack = {
+        //             isDirectory: true,
+        //             name: "Go Back",
+        //             uri: dir
+        //         }
+        //         const directory = [goBack, ...this.props?.directory]
+        //         this.setState({ directory: directory, directorydisplay: directory })
+        //     } else {
+
+        //     }
+        // }
     }
-
 
     onChangeInText(inputValue) {
         const regex = new RegExp(inputValue, "i")
@@ -75,6 +112,9 @@ class DocumentList extends Component {
     }
 
     generateIcon(item) {
+        if (item.name === "Go Back") {
+            return <MaterialCommunityIcons style={styles.searchIcon} name={'folder-upload'} size={71} color={"#00007b"} />
+        }
         if (item.isDirectory) {
             return <MaterialCommunityIcons style={styles.searchIcon} name={'folder'} size={71} color={"#00007b"} />
         } else {
@@ -87,21 +127,6 @@ class DocumentList extends Component {
             <View style={styles.container} >
                 <View style={styles.searchBarContainer}>
                     <View style={styles.searchBar}>
-                        <Ionicons style={styles.searchIcon} name={'search-outline'} size={22} color={"#8E8E93"} />
-                        <TextInput
-                            style={styles.searchField}
-                            ref={(input) => { this.searchTextBox = input; }}
-                            selectionColor={"black"}
-                            onChangeText={(inputValue) => this.onChangeInText(inputValue)}
-                            onPressIn={() => { this.setState({ searchBarActive: true }) }}
-                            value={this.state.searchTextBoxValue}
-                            placeholder={this.state.placeholder}
-                        />
-                    </View>
-                </View>
-
-                <View style={styles.backButtonContainer}>
-                    <View style={styles.backButton}>
                         <Ionicons style={styles.searchIcon} name={'search-outline'} size={22} color={"#8E8E93"} />
                         <TextInput
                             style={styles.searchField}
@@ -249,15 +274,6 @@ const styles = StyleSheet.create({
         shadowRadius: 4,
         elevation: 5,
         justifyContent: "center",
-    },
-    backButtonContainer: {
-        paddingTop: 20,
-        paddingBottom: 10,
-        paddingHorizontal: 20,
-        width: "100%"
-    },
-    backButton: {
-
     }
 })
 
