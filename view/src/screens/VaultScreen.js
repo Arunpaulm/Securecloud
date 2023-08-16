@@ -2,7 +2,6 @@ import React, { Component } from "react";
 import { StyleSheet, Text, TextInput, View, FlatList, TouchableOpacity, Dimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as FileSystem from 'expo-file-system';
-import { StorageAccessFramework } from 'expo-file-system';
 
 import * as DocumentPicker from 'expo-document-picker';
 
@@ -24,7 +23,9 @@ class VaultScreen extends Component {
         this.state = {
             directory: [],
             uploadIcon: "cloud-upload",
-            fontColor: "#555"
+            fontColor: "#555",
+            currentPath: cacheDir,
+            reloadPage: 0
         };
     }
 
@@ -50,7 +51,7 @@ class VaultScreen extends Component {
         //     // this.ensureDirExists()
         // })
 
-        await this.getDirectoryInfo()
+        await this.getDirectoryInfo(this.state.currentPath)
     }
 
     async ensureDirExists() {
@@ -62,34 +63,36 @@ class VaultScreen extends Component {
     }
 
     async getDirectoryInfo(path) {
-        const fileDir = path ? cacheDir + path : cacheDir
-        const dir = await FileSystem.readDirectoryAsync(fileDir);
+        console.log("path - ", path)
+        // const fileDir = path ? cacheDir + path : cacheDir
+        const dir = await FileSystem.readDirectoryAsync(path);
         const dirInfo = []
         console.log(dir)
         for (const drr in dir) {
             const val = dir[drr]
             // console.log("-  ", drr)
 
-            const drin = await FileSystem.getInfoAsync(fileDir + "/" + val)
+            const drin = await FileSystem.getInfoAsync(path + "/" + val)
 
             console.log(drin)
 
             dirInfo.push({ name: val, id: drr, ...drin })
-
-            dirInfo.sort((a, b) => {
-                if (a.name < b.name) { return -1; }
-                if (a.name > b.name) { return 1; }
-                return 0;
-            }).sort((a, b) => b.isDirectory - a.isDirectory)
-
-
-
-            this.setState({
-                directory: dirInfo
-            })
-
-            // console.log(dirInfo)
         }
+
+        dirInfo.sort((a, b) => {
+            if (a.name < b.name) { return -1; }
+            if (a.name > b.name) { return 1; }
+            return 0;
+        }).sort((a, b) => b.isDirectory - a.isDirectory)
+
+
+
+        this.setState({
+            directory: dirInfo,
+            reloadPage: this.state.reloadPage + 1
+        })
+
+        console.log("dirInfo - ", dirInfo)
         // dir.forEach(async (val) => {
 
         //     console.log("-  ", val)
@@ -127,7 +130,7 @@ class VaultScreen extends Component {
                     </TouchableOpacity>
                 </View>
 
-                <DocumentList directory={this.state.directory} />
+                <DocumentList directory={this.state.directory} getDirectoryInfo={this.getDirectoryInfo.bind(this)} />
             </View>
         );
     }
