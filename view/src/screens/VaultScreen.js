@@ -144,7 +144,14 @@ class VaultScreen extends Component {
         try {
             const response = await DocumentPicker.getDocumentAsync()
             console.log(response)
-            this.setState({ documentPicked: response })
+            if (response.canceled !== true) {
+                const [document] = response.assets || []
+                const options = { from: document?.uri, to: this.state.currentPath + "/" + document.name }
+                console.log(options)
+                FileSystem.copyAsync(options)
+                this.setState({ documentPicked: document })
+                this.getDirectoryInfo(this.state.currentPath)
+            }
         } catch (err) {
             console.warn(err);
         }
