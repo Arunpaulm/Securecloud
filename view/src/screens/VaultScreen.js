@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { StyleSheet, Text, TextInput, View, FlatList, TouchableOpacity, Dimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import * as FileSystem from 'expo-file-system';
+import moment from 'moment'
 
 import * as DocumentPicker from 'expo-document-picker';
 
@@ -17,6 +18,8 @@ const cacheDir = FileSystem.cacheDirectory + "securecloud"
 MaterialIcons.loadFont();
 Ionicons.loadFont();
 
+const decimals = 2
+
 class VaultScreen extends Component {
     constructor (props) {
         super(props);
@@ -27,7 +30,8 @@ class VaultScreen extends Component {
             currentPath: cacheDir,
             reloadPage: 0,
             reloadDocumentView: true,
-            isRootDir: true
+            isRootDir: true,
+            refreshPage: 0
         };
     }
 
@@ -71,6 +75,31 @@ class VaultScreen extends Component {
             const drin = await FileSystem.getInfoAsync(path + "/" + val)
 
             // console.log(drin)
+
+            let size = drin?.size
+
+            if (size !== undefined) {
+                const convert = 1024
+                const nearDeci = decimals < 0 ? 0 : decimals
+                const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+
+                const i = Math.floor(Math.log(size) / Math.log(convert))
+
+                const sizeName = sizes[i]
+                const sizeConvert = size / Math.pow(convert, i)
+                const sizeConverted = parseFloat(sizeConvert).toFixed(nearDeci)
+
+                drin.size = `${sizeConverted} ${sizeName}`
+            } else {
+                drin.size = '0 B'
+            }
+
+            if (drin.modificationTime) {
+                const dd = drin.modificationTime.toString()?.split('.')?.[0]
+                console.log(dd)
+                var date = moment(Number(dd + "000"));
+                drin.lastUpdated = date.format("MMM DD YYYY h:mm A")
+            }
 
             dirInfo.push({ name: val, id: drr, ...drin })
         }

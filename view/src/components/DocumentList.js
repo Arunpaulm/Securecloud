@@ -23,11 +23,12 @@ class DocumentList extends Component {
             searchTextBoxValue: "",
             directorydisplay: this.props?.directory || [],
             directory: this.props?.directory || [],
-            refreshPage: 1,
             modalVisible: false,
+            moreInfoModalVisible: false,
             selectedItem: {},
             isRootDir: true,
-            currentPath: '/'
+            currentPath: '/',
+            isRefreshing: false
         };
     }
 
@@ -62,14 +63,17 @@ class DocumentList extends Component {
                 uri: dir
             }
             const directory = [goBack, ...this.props?.directory]
-            this.setState({ directory: directory, directorydisplay: directory })
+            this.setState({ directory: directory, directorydisplay: directory, currentPath: this.props.currentPath })
         } else {
-            this.setState({ directory: this.props?.directory, directorydisplay: this.props?.directory })
+            this.setState({ directory: this.props?.directory, directorydisplay: this.props?.directory, currentPath: this.props.currentPath })
         }
 
     }
 
     componentDidUpdate() {
+        if (this.state.selectedItem?.uri) {
+            console.log(this.state.selectedItem)
+        }
         // console.log("updating")
         // console.log("this.state?.currentPath - ", this.state.currentPath)
         // console.log("this.state.isRootDir - ", this.state.isRootDir)
@@ -145,6 +149,8 @@ class DocumentList extends Component {
                         style={{ flex: 1, width: SCREENWIDTH }}
                         data={this.state.directorydisplay}
                         keyExtractor={(item) => item?.id?.toString()}
+                        refreshing={this.state.isRefreshing}
+                        onRefresh={() => this.props.getDirectoryInfo(this.state.currentPath)}
                         renderItem={({ item, index }) => (<TouchableOpacity style={{ height: 130, margin: 18, paddingVertical: 6, justifyContent: "center", alignItems: "center" }}
                             onPress={() => {
                                 if (!item.isDirectory) {
@@ -174,17 +180,59 @@ class DocumentList extends Component {
                     }} style={{ backgroundColor: "red" }}>
                     <TouchableOpacity style={styles.centeredView} onPressIn={() => { this.setState({ modalVisible: false }) }}>
                         <View style={styles.modalView}>
-                            <View style={{ height: 70 }}>{this.generateIcon(this.state.selectedItem)}</View>
+                            <View style={{ height: 70 }}>{this.generateIcon(this.state?.selectedItem)}</View>
                             <View style={styles.optionButtons}>
                                 <Text style={{ fontSize: 18, textAlign: "center", paddingBottom: 10 }}
                                     adjustsFontSizeToFit={false}
                                     numberOfLines={2}
                                 >{this.state.selectedItem?.name?.trim()}</Text>
                             </View>
-                            <TouchableOpacity style={styles.optionButtons} onPress={() => { Sharing.shareAsync(this.state.selectedItem.uri); }}><Text style={{ fontSize: 17, textAlign: "center" }}>Open</Text></TouchableOpacity>
-                            <TouchableOpacity style={styles.optionButtons}><Text style={{ fontSize: 17, textAlign: "center" }}>Rename</Text></TouchableOpacity>
-                            <TouchableOpacity style={styles.optionButtons}><Text style={{ fontSize: 17, textAlign: "center" }}>Get Info</Text></TouchableOpacity>
-                            <TouchableOpacity style={styles.bottomOptionButtons}><Text style={{ fontSize: 17, color: "red", textAlign: "center" }}>Delete</Text></TouchableOpacity>
+                            <TouchableOpacity style={styles.optionButtons} onPress={() => {
+                                if (!this.state.selectedItem?.isDirectory) {
+                                    Sharing.shareAsync(this.state.selectedItem?.uri)
+                                } else {
+                                    this.setState({ currentPath: this.state.selectedItem?.uri })
+                                    this.props.getDirectoryInfo(this.state.selectedItem?.uri)
+                                }
+                            }}><Text style={{ fontSize: 17, textAlign: "center" }}>Open</Text></TouchableOpacity>
+                            <TouchableOpacity style={styles.optionButtons} ><Text style={{ fontSize: 17, textAlign: "center" }}>Rename</Text></TouchableOpacity>
+                            <TouchableOpacity style={styles.optionButtons} onPress={() => { this.setState({ modalVisible: false, moreInfoModalVisible: true }) }}><Text style={{ fontSize: 17, textAlign: "center" }}>Get Info</Text></TouchableOpacity>
+                            <TouchableOpacity style={styles.bottomOptionButtons} onPress={() => {
+                                FileSystem.deleteAsync(this.state.selectedItem?.uri)
+                                this.setState({ modalVisible: false })
+                                this.props.getDirectoryInfo(this.state.currentPath)
+                            }}><Text style={{ fontSize: 17, color: "red", textAlign: "center" }}>Delete</Text></TouchableOpacity>
+                        </View>
+                    </TouchableOpacity>
+                </Modal >
+
+
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={this.state.moreInfoModalVisible} // this.state.modalVisible
+                    onRequestClose={() => {
+                        console.log('Modal has been closed.');
+                        this.setState({ moreInfoModalVisible: false })
+                    }} style={{ backgroundColor: "red" }}>
+                    <TouchableOpacity style={styles.centeredView} onPressIn={() => { this.setState({ moreInfoModalVisible: false }) }}>
+                        <View style={styles.modalView}>
+                            <View style={{ height: 70 }}>{this.generateIcon(this.state.selectedItem)}</View>
+                            <View style={styles.optionButtons}>
+                                <Text style={{ fontSize: 18, textAlign: "center", paddingBottom: 10 }}
+                                    adjustsFontSizeToFit={false}
+                                    numberOfLines={2}
+                                >{
+                                        this.state.selectedItem?.name?.trim()
+
+                                    }</Text>
+                            </View>
+                            <Text style={{ fontSize: 17, textAlign: "left", padding: 4 }}>Size: </Text>
+                            <Text style={{ fontSize: 17, textAlign: "right", padding: 2 }}>{this.state.selectedItem.size}</Text>
+                            <Text style={{ fontSize: 17, textAlign: "center", padding: 4 }}>Last modified:</Text>
+                            <Text style={{ fontSize: 17, textAlign: "center", padding: 2 }}>{this.state.selectedItem.lastUpdated}</Text>
+                            <Text style={{ fontSize: 17, textAlign: "center", padding: 4 }}>Absolute path:</Text>
+                            <Text style={{ fontSize: 17, textAlign: "center", padding: 2 }}>{this.state.selectedItem.uri}</Text>
                         </View>
                     </TouchableOpacity>
                 </Modal >
