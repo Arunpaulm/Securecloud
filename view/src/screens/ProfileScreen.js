@@ -9,6 +9,8 @@ import * as SecureStore from 'expo-secure-store';
 import FormComponents from '../components/FormComponents';
 import axios from "../api/index"
 
+import { background, primarybuttonbg, white } from "../../colorpalette"
+
 Icon.loadFont();
 
 class ProfileScreen extends Component {
@@ -163,7 +165,7 @@ class ProfileScreen extends Component {
 const styles = StyleSheet.create({
     container: {
         height: "100%",
-        backgroundColor: '#fff',
+        backgroundColor: background,
         alignItems: 'center',
     },
     loginTextBoxContainer: {
@@ -186,12 +188,12 @@ const styles = StyleSheet.create({
     },
     loginButton: {
         alignItems: "center",
-        backgroundColor: "#003399",
+        backgroundColor: primarybuttonbg,
         padding: 15,
         borderRadius: 10
     },
     loginButtonText: {
-        color: "white",
+        color: white,
         fontWeight: "500",
         fontSize: 16
     },

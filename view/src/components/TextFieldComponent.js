@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, TextInput } from 'react-native';
 
+import { tabactive, tabinactive, textinputcaption } from "../../colorpalette"
 
 class TextFieldComponent extends Component {
     constructor (props) {
@@ -10,8 +11,8 @@ class TextFieldComponent extends Component {
             title: "E-Mail",
             placeholder: "example@gmail.com",
             active: true,
-            themeColorActive: "#003399",
-            themeColorIdle: "#D9D9D9",
+            themeColorActive: tabactive,
+            themeColorIdle: tabinactive,
             editable: this.props.editable
         };
     }
@@ -63,7 +64,7 @@ const styles = StyleSheet.create({
     },
     textCaption: {
         position: "absolute",
-        color: "#6A6EEE",
+        color: textinputcaption,
         fontWeight: "500",
         backgroundColor: "white",
         top: -10,
@@ -76,7 +77,7 @@ const styles = StyleSheet.create({
         width: "100%",
         borderWidth: 1.3,
         borderRadius: 7,
-        borderColor: "#6A6EEE",
+        borderColor: textinputcaption,
         padding: 20,
     },
 })

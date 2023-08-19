@@ -9,6 +9,8 @@ import FormComponents from '../components/FormComponents';
 
 import axios from "../api/index"
 
+import { background, black, primarybuttonbg, danger, dangerBg, white, primarybutton } from "../../colorpalette"
+
 class ModelComponent extends Component {
     constructor (props) {
         super(props);
@@ -171,11 +173,11 @@ const styles = StyleSheet.create({
         flex: 1,
         // padding: 50,
         marginVertical: 20,
-        backgroundColor: 'white',
+        backgroundColor: background,
         borderRadius: 20,
         // padding: 35,
         alignItems: 'center',
-        shadowColor: '#000',
+        shadowColor: black,
         shadowOffset: {
             width: 0,
             height: 2,
@@ -191,10 +193,10 @@ const styles = StyleSheet.create({
         elevation: 2,
     },
     buttonOpen: {
-        backgroundColor: '#F194FF',
+        backgroundColor: primarybuttonbg,
     },
     buttonClose: {
-        backgroundColor: '#2196F3',
+        backgroundColor: dangerBg,
     },
     textStyle: {
         color: 'white',
@@ -207,7 +209,7 @@ const styles = StyleSheet.create({
     },
     container: {
         height: "100%",
-        backgroundColor: '#fff',
+        backgroundColor: white,
         alignItems: 'center',
     },
     loginTextBoxContainer: {
@@ -233,12 +235,12 @@ const styles = StyleSheet.create({
     },
     loginButton: {
         alignItems: "center",
-        backgroundColor: "#003399",
+        backgroundColor: primarybuttonbg,
         padding: 20,
         borderRadius: 10
     },
     loginButtonText: {
-        color: "white",
+        color: white,
         fontWeight: "500",
         fontSize: 16
     },
@@ -252,14 +254,14 @@ const styles = StyleSheet.create({
     },
     closeButton: {
         alignItems: "center",
-        backgroundColor: "#ffcccb",
+        backgroundColor: dangerBg,
         borderWidth: 1,
-        borderColor: "red",
+        borderColor: danger,
         padding: 20,
         borderRadius: 10
     },
     closeButtonText: {
-        color: "red",
+        color: white,
         fontWeight: "500",
         fontSize: 16
     },

@@ -3,9 +3,11 @@ import { StyleSheet, Text, View, TextInput } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import Checkbox from 'expo-checkbox';
 
+import { tabactive, tabinactive, textinputcaption, white } from "../../colorpalette"
 
-const themeColorActive = "#003399"
-const themeColorIdle = "#D9D9D9"
+
+const themeColorActive = tabactive
+const themeColorIdle = tabinactive
 
 
 const textComponent = ({ editable, field, getActiveTextBox, editFormValues }) => {
@@ -64,7 +66,7 @@ const checkBoxComponents = ({ editable, field, getActiveTextBox, editFormValues 
                 field.value = !field.value
                 editFormValues(field, field.value)
             }}
-            color={field.value ? '#4630EB' : undefined}
+            color={field.value ? themeColorActive : themeColorIdle}
         />
         {field.title ? <Text style={[styles.checkBoxCaption, { color: field.value ? themeColorActive : themeColorIdle }]}>{field.title}</Text> : null}
     </View>
@@ -94,7 +96,7 @@ const styles = StyleSheet.create({
     },
     textCaption: {
         position: "absolute",
-        color: "#6A6EEE",
+        color: textinputcaption,
         fontWeight: "500",
         backgroundColor: "white",
         top: -10,
@@ -107,7 +109,7 @@ const styles = StyleSheet.create({
         width: "100%",
         borderWidth: 1.3,
         borderRadius: 7,
-        borderColor: "#6A6EEE",
+        borderColor: textinputcaption,
         padding: 20,
     },
     checkBox: {
@@ -121,9 +123,9 @@ const styles = StyleSheet.create({
     },
     checkBoxCaption: {
         // position: "absolute",
-        color: "#6A6EEE",
+        color: textinputcaption,
         fontWeight: "500",
-        backgroundColor: "white",
+        backgroundColor: white,
         // top: -10,
         // left: 15,
         // zIndex: 1,
@@ -134,7 +136,7 @@ const styles = StyleSheet.create({
         // width: "100%",
         borderWidth: 1.3,
         borderRadius: 7,
-        borderColor: "#6A6EEE",
+        borderColor: textinputcaption,
         padding: 10,
     },
     pickerBox: {
@@ -143,9 +145,9 @@ const styles = StyleSheet.create({
     },
     pickerCaption: {
         position: "absolute",
-        color: "#6A6EEE",
+        color: textinputcaption,
         fontWeight: "500",
-        backgroundColor: "white",
+        backgroundColor: white,
         top: -10,
         left: 15,
         zIndex: 1,
@@ -160,7 +162,7 @@ const styles = StyleSheet.create({
         width: "100%",
         borderWidth: 1.3,
         borderRadius: 7,
-        borderColor: "#6A6EEE",
+        borderColor: textinputcaption,
         // padding: 20,
     }
 })

@@ -25,8 +25,11 @@ const dangerBg = "#ff5555"
 const warning = "orange"
 const warningBg = "orange"
 
-const primarybutton = "#00007b"
-const primarybuttonbg = "#00007baa"
+// const primarybutton = "#00007b"
+// const primarybuttonbg = "#00007baa"
+
+const primarybutton = oxfordblue
+const primarybuttonbg = oxfordblue
 
 const background = babypowder
 const tabactive = blue
@@ -44,6 +47,7 @@ const searchicon = "#8E8E93"
 const fileoptionsborder = "#888"
 const fileoptionsbg = '#eee'
 
+const textinputcaption = "#6A6EEE"
 
 export {
     oxfordblue,
@@ -51,6 +55,7 @@ export {
     black,
     blue,
     grey,
+    lightgrey,
     moonstone,
     gunmetal,
     babypowder,
@@ -70,6 +75,8 @@ export {
 
     tabactive,
     tabinactive,
+
+    textinputcaption,
 
     uploadicontext,
     uploadiconbg,

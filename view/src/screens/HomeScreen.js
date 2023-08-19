@@ -1,7 +1,6 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, TextInput, View, Image, FlatList, TouchableOpacity, Alert, Modal } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
-import { Avatar, List, ProgressBar, MD3Colors } from 'react-native-paper';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { Avatar } from 'react-native-paper';
 
 import * as Animatable from 'react-native-animatable';
 import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -9,10 +8,9 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import * as SecureStore from 'expo-secure-store';
 
 import CloudDirectory from "../components/CloudDirectory";
-import Logo from "../assets/logo.png"
 import axios from "../api/index"
 
-import { background, logocolor, homeusernamebg, uploadicontext, uploadiconbg, grey, success, danger, warning } from "../../colorpalette"
+import { background, logocolor, homeusernamebg, uploadicontext, uploadiconbg, grey, success, danger, warning, blue } from "../../colorpalette"
 
 MaterialIcons.loadFont();
 Ionicons.loadFont();
@@ -79,7 +77,6 @@ class HomeScreen extends Component {
     render() {
         return (
             <View style={styles.container}>
-
                 <View style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
                     <MaterialIcons style={{ padding: 10, width: 70, height: 70, color: this.state.color }} name={'cloud-lock'} size={50} ></MaterialIcons>
                     <View style={{ flex: 1, marginLeft: 8, flexDirection: "row" }}>

@@ -12,6 +12,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import DocumentList from "../components/DocumentList";
 
+import { background, uploadiconbg, uploadicontext } from "../../colorpalette"
 
 const cacheDir = FileSystem.cacheDirectory + "securecloud"
 
@@ -26,7 +27,6 @@ class VaultScreen extends Component {
         this.state = {
             directory: [],
             uploadIcon: "cloud-upload",
-            fontColor: "#555",
             currentPath: cacheDir,
             reloadPage: 0,
             reloadDocumentView: true,
@@ -165,11 +165,11 @@ class VaultScreen extends Component {
 
                 <View style={{ flex: 0.1, padding: 20 }}>
                     <TouchableOpacity
-                        style={{ flex: 1, flexDirection: "row", backgroundColor: "#eee", borderWidth: 1, borderRadius: 5, borderColor: this.state.fontColor, justifyContent: "center", alignItems: "center" }}
+                        style={{ flex: 1, flexDirection: "row", backgroundColor: uploadiconbg, borderWidth: 1, borderRadius: 5, borderColor: uploadicontext, justifyContent: "center", alignItems: "center" }}
                         onPress={this.handleDocumentSelection.bind(this)}
                     >
-                        <MaterialIcons style={{ paddingRight: 5, color: this.state.fontColor }} name={this.state.uploadIcon} size={25} />
-                        <Text style={{ color: this.state.fontColor }} >Add files</Text>
+                        <MaterialIcons style={{ paddingRight: 5, color: uploadicontext }} name={this.state.uploadIcon} size={25} />
+                        <Text style={{ color: uploadicontext }} >Add files</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -182,7 +182,7 @@ class VaultScreen extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: "#fff"
+        backgroundColor: background
     }
 })
 

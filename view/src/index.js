@@ -12,6 +12,9 @@ import {
 
 import Router from "./router";
 
+import { babypowder, blue } from "../colorpalette"
+
+
 SplashScreen.preventAutoHideAsync();
 
 function App() {
@@ -74,7 +77,7 @@ function App() {
 
     return (
         <SafeAreaView style={styles.container} onLayout={onLayoutRootView}>
-            <StatusBar translucent backgroundColor={"#5993c0"} barStyle="light-content" />
+            <StatusBar translucent backgroundColor={blue} barStyle="light-content" />
             <Router />
         </SafeAreaView>
     )

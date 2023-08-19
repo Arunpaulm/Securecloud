@@ -8,9 +8,9 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { ScrollView } from "react-native-gesture-handler";
 
 import axios from "../api/index"
-
-
 import ModelComponent from "../components/ModelComponent";
+
+import { background, lightgrey, primarybutton, babypowder } from "../../colorpalette"
 
 Icon.loadFont();
 
@@ -139,7 +139,7 @@ const UsersScreen = (props) => {
                                     <DataTable.Header style={styles.tableHeader}>
                                         {
                                             [...Object.keys(clientList[0])
-                                                .map((listKey, index) => { if (allowedOuterTableHeadings.indexOf(listKey) > -1) return (<DataTable.Title key={index} style={{ flex: tableWidthFlex[index] }}>{listKey?.toString()?.trim()}</DataTable.Title>) })
+                                                .map((listKey, index) => { if (allowedOuterTableHeadings.indexOf(listKey) > -1) return (<DataTable.Title key={index} style={{ flex: tableWidthFlex[index] }}><Text style={{ fontSize: 15 }}>{listKey?.toString()?.trim()?.toUpperCase()}</Text></DataTable.Title>) })
                                                 , <DataTable.Title key={"lastbutton"} style={{ flex: 0.8 }}> </DataTable.Title>]
                                         }
                                     </DataTable.Header>
@@ -196,7 +196,7 @@ const UsersScreen = (props) => {
 const styles = StyleSheet.create({
     container: {
         height: "100%",
-        backgroundColor: '#fff',
+        backgroundColor: background,
         alignItems: 'center',
     },
     clientListContainer: {
@@ -215,11 +215,11 @@ const styles = StyleSheet.create({
     footerSpace: {
         // flex: 6,
     },
-    tableHeader: { height: 50, backgroundColor: '#D9D9D9' },
+    tableHeader: { height: 50, backgroundColor: lightgrey },
     row: { flexDirection: 'row', height: 40 },
     text: { margin: 6, justifyContent: "center", alignContent: "center", alignItems: "center" },
-    button: { width: 58, height: 25, backgroundColor: '#003399', borderRadius: 4, justifyContent: "center" },
-    buttonText: { textAlign: 'center', color: '#fff' }
+    button: { width: 58, height: 25, backgroundColor: primarybutton, borderRadius: 4, justifyContent: "center" },
+    buttonText: { textAlign: 'center', color: babypowder }
 
 })
 
