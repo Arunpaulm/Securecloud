@@ -1,6 +1,5 @@
 import React from "react";
 import { StyleSheet, Text, TextInput, View, Image, FlatList, TouchableOpacity, Alert, Modal } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 import { DataTable } from 'react-native-paper';
 import { Snackbar } from 'react-native-paper';
 
@@ -116,10 +115,7 @@ const UsersScreen = (props) => {
 
     return (
         <View style={styles.container}>
-            <StatusBar style="auto" />
-
             <View style={{ flex: 0.2 }} />
-
             <View style={styles.clientListContainer}>
                 {clientList.length > 0 ?
                     <DataTable style={{ flex: 1 }}>

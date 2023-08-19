@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { StyleSheet, Text, View, TextInput } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
-import { tabactive, tabinactive, textinputcaption } from "../../colorpalette"
+import { tabactive, tabinactive, textinputcaption, white } from "../../colorpalette"
 
 class TextFieldComponent extends Component {
     constructor (props) {
@@ -58,7 +58,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         color: textinputcaption,
         fontWeight: "500",
-        backgroundColor: "white",
+        backgroundColor: white,
         top: -10,
         left: 15,
         zIndex: 1,

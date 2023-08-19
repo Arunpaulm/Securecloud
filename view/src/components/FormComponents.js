@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
         position: "absolute",
         color: textinputcaption,
         fontWeight: "500",
-        backgroundColor: "white",
+        backgroundColor: white,
         top: -10,
         left: 15,
         zIndex: 1,

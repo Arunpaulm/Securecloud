@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, TextInput, View, FlatList, TouchableOpacity, Dimensions } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 import * as FileSystem from 'expo-file-system';
 import moment from 'moment'
 

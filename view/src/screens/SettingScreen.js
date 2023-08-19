@@ -1,11 +1,10 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, TextInput, View, Image, FlatList, TouchableOpacity, Alert } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 import Icon from "react-native-vector-icons/Ionicons";
 import { Avatar } from 'react-native-paper';
 import * as SecureStore from 'expo-secure-store';
 
-import { avataricon } from "../../colorpalette"
+import { avataricon, white } from "../../colorpalette"
 import axios from "../api/index"
 
 import { background, logocolor, babypowder, primarybutton, primarybuttonbg, success, successBg, warning, warningBg, danger, dangerBg } from "../../colorpalette"
@@ -76,7 +75,7 @@ class SettingScreen extends Component {
                             onPress={() => {
                                 this.props.navigation.navigate("Profile", { editable: true, form: this.state.form })
                             }}>
-                            <Text style={{ fontSize: 15, fontWeight: 600, color: "white" }}>EDIT PROFILE</Text>
+                            <Text style={{ fontSize: 15, fontWeight: 600, color: white }}>EDIT PROFILE</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -85,13 +84,13 @@ class SettingScreen extends Component {
                             await SecureStore.setItemAsync("screen_lock", String(!this.state.screenLock));
                             this.setState({ screenLock: !this.state.screenLock })
                         }}>
-                            <Text style={{ fontSize: 15, fontWeight: 600, color: "white" }}>SCREEN LOCK - {this.state.screenLock ? "ON" : "OFF"}</Text>
+                            <Text style={{ fontSize: 15, fontWeight: 600, color: white }}>SCREEN LOCK - {this.state.screenLock ? "ON" : "OFF"}</Text>
                         </TouchableOpacity>
                     </View>
 
                     <View style={{ marginVertical: 10 }}>
                         <TouchableOpacity style={{ ...styles.buttonContainer, ...styles.primaryButton }}>
-                            <Text style={{ fontSize: 15, fontWeight: 600, color: "white" }}>ABOUT THIS APP</Text>
+                            <Text style={{ fontSize: 15, fontWeight: 600, color: white }}>ABOUT THIS APP</Text>
                         </TouchableOpacity>
                     </View>
 
@@ -106,7 +105,7 @@ class SettingScreen extends Component {
                                 ],
                                 { cancelable: false });
                         }}>
-                            <Text style={{ fontSize: 15, fontWeight: 600, color: "white" }}>LOGOUT</Text>
+                            <Text style={{ fontSize: 15, fontWeight: 600, color: white }}>LOGOUT</Text>
                         </TouchableOpacity>
                     </View>
                 </View>

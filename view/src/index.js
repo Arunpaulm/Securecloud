@@ -1,6 +1,5 @@
-import React, { useCallback, useEffect } from "react";
-import { StatusBar } from 'expo-status-bar';
-import { SafeAreaView, StyleSheet, Platform, Alert } from 'react-native';
+import React, { useCallback, useState } from "react";
+import { SafeAreaView, StyleSheet, View, StatusBar } from 'react-native';
 import * as SecureStore from 'expo-secure-store';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
@@ -12,7 +11,7 @@ import {
 
 import Router from "./router";
 
-import { babypowder, blue } from "../colorpalette"
+import { oxfordblue, white } from "../colorpalette"
 
 
 SplashScreen.preventAutoHideAsync();
@@ -76,19 +75,35 @@ function App() {
     // }
 
     return (
-        <SafeAreaView style={styles.container} onLayout={onLayoutRootView}>
-            <StatusBar translucent backgroundColor={blue} barStyle="light-content" />
-            <Router />
-        </SafeAreaView>
+        <>
+            <SafeAreaView style={styles.container} onLayout={onLayoutRootView}>
+                <StatusBar
+                    animated={true}
+                    backgroundColor={oxfordblue}
+                    barStyle='light-content'
+                    showHideTransition="fade"
+                />
+
+                <Router />
+            </SafeAreaView>
+            <View style={{ backgroundColor: white, padding: 18 }}></View>
+        </>
     )
 
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
-    }
+        flex: 1,
+        backgroundColor: oxfordblue
+    },
+    buttonsContainer: {
+        padding: 10,
+    },
+    textStyle: {
+        textAlign: 'center',
+        marginBottom: 8,
+    },
 })
-
 
 export default App;

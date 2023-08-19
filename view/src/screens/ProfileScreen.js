@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, TextInput, View, Image, FlatList, TouchableOpacity } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 import Icon from "react-native-vector-icons/Ionicons";
 import { Snackbar } from 'react-native-paper';
 import * as SecureStore from 'expo-secure-store';

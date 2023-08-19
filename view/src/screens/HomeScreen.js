@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, StatusBar } from 'react-native';
 import { Avatar } from 'react-native-paper';
 
 import * as Animatable from 'react-native-animatable';
@@ -10,7 +10,7 @@ import * as SecureStore from 'expo-secure-store';
 import CloudDirectory from "../components/CloudDirectory";
 import axios from "../api/index"
 
-import { background, logocolor, homeusernamebg, uploadicontext, uploadiconbg, grey, success, danger, warning, blue } from "../../colorpalette"
+import { background, logocolor, homeusernamebg, uploadicontext, uploadiconbg, grey, success, danger, warning, blue, oxfordblue, white, babypowder } from "../../colorpalette"
 
 MaterialIcons.loadFont();
 Ionicons.loadFont();
@@ -80,8 +80,8 @@ class HomeScreen extends Component {
                 <View style={{ flex: 1, flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
                     <MaterialIcons style={{ padding: 10, width: 70, height: 70, color: this.state.color }} name={'cloud-lock'} size={50} ></MaterialIcons>
                     <View style={{ flex: 1, marginLeft: 8, flexDirection: "row" }}>
-                        <Text style={{ color: this.state.color, fontSize: 20, fontWeight: 700 }}>Secure</Text>
-                        <Text style={{ fontSize: 20, fontWeight: 500, paddingLeft: 1, fontFamily: 'Roboto' }}>cloud</Text>
+                        <Text style={{ color: this.state.color, fontSize: 20, fontWeight: 700, fontFamily: 'Roboto' }}>Secure</Text>
+                        <Text style={{ fontSize: 20, fontWeight: 700, paddingLeft: 1, fontFamily: 'Roboto', color: babypowder }}>cloud</Text>
                     </View>
                     <Animatable.View ref={this.handleViewRef}
                         duration={1100}>
@@ -90,8 +90,8 @@ class HomeScreen extends Component {
                 </View>
 
                 <View style={{ flex: 1, paddingHorizontal: 20, flexDirection: "row", alignItems: "center", backgroundColor: homeusernamebg }}>
-                    <Text style={{ flex: 0.06, fontSize: 18, fontWeight: 600, color: "white", paddingRight: 7 }}>Hi</Text>
-                    <Text style={{ flex: 1, fontSize: 18, fontWeight: 600, color: "white" }}>{this.state?.form?.username}</Text>
+                    <Text style={{ flex: 0.06, fontSize: 18, fontWeight: 600, color: babypowder, paddingRight: 7 }}>Hi</Text>
+                    <Text style={{ flex: 1, fontSize: 18, fontWeight: 600, color: babypowder }}>{this.state?.form?.username}</Text>
                     <Avatar.Text size={40} label="UN" style={{ backgroundColor: logocolor }} />
                 </View>
 
@@ -102,7 +102,7 @@ class HomeScreen extends Component {
                     </TouchableOpacity>
                 </View>
 
-                <View style={{ flex: 10, backgroundColor: "blue" }}>
+                <View style={{ flex: 10, borderTopRightRadius: 25, borderTopLeftRadius: 25, overflow: "hidden" }}>
                     <CloudDirectory />
                 </View>
 
@@ -115,7 +115,7 @@ class HomeScreen extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: background
+        backgroundColor: oxfordblue
     }
 })
 

@@ -1,9 +1,10 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, Image, FlatList, TouchableOpacity } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 import Icon from "react-native-vector-icons/Ionicons";
 
 import TextFieldComponent from '../components/TextFieldComponent';
+
+import { white } from "../../colorpalette"
 
 Icon.loadFont();
 
@@ -128,7 +129,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         flexDirection: "row",
         justifyContent: 'space-between',
-        // backgroundColor: "red",
+        // backgroundColor: danger,
 
     },
     loginButtonContainer: {
@@ -145,7 +146,7 @@ const styles = StyleSheet.create({
         borderRadius: 10
     },
     loginButtonText: {
-        color: "white",
+        color: white,
         fontWeight: "500",
         fontSize: 16
     },

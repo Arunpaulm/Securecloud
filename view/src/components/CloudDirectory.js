@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, TextInput, View, FlatList, TouchableOpacity, Dimensions, Modal, Alert, TouchableWithoutFeedback } from 'react-native';
-import { StatusBar } from 'expo-status-bar';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -8,7 +7,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import axios from "../api/index"
 
-import { background, filecolor, searchbarbg, searchicon, fileoptionsborder, black, fileoptionsbg } from "../../colorpalette"
+import { background, filecolor, searchbarbg, searchicon, fileoptionsborder, black, fileoptionsbg, danger } from "../../colorpalette"
 
 const SCREENWIDTH = Dimensions.get('window').width;
 const SCREEHEIGHT = Dimensions.get('window').height;
@@ -149,7 +148,7 @@ class CloudDirectory extends Component {
                         FileSystem.deleteAsync(this.state.selectedItem?.uri)
                         this.setState({ modalVisible: false })
                         this.props.getDirectoryInfo(this.state.currentPath)
-                    }}><Text style={{ fontSize: 17, color: "red", textAlign: "center" }}>Delete</Text></TouchableOpacity>
+                    }}><Text style={{ fontSize: 17, color: danger, textAlign: "center" }}>Delete</Text></TouchableOpacity>
                 </View>
             </TouchableOpacity>
         </Modal >
@@ -164,7 +163,7 @@ class CloudDirectory extends Component {
             onRequestClose={() => {
                 console.log('Modal has been closed.');
                 this.setState({ moreInfoModalVisible: false })
-            }} style={{ backgroundColor: "red" }}>
+            }} style={{ backgroundColor: danger }}>
             <TouchableOpacity style={styles.centeredView} onPressIn={() => { this.setState({ moreInfoModalVisible: false }) }}>
                 <View style={styles.modalView}>
                     <View style={{ height: 70 }}>{this.generateIcon(this.state.selectedItem)}</View>
