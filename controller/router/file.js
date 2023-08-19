@@ -14,7 +14,7 @@ router
 
 router
     .route("/download")
-    .get(downloadFile)
+    .post(downloadFile)
 
 
 module.exports = router

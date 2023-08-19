@@ -109,6 +109,11 @@ async function getFiles(req, res) {
     }).catch(err => { res.status(500).send(err) })
 }
 
+/**
+ * 
+ * @param {*} request 
+ * @param {*} response 
+ */
 function uploadFile(request, response) {
 
     var fstream;
@@ -126,21 +131,25 @@ function uploadFile(request, response) {
     response.send('user ' + request.params.id)
 }
 
-function downloadFile(request, response) {
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
+function downloadFile(req, res) {
+    try {
 
-    var fstream;
-    request.pipe(request.busboy);
-    request.busboy.on('file', function (fieldname, file, filename) {
-        console.log("Uploading: ", filename);
-        console.log("Uploading: ", fieldname);
-        fstream = fs.createWriteStream('../files/' + filename.filename, { flags: "ax" });
-        file.pipe(fstream);
-        fstream.on('close', function () {
-            response.redirect('back');
-        });
-    });
-    // console.log(response)
-    response.send('user ' + request.params.id)
+        if (!req.body?.filename) {
+            res.status(404).send({
+                status: false,
+                error: "invalid filename"
+            })
+        }
+        const file = path.join(bucket, req.body?.filename)
+        res.download(file); // Set disposition and send it.
+    } catch (err) {
+        res.status(500).send(err)
+    }
 }
 
 module.exports = {

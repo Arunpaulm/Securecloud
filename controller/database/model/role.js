@@ -1,6 +1,5 @@
 const { sequelize, DataTypes } = require('../index')
 
-
 const roleModel = sequelize.define("role", {
     id: {
         type: DataTypes.UUID,

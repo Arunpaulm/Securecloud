@@ -92,7 +92,7 @@ class HomeScreen extends Component {
                 <View style={{ flex: 1, paddingHorizontal: 20, flexDirection: "row", alignItems: "center", backgroundColor: homeusernamebg }}>
                     <Text style={{ flex: 0.06, fontSize: 18, fontWeight: 600, color: babypowder, paddingRight: 7 }}>Hi</Text>
                     <Text style={{ flex: 1, fontSize: 18, fontWeight: 600, color: babypowder }}>{this.state?.form?.username}</Text>
-                    <Avatar.Text size={40} label="UN" style={{ backgroundColor: logocolor }} />
+                    <Avatar.Text style={{ marginRight: 10, backgroundColor: logocolor, borderRadius: 20 }} size={50} label={this.state.form?.username?.split("")[0]?.toUpperCase()} />
                 </View>
 
                 <View style={{ flex: 1, padding: 20 }}>
