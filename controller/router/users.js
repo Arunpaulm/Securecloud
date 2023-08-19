@@ -14,7 +14,7 @@ router
     .post(authUser);
 
 router
-    .route("/:noteId")
+    .route("/:user_id")
     .get(getOneUser)
     .patch(validate(updateUsersSchema), updateUser)
     .delete(deleteUser);

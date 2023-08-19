@@ -167,7 +167,7 @@ class VaultScreen extends Component {
                         onPress={this.handleDocumentSelection.bind(this)}
                     >
                         <MaterialIcons style={{ paddingRight: 5, color: this.state.fontColor }} name={this.state.uploadIcon} size={25} />
-                        <Text style={{ color: this.state.fontColor }} >Upload files</Text>
+                        <Text style={{ color: this.state.fontColor }} >Add files</Text>
                     </TouchableOpacity>
                 </View>
 

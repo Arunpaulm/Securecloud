@@ -2,9 +2,13 @@ import React from "react";
 import { StyleSheet, Text, TextInput, View, Image, FlatList, TouchableOpacity, Alert, Modal } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { DataTable } from 'react-native-paper';
+import { Snackbar } from 'react-native-paper';
 
 import Icon from "react-native-vector-icons/Ionicons";
 import { ScrollView } from "react-native-gesture-handler";
+
+import axios from "../api/index"
+
 
 import ModelComponent from "../components/ModelComponent";
 
@@ -13,10 +17,12 @@ Icon.loadFont();
 const UsersScreen = (props) => {
 
     const [clientList, setClientList] = React.useState([])
+    const [snackbarVisible, setSnackbarVisible] = React.useState(false)
+    const [snackbarValue, setSnackbarValue] = React.useState("Hi")
     const placeholder = "Search"
     const [searchBarActive, setSearchBarActive] = React.useState(false)
     const [page, setPage] = React.useState(0);
-    const [numberOfItemsPerPageList] = React.useState([10, 15, 20]);
+    const [numberOfItemsPerPageList] = React.useState([15, 30]);
     const [itemsPerPage, setItemsPerPage] = React.useState(
         numberOfItemsPerPageList[0]
     );
@@ -26,25 +32,41 @@ const UsersScreen = (props) => {
     const from = page * itemsPerPage;
     const to = Math.min((page + 1) * itemsPerPage, clientList.length);
 
-    const allowedOuterTableHeadings = ["", "Name", "Role"]
+    const allowedOuterTableHeadings = ["", "username", "role"]
     const tableWidthFlex = [2, 2, 1]
     const [modalVisible, setModalVisible] = React.useState(false)
 
+    const [, updateState] = React.useState();
+    const forceUpdate = React.useCallback(() => updateState({}), []);
 
-    React.useEffect(() => {
-        setPage(0);
-        const dummyclientList = []
-        for (let i = 1; i <= 44; i++) {
-            dummyclientList.push({ id: i, "Name": "Timmy Marvel " + i, phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" })
-        }
+    function loadApi() {
+        axios.get("/user").then((response) => {
 
-        setClientList(dummyclientList)
-    }, [itemsPerPage]);
+            console.log(response.data)
+            setClientList(response.data.users)
+            forceUpdate()
+        }).catch(error => { console.log(error) })
+    }
+
+    React.useEffect(loadApi, [])
+
+    // React.useEffect(() => {
+    //     setPage(0);
+    //     const dummyclientList = []
+    //     for (let i = 1; i <= 44; i++) {
+    //         dummyclientList.push({ id: i, "Name": "Timmy Marvel " + i, phoneNumber: "9876543210", "email": "example@gmail.com", Role: "Admin" })
+    //     }
+
+    //     setClientList(dummyclientList)
+    // }, [itemsPerPage]);
 
 
-    function onSubmit() {
+    async function onSubmit() {
+        setTimeout(loadApi, 500)
         console.log("clicked")
-        // setSearchBarActive(false)
+        // setSearchBarActive(true)
+        setSnackbarVisible(true)
+        setSnackbarValue(" User updated successfully ")
     }
 
     function onPressSearchBarRightButton() {
@@ -56,9 +78,10 @@ const UsersScreen = (props) => {
     }
 
     function _alertIndex(index, data) {
-        setModalVisible(true)
+        setModalVisible(false)
         setSelectedTableRow(data)
         setSelectedTableRowIndex(index)
+        setModalVisible(true)
         // this.setState({ modalVisible: true, selectedTableRow: data, selectedTableRowIndex: index })
     }
 
@@ -78,10 +101,10 @@ const UsersScreen = (props) => {
         for (const key in item) {
             const tdData = item[key]
             if (allowedOuterTableHeadings.indexOf(key) > -1)
-                uielements.push(<DataTable.Cell key={index + "" + key + item.id} style={{ flex: tableWidthFlex[cellIndex] }}>{tdData?.toString()?.trim()}</DataTable.Cell>)
+                uielements.push(<DataTable.Cell key={index + "" + key + "cell"} style={{ flex: tableWidthFlex[cellIndex] }}>{tdData?.toString()?.trim()}</DataTable.Cell>)
             cellIndex += 1
         }
-        uielements.push(<DataTable.Cell key={index + "button" + item.id} style={{ flex: 0.8, justifyContent: "flex-end" }}>{generateButton(item, index)}</DataTable.Cell>)
+        uielements.push(<DataTable.Cell key={index + "button"} style={{ flex: 0.8, justifyContent: "flex-end" }}>{generateButton(item, index)}</DataTable.Cell>)
         return uielements
     }
 
@@ -100,7 +123,7 @@ const UsersScreen = (props) => {
             <View style={styles.clientListContainer}>
                 {clientList.length > 0 ?
                     <DataTable style={{ flex: 1 }}>
-                        <View style={{ flex: 15 }}>
+                        <View style={{ flex: 25 }}>
                             <ScrollView
                                 horizontal
                                 showsHorizontalScrollIndicator={false}
@@ -124,7 +147,7 @@ const UsersScreen = (props) => {
                                     <FlatList
                                         style={styles.clientList}
                                         data={clientList.slice(from, to)}
-                                        keyExtractor={(item) => item.id.toString()}
+                                        keyExtractor={(item) => item.user_id.toString()}
                                         renderItem={({ item, index }) => (
                                             <DataTable.Row key={index}>
                                                 {generateTableCells(item, index)}
@@ -156,9 +179,15 @@ const UsersScreen = (props) => {
                     </DataTable>
                     : null}
             </View>
+            <Snackbar
+                visible={snackbarVisible}
+                onDismiss={() => { setSnackbarVisible(false) }}
+                duration={2000}>
+                {snackbarValue}
+            </Snackbar>
             {
                 modalVisible ?
-                    <ModelComponent modalVisible={modalVisible} setModalVisible={(value) => { setModalVisible(value) }} editable={true} selectedTableRow={selectedTableRow} selectedTableRowIndex={selectedTableRowIndex} /> : null
+                    <ModelComponent modalVisible={modalVisible} setModalVisible={(value) => { setModalVisible(value) }} editable={true} selectedTableRow={selectedTableRow} selectedTableRowIndex={selectedTableRowIndex} onSubmit={onSubmit} /> : null
             }
         </View>
     );

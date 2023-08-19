@@ -7,12 +7,13 @@ import Icon from "react-native-vector-icons/Ionicons";
 
 
 
-import ProfileScreen from './ProfileScreen';
+
+import SettingScreen from './SettingScreen';
 import UsersScreen from './UsersScreen';
 import VaultScreen from './VaultScreen';
 import HomeScreen from './HomeScreen';
 import NotificationScreen from './NotificationScreen';
-
+import * as SecureStore from 'expo-secure-store';
 
 const Tab = createBottomTabNavigator();
 Icon.loadFont();
@@ -21,10 +22,10 @@ class LandingScreen extends Component {
     constructor (props) {
         super(props);
         this.state = {
-
         };
     }
-    componentDidMount() {
+    async componentDidMount() {
+        await SecureStore.setItemAsync("user_id", "74de57d2-09c6-476e-af69-cdf69bdad27d");
     }
 
     render() {
@@ -39,8 +40,8 @@ class LandingScreen extends Component {
                         iconName = focused ? 'lock-open-outline' : 'lock-closed';
                     } else if (route.name === 'Notification') {
                         iconName = focused ? 'notifications' : 'notifications-outline';
-                    } else if (route.name === 'Profile') {
-                        iconName = focused ? 'person' : 'person-outline';
+                    } else if (route.name === 'Settings') {
+                        iconName = focused ? 'settings' : 'settings-outline';
                     } else if (route.name === 'Users') {
                         iconName = focused ? 'people' : 'people-outline';
                     }
@@ -55,7 +56,8 @@ class LandingScreen extends Component {
                 <Tab.Screen name="Vault" component={VaultScreen} options={{ title: "Private Vault" }} />
                 <Tab.Screen name="Notification" component={NotificationScreen} options={{ title: "Notification log" }} />
                 <Tab.Screen name="Users" component={UsersScreen} options={{ title: "All Users" }} />
-                <Tab.Screen name="Profile" children={() => <ProfileScreen editable={false} />} options={{
+                <Tab.Screen name="Settings" component={SettingScreen} options={{}} />
+                {/* <Tab.Screen name="Setting" children={() => <ProfileScreen editable={false} />} options={{
                     title: "My Profile", headerBackTitle: "Back", headerRight: () => (
                         <Button
                             onPress={() => {
@@ -63,7 +65,7 @@ class LandingScreen extends Component {
                             }}
                             title="Edit"
                         />)
-                }} />
+                }} /> */}
                 {/* initialParams={{ editable: false }} */}
             </Tab.Navigator>
         );

@@ -60,6 +60,16 @@ async function createUser(req, res) {
 async function updateUser(req, res) {
     try {
         console.log(" update user ")
+
+        console.log("update body -", req.body)
+
+        if (!req.params?.user_id) {
+            return res.status(500).json({
+                status: false,
+                message: "id cannot be empty or invalid id",
+            });
+        }
+
         const { password } = req.body;
 
         if (password) {
@@ -71,7 +81,7 @@ async function updateUser(req, res) {
             { ...req.body, updatedAt: Date.now() },
             {
                 where: {
-                    id: req.params.user_id,
+                    user_id: req.body.user_id,
                 },
             }
         );
@@ -92,6 +102,7 @@ async function updateUser(req, res) {
             },
         });
     } catch (error) {
+        console.log(error)
         res.status(500).json({
             status: false,
             message: error.message,
@@ -108,7 +119,8 @@ async function updateUser(req, res) {
 async function getOneUser(req, res) {
     try {
         console.log(" get one user ")
-        if (req.params?.user_id) {
+        console.log(req.params)
+        if (!req.params?.user_id) {
             return res.status(500).json({
                 status: false,
                 message: "id cannot be empty or invalid id",
@@ -212,6 +224,13 @@ async function getAllUsers(req, res) {
 async function deleteUser(req, res) {
     try {
         console.log(" delete user ")
+        if (!req.params?.user_id) {
+            return res.status(500).json({
+                status: false,
+                message: "id cannot be empty or invalid id",
+            });
+        }
+
         const user = await UserModel.findByPk(req.params.user_id);
 
         if (!user) {

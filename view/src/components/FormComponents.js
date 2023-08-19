@@ -9,10 +9,11 @@ const themeColorIdle = "#D9D9D9"
 
 
 const textComponent = ({ editable, field, getActiveTextBox, editFormValues }) => {
-    return <>
+    return <View style={styles.textBox} key={field.id + field.title + "text"}>
         {field.title ? <Text style={[styles.textCaption, { color: field.active || !editable ? themeColorActive : themeColorIdle }]}>{field.title}</Text> : null}
         <TextInput
             ref={ref => { field.ref = ref }}
+            key={field.id + field.title + "text"}
             style={[styles.textInput, { color: field.active || !editable ? themeColorActive : themeColorIdle, borderColor: field.active || !editable ? themeColorActive : themeColorIdle }]}
             selectionColor={field.active || !editable ? themeColorActive : themeColorIdle}
             onChangeText={(inputValue) => {
@@ -24,63 +25,66 @@ const textComponent = ({ editable, field, getActiveTextBox, editFormValues }) =>
             value={field.value}
             placeholder={field.placeholder}
             editable={editable}
-            key={field.id + field.title}
             onPressIn={() => {
                 field.active = true
                 getActiveTextBox(field.id)
                 // this.setState({ active: true })
             }}
         />
-    </>
+    </View >
 }
 
-const pickerComponent = (field) => {
-    return <>
-        {field.title ? <Text style={[styles.textCaption, { color: field.active ? themeColorActive : themeColorIdle }]}>{field.title}</Text> : null}
+const pickerComponent = ({ editable, field, getActiveTextBox, editFormValues }) => {
+    return <View style={styles.pickerBox} key={field.id + field.title + "picker"}>
+        {field.title ? <Text style={[styles.pickerCaption, { color: field.active ? themeColorActive : themeColorIdle }]}>{field.title}</Text> : null}
         <Picker
-            itemStyle={{ height: 60, width: "100%" }}
-            style={[styles.textInput, { color: field.active ? themeColorActive : themeColorIdle, borderColor: field.active ? themeColorActive : themeColorIdle }]}
-            selectedValue={field.selectedValue}
+            key={field.id + field.title + "picker"}
+            itemStyle={{ height: 150, width: "100%" }}
+            style={[styles.pickerInput, { color: field.active ? themeColorActive : themeColorIdle, borderColor: field.active ? themeColorActive : themeColorIdle }]}
+            selectedValue={field.value}
             onValueChange={(itemValue, itemIndex) => {
                 console.log(itemValue)
-                // this.props.getActiveTextBox(this.state.id)
-                // this.setState({ active: true, selectedValue: itemValue })
+                getActiveTextBox(field.id)
+                editFormValues(field, itemValue)
+                // this.setState({active: true, selectedValue: itemValue })
             }
             }>
             {field.options?.map(option => <Picker.Item label={option} value={option} />)}
         </Picker>
-    </>
+    </View >
+}
+
+const checkBoxComponents = ({ editable, field, getActiveTextBox, editFormValues }) => {
+    return <View style={styles.checkBox} key={field.id + field.title + "checkbox"}>
+        <Checkbox
+            key={field.id + field.title + "check"}
+            style={[styles.checkBoxInput, { color: field.active ? themeColorActive : themeColorIdle, borderColor: field.active ? themeColorActive : themeColorIdle }]}
+            value={field.value}
+            onValueChange={() => {
+                field.value = !field.value
+                editFormValues(field, field.value)
+            }}
+            color={field.value ? '#4630EB' : undefined}
+        />
+        {field.title ? <Text style={[styles.checkBoxCaption, { color: field.value ? themeColorActive : themeColorIdle }]}>{field.title}</Text> : null}
+    </View>
 }
 
 const inputComponents = (config) => {
-
     switch (config.field.type) {
         case "picker":
             return pickerComponent(config)
         case "checkbox":
             return checkBoxComponents(config)
-        default:
+        case "text":
             return textComponent(config)
     }
 }
 
-const checkBoxComponents = (field) => {
-    return <>
-        <Checkbox
-            style={[styles.checkBox, { color: field.active ? themeColorActive : themeColorIdle, borderColor: field.active ? themeColorActive : themeColorIdle }]}
-            value={field.isChecked}
-            onValueChange={() => { field.isChecked = !field.isChecked }}
-            color={field.isChecked ? '#4630EB' : undefined}
-        />
-        {field.title ? <Text style={[styles.checkBoxCaption, { color: field.isChecked ? themeColorActive : themeColorIdle }]}>{field.title}</Text> : null}
-    </>
-}
-
 export default function formComponents(field) {
     // console.log(field)
-    return <View style={styles.textBox} key={field.id + field.title + field.value}>
-        {inputComponents(field)}
-    </View>
+    return inputComponents(field)
+
 }
 
 
@@ -106,22 +110,14 @@ const styles = StyleSheet.create({
         borderColor: "#6A6EEE",
         padding: 20,
     },
-    pickerInput: {
-        // height: 60,
-        // height: 60,
-        width: "100%",
-        borderWidth: 1.3,
-        borderRadius: 7,
-        borderColor: "#6A6EEE",
-        // padding: 20,
-    },
     checkBox: {
-        height: 5,
-        // width: "100%",
-        borderWidth: 1.3,
-        borderRadius: 7,
-        borderColor: "#6A6EEE",
-        padding: 10,
+        // flex: 1,
+        // height: 50,
+        width: "100%",
+        flexDirection: "row",
+        justifyContent: "center",
+        alignItems: "center",
+        paddingBottom: 20
     },
     checkBoxCaption: {
         // position: "absolute",
@@ -133,4 +129,38 @@ const styles = StyleSheet.create({
         // zIndex: 1,
         padding: 10,
     },
+    checkBoxInput: {
+        height: 5,
+        // width: "100%",
+        borderWidth: 1.3,
+        borderRadius: 7,
+        borderColor: "#6A6EEE",
+        padding: 10,
+    },
+    pickerBox: {
+        height: 150,
+        width: "100%",
+    },
+    pickerCaption: {
+        position: "absolute",
+        color: "#6A6EEE",
+        fontWeight: "500",
+        backgroundColor: "white",
+        top: -10,
+        left: 15,
+        zIndex: 1,
+        paddingTop: 2,
+        paddingHorizontal: 2,
+        paddingBottom: 0
+    },
+    pickerInput: {
+        paddingTop: 2,
+        height: 150,
+        // height: 60,
+        width: "100%",
+        borderWidth: 1.3,
+        borderRadius: 7,
+        borderColor: "#6A6EEE",
+        // padding: 20,
+    }
 })

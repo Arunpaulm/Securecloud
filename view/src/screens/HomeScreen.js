@@ -6,10 +6,11 @@ import { Avatar, List, ProgressBar, MD3Colors } from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
 import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import * as SecureStore from 'expo-secure-store';
 
 import DocumentList from "../components/DocumentList";
-
 import Logo from "../assets/logo.png"
+import axios from "../api/index"
 
 MaterialIcons.loadFont();
 Ionicons.loadFont();
@@ -31,6 +32,7 @@ class HomeScreen extends Component {
     }
 
     componentDidMount() {
+        this.loadApi()
         let turn = 0
         const intervalID = setInterval(() => {
             const state = {}
@@ -62,6 +64,25 @@ class HomeScreen extends Component {
 
     }
 
+    async loadApi() {
+        const userId = await SecureStore.getItemAsync("user_id");
+        axios.get("/user/" + userId).then((response) => {
+            const field = { form: response.data?.data?.user || {} }
+            console.log("field before", field)
+            this.setState(field)
+            console.log("this.state.form ", this.state.form)
+        }).catch(error => { console.log(error) })
+    }
+
+    async loadDirApi() {
+        axios.get("/file").then((response) => {
+            const field = { directory: response.data?.data || {} }
+            console.log("field before", field)
+            this.setState(field)
+            console.log("this.state.form ", this.state.form)
+        }).catch(error => { console.log(error) })
+    }
+
     handleViewRef = ref => { this.setState({ pulseAnimateRef: ref }) }
 
     pulse = () => this.state.pulseAnimateRef.pulse();
@@ -78,14 +99,14 @@ class HomeScreen extends Component {
                     </View>
                     <Animatable.View ref={this.handleViewRef}
                         duration={1100}>
-                        <Ionicons style={{ padding: 20, fontWeight: 300, color: this.state.internetIconColors["disconnected"] }} name={this.state.internetIcon} size={25} ></Ionicons>
+                        <Ionicons style={{ padding: 20, fontWeight: 300, color: this.state.internetIconColors["connected"] }} name={this.state.internetIcon} size={25} ></Ionicons>
                     </Animatable.View>
                 </View>
 
-                <View style={{ flex: 1, paddingHorizontal: 20, flexDirection: "row", alignItems: "center", backgroundColor: "lightgrey" }}>
-                    <Text style={{ flex: 0.06, fontSize: 18 }}>Hi</Text>
-                    <Text style={{ flex: 1, fontSize: 18 }}>"UserName"</Text>
-                    <Avatar.Text size={40} label="UN" style={{ backgroundColor: "grey" }} />
+                <View style={{ flex: 1, paddingHorizontal: 20, flexDirection: "row", alignItems: "center", backgroundColor: "#00007b99" }}>
+                    <Text style={{ flex: 0.06, fontSize: 18, fontWeight: 600, color: "white", paddingRight: 7 }}>Hi</Text>
+                    <Text style={{ flex: 1, fontSize: 18, fontWeight: 600, color: "white" }}>{this.state?.form?.username}</Text>
+                    <Avatar.Text size={40} label="UN" style={{ backgroundColor: "#00007b" }} />
                 </View>
 
                 <View style={{ flex: 1, padding: 20 }}>

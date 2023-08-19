@@ -1,11 +1,20 @@
 const router = require('express').Router()
 const busboy = require('connect-busboy');
-const fileServices = require('../services/files')
-
-router.get('/', fileServices.getFiles)
+const { getFiles, uploadFile, downloadFile } = require('../services/files')
 
 router.use(busboy())
 
-router.post('/', fileServices.postFiles)
+router
+    .route("/")
+    .get(getFiles);
+
+router
+    .route("/upload")
+    .post(uploadFile)
+
+router
+    .route("/download")
+    .get(downloadFile)
+
 
 module.exports = router

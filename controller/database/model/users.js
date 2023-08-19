@@ -23,9 +23,9 @@ const usersModel = sequelize.define("users", {
     phone: {
         type: DataTypes.STRING
     },
-    type: {
+    role: {
         type: DataTypes.STRING,
-        defaultValue: "client",
+        defaultValue: "Customer",
     },
     is_active: {
         type: DataTypes.BOOLEAN,
