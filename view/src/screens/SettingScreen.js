@@ -5,7 +5,10 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { Avatar } from 'react-native-paper';
 import * as SecureStore from 'expo-secure-store';
 
+import { avataricon } from "../../colorpalette"
 import axios from "../api/index"
+
+import { background, logocolor, babypowder, primarybutton, primarybuttonbg, success, successBg, warning, warningBg, danger, dangerBg } from "../../colorpalette"
 
 Icon.loadFont();
 
@@ -62,7 +65,7 @@ class SettingScreen extends Component {
         return (
             <View style={styles.container}>
                 <View style={{ flex: 6, justifyContent: "flex-end", alignItems: "center" }}>
-                    <Avatar.Text size={100} label={this.state.form?.[0]?.value?.split("")[0]?.toUpperCase()} />
+                    <Avatar.Text size={150} label={this.state.form?.[0]?.value?.split("")[0]?.toUpperCase()} color={babypowder} style={{ backgroundColor: logocolor, borderRadius: 30 }} />
                     {/* <Avatar.Image size={100} source={require('../assets/avatar.png')} /> */}
                     <Text style={{ fontSize: 25, fontWeight: 600, padding: 25 }}>{this.state.form?.[0]?.value}</Text>
                 </View>
@@ -78,7 +81,8 @@ class SettingScreen extends Component {
                     </View>
 
                     <View style={{ marginVertical: 10 }}>
-                        <TouchableOpacity style={{ ...styles.buttonContainer, ...(this.state.screenLock ? styles.successButton : styles.warningButton) }} onPress={() => {
+                        <TouchableOpacity style={{ ...styles.buttonContainer, ...(this.state.screenLock ? styles.successButton : styles.warningButton) }} onPress={async () => {
+                            await SecureStore.setItemAsync("screen_lock", String(!this.state.screenLock));
                             this.setState({ screenLock: !this.state.screenLock })
                         }}>
                             <Text style={{ fontSize: 15, fontWeight: 600, color: "white" }}>SCREEN LOCK - {this.state.screenLock ? "ON" : "OFF"}</Text>
@@ -117,11 +121,11 @@ class SettingScreen extends Component {
 const styles = StyleSheet.create({
     container: {
         height: "100%",
-        backgroundColor: '#fff',
+        backgroundColor: background,
         alignItems: 'center',
     },
     buttonContainer: {
-        padding: 10,
+        padding: 20,
         width: 350,
         borderWidth: 1,
         borderRadius: 5,
@@ -129,20 +133,20 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     primaryButton: {
-        borderColor: "#00007b",
-        backgroundColor: "#00007baa"
+        borderColor: primarybutton,
+        backgroundColor: primarybuttonbg
     },
     dangerButton: {
-        borderColor: "red",
-        backgroundColor: "#ff5555"
+        borderColor: danger,
+        backgroundColor: dangerBg
     },
     successButton: {
-        borderColor: "green",
-        backgroundColor: "green"
+        borderColor: success,
+        backgroundColor: successBg
     },
     warningButton: {
-        borderColor: "orange",
-        backgroundColor: "orange"
+        borderColor: warning,
+        backgroundColor: warningBg
     }
 
 })

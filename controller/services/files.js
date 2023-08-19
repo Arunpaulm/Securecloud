@@ -81,14 +81,15 @@ function getDirInformation() {
         const dirDetails = []
         const files = await readDir()
 
-        console.log("\nCurrent directory filenames:");
+        let id = 1
         for (const file of files) {
             const filePath = path.join(bucket, file)
             const fileData = await getFileStat(filePath, file)
+            fileData.id = id
             dirDetails.push(fileData)
+            id += 1
         }
 
-        console.log(dirDetails)
         resolve(dirDetails)
 
     })

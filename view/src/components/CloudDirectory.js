@@ -3,12 +3,12 @@ import { StyleSheet, Text, TextInput, View, FlatList, TouchableOpacity, Dimensio
 import { StatusBar } from 'expo-status-bar';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
-
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
-import { background, filecolor, searchbarbg, searchicon, fileoptionsborder, black, fileoptionsbg } from "../../colorpalette"
+import axios from "../api/index"
 
+import { background, filecolor, searchbarbg, searchicon, fileoptionsborder, black, fileoptionsbg } from "../../colorpalette"
 
 const SCREENWIDTH = Dimensions.get('window').width;
 const SCREEHEIGHT = Dimensions.get('window').height;
@@ -16,8 +16,7 @@ const SCREEHEIGHT = Dimensions.get('window').height;
 MaterialCommunityIcons.loadFont();
 Ionicons.loadFont();
 
-const cacheDir = FileSystem.cacheDirectory + "securecloud"
-class DocumentList extends Component {
+class CloudDirectory extends Component {
     constructor (props) {
         super(props);
         this.state = {
@@ -38,78 +37,32 @@ class DocumentList extends Component {
 
 
     componentDidMount() {
-
-        console.log("---------------")
-
         // console.log(FileSystem.readDirectoryAsync(FileSystem.documentDirectory))
         // console.log("this.props - ", this.props)
 
         // let dir = await FileSystem.readDirectoryAsync(FileSystem.cacheDirectory);
 
         // dir.forEach(async (val) => {
-
         //     console.log("-  ", val)
-
         //     console.log(await FileSystem.getInfoAsync(FileSystem.cacheDirectory + val))
-
         //     // this.state.docsList.push(FileSystem.documentDirectory + 'app_docs/' + val);
-
         //     // this.ensureDirExists()
         // })
-        if (!this.props.isRootDir) {
-            let dir = this.props.currentPath?.split('/')?.filter(i => i)
-            if (dir?.length) {
-                dir.pop()
-                dir = dir.join('/')
-            }
-            const goBack = {
-                isDirectory: true,
-                name: "Go Back",
-                uri: dir
-            }
-            const directory = [goBack, ...this.props?.directory]
-            this.setState({ directory: directory, directorydisplay: directory, currentPath: this.props.currentPath })
-        } else {
-            this.setState({ directory: this.props?.directory, directorydisplay: this.props?.directory, currentPath: this.props.currentPath })
-        }
-
+        this.loadDirApi()
+        // this.setState({ directory: this.props?.directory, directorydisplay: this.props?.directory })
     }
 
     componentDidUpdate() {
-        console.log(this.state.newFileName)
-        // console.log("updating")
-        // console.log("this.state?.currentPath - ", this.state.currentPath)
-        // console.log("this.state.isRootDir - ", this.state.isRootDir)
+        // console.log(this.state.newFileName)
+    }
 
-        // const objectCompare = (prevProp, currentProp, callback = (a, b) => a.name === b.name && a.uri === b.uri) =>
-        //     prevProp.filter(preValue =>
-        //         !currentProp.some(currentValue =>
-        //             callback(preValue, currentValue)));
-
-        // const newProps = objectCompare(this.props?.directory, this.state.directory);
-        // const oldProps = objectCompare(this.state.directory, this.props?.directory);
-
-        // console.log("newProps - ", newProps)
-        // console.log(" this.props.currentPath - ", this.props.params.currentPath)
-        // console.log(" this.state.isRootDir - ", this.state.isRootDir)
-
-        // if ((this.props?.directory.length === 0 && oldProps.length) || newProps.length) {
-        //     console.log(" not equal ")
-        //     if (this.state?.currentPath?.toString().replace(cacheDir, "") !== "") {
-        //         let dir = this.state.currentPath.split('/')?.filter(i => i)
-        //         dir.pop()
-        //         dir = dir.join('/')
-        //         const goBack = {
-        //             isDirectory: true,
-        //             name: "Go Back",
-        //             uri: dir
-        //         }
-        //         const directory = [goBack, ...this.props?.directory]
-        //         this.setState({ directory: directory, directorydisplay: directory })
-        //     } else {
-
-        //     }
-        // }
+    async loadDirApi() {
+        axios.get("/file").then((response) => {
+            const field = { directory: response.data?.data || {}, directorydisplay: response.data?.data || {} }
+            console.log("field before", field)
+            this.setState(field)
+            console.log("this.state.form ", this.state.form)
+        }).catch(error => { console.log(error) })
     }
 
     onChangeInText(inputValue) {
@@ -119,13 +72,10 @@ class DocumentList extends Component {
     }
 
     generateIcon(item) {
-        if (item.name === "Go Back") {
-            return <MaterialCommunityIcons style={styles.searchIcon} name={'folder-upload'} size={71} color={filecolor} />
-        }
         if (item.isDirectory) {
             return <MaterialCommunityIcons style={styles.searchIcon} name={'folder'} size={71} color={filecolor} />
         } else {
-            return <MaterialCommunityIcons style={styles.searchIcon} name={'file'} size={71} color={filecolor} />
+            return <MaterialCommunityIcons style={styles.searchIcon} name={'archive-lock'} size={71} color={filecolor} />
         }
     }
 
@@ -230,7 +180,9 @@ class DocumentList extends Component {
                     <Text style={{ fontSize: 17, textAlign: "left", padding: 4 }}>Size: </Text>
                     <Text style={{ fontSize: 17, textAlign: "right", padding: 2 }}>{this.state.selectedItem.size}</Text>
                     <Text style={{ fontSize: 17, textAlign: "center", padding: 4 }}>Last modified:</Text>
-                    <Text style={{ fontSize: 17, textAlign: "center", padding: 2 }}>{this.state.selectedItem.lastUpdated}</Text>
+                    <Text style={{ fontSize: 17, textAlign: "center", padding: 2 }}>{this.state.selectedItem.modifiedAt}</Text>
+                    <Text style={{ fontSize: 17, textAlign: "center", padding: 4 }}>Created At:</Text>
+                    <Text style={{ fontSize: 17, textAlign: "center", padding: 2 }}>{this.state.selectedItem.createdAt}</Text>
                     <Text style={{ fontSize: 17, textAlign: "center", padding: 4 }}>Absolute path:</Text>
                     <Text style={{ fontSize: 17, textAlign: "center", padding: 2 }}>{this.state.selectedItem.uri}</Text>
                 </View>
@@ -262,7 +214,7 @@ class DocumentList extends Component {
                         data={this.state.directorydisplay}
                         keyExtractor={(item) => item?.id?.toString()}
                         refreshing={this.state.isRefreshing}
-                        onRefresh={() => this.props.getDirectoryInfo(this.state.currentPath)}
+                        onRefresh={() => this.loadDirApi()}
                         renderItem={({ item, index }) => (<TouchableOpacity style={{ height: 130, margin: 18, paddingVertical: 6, justifyContent: "center", alignItems: "center" }}
                             onPress={() => {
                                 if (!item.isDirectory) {
@@ -373,4 +325,4 @@ const styles = StyleSheet.create({
 })
 
 
-export default DocumentList;
+export default CloudDirectory;

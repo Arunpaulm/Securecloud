@@ -1,17 +1,15 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useEffect } from "react";
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView, StyleSheet, Platform, Alert } from 'react-native';
-
-// import * as LocalAuthentication from 'expo-local-authentication';
-
+import * as SecureStore from 'expo-secure-store';
 import { useFonts } from 'expo-font';
-
+import * as SplashScreen from 'expo-splash-screen';
 import {
     setCustomTextInput,
     setCustomText
 } from 'react-native-global-props';
+// import * as LocalAuthentication from 'expo-local-authentication';
 
-import * as SplashScreen from 'expo-splash-screen';
 import Router from "./router";
 
 SplashScreen.preventAutoHideAsync();
@@ -44,10 +42,14 @@ function App() {
         setCustomTextInput(customTextInputProps);
     }, [fontsLoaded]);
 
-    if (!fontsLoaded) {
-        return null;
-    }
+    if (!fontsLoaded) { return null }
 
+    // useEffect(async () => {
+    //     const screenLock = await SecureStore.getItemAsync("screen_lock");
+    //     if (Boolean(screenLock)) {
+    //         onFaceId() // disabled considering the compatability
+    //     }
+    // }, [])
 
 
     // face detection code
@@ -69,7 +71,6 @@ function App() {
     //         Alert.alert('Authenticated')
     //     } catch (error) { Alert.alert('error', error?.message) }
     // }
-
 
     return (
         <SafeAreaView style={styles.container} onLayout={onLayoutRootView}>

@@ -1,11 +1,8 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, Button, View } from 'react-native';
 // import { StatusBar } from 'expo-status-bar';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Icon from "react-native-vector-icons/Ionicons";
-
-
 
 
 import SettingScreen from './SettingScreen';
@@ -14,6 +11,8 @@ import VaultScreen from './VaultScreen';
 import HomeScreen from './HomeScreen';
 import NotificationScreen from './NotificationScreen';
 import * as SecureStore from 'expo-secure-store';
+
+import { tabactive, tabinactive } from "../../colorpalette"
 
 const Tab = createBottomTabNavigator();
 Icon.loadFont();
@@ -47,10 +46,10 @@ class LandingScreen extends Component {
                     }
 
                     // You can return any component that you like here!
-                    return <Icon name={iconName} size={size} color={focused ? "#6A6EEE" : "#D9D9D9"} />;
+                    return <Icon name={iconName} size={size} color={focused ? tabactive : tabinactive} />;
                 },
-                tabBarActiveTintColor: "#6A6EEE",
-                tabBarInactiveTintColor: "#D9D9D9",
+                tabBarActiveTintColor: tabactive,
+                tabBarInactiveTintColor: tabinactive,
             })}>
                 <Tab.Screen name="Home" component={HomeScreen} options={{ headerShown: false, headerBackTitle: "Back" }} />
                 <Tab.Screen name="Vault" component={VaultScreen} options={{ title: "Private Vault" }} />
@@ -71,14 +70,5 @@ class LandingScreen extends Component {
         );
     }
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-})
-
 
 export default LandingScreen;

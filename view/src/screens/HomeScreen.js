@@ -8,9 +8,11 @@ import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import * as SecureStore from 'expo-secure-store';
 
-import DocumentList from "../components/DocumentList";
+import CloudDirectory from "../components/CloudDirectory";
 import Logo from "../assets/logo.png"
 import axios from "../api/index"
+
+import { background, logocolor, homeusernamebg, uploadicontext, uploadiconbg, grey, success, danger, warning } from "../../colorpalette"
 
 MaterialIcons.loadFont();
 Ionicons.loadFont();
@@ -19,15 +21,11 @@ class HomeScreen extends Component {
     constructor (props) {
         super(props);
         this.state = {
-            color: "#0077B5",
+            color: logocolor,
             internetIcon: "wifi",
             uploadIcon: "cloud-upload",
-            internetIconColors: { disconnected: "red", warning: "orange", connected: "green" },
-            intervalID: "",
-            directory: [
-                { "exists": true, "id": "1", "isDirectory": false, "modificationTime": 1691592905.7390752, "name": "ExponentAsset-9456fa40117c9472546b15f9e7e91a19.otf", "size": 186664, "uri": "file:///Users/Hash/Library/Developer/CoreSimulator/Devices/AE282950-5ADC-4AD2-8BFD-67903F95387C/data/Containers/Data/Application/4859E6D1-6B7A-405B-B92D-24D85C75DBE5/Library/Caches/ExponentExperienceData/%2540anonymous%252FSecureCloud-bc0aa9c2-df66-4895-be03-d191a79471f4/ExponentAsset-9456fa40117c9472546b15f9e7e91a19.otf" },
-                { "exists": true, "id": "0", "isDirectory": false, "modificationTime": 1691592718.068173, "name": "ExponentAsset-b3263095df30cb7db78c613e73f9499a.ttf", "size": 247192, "uri": "file:///Users/Hash/Library/Developer/CoreSimulator/Devices/AE282950-5ADC-4AD2-8BFD-67903F95387C/data/Containers/Data/Application/4859E6D1-6B7A-405B-B92D-24D85C75DBE5/Library/Caches/ExponentExperienceData/%2540anonymous%252FSecureCloud-bc0aa9c2-df66-4895-be03-d191a79471f4/ExponentAsset-b3263095df30cb7db78c613e73f9499a.ttf" }
-            ]
+            internetIconColors: { disconnected: danger, warning: warning, connected: success },
+            intervalID: ""
         };
     }
 
@@ -74,15 +72,6 @@ class HomeScreen extends Component {
         }).catch(error => { console.log(error) })
     }
 
-    async loadDirApi() {
-        axios.get("/file").then((response) => {
-            const field = { directory: response.data?.data || {} }
-            console.log("field before", field)
-            this.setState(field)
-            console.log("this.state.form ", this.state.form)
-        }).catch(error => { console.log(error) })
-    }
-
     handleViewRef = ref => { this.setState({ pulseAnimateRef: ref }) }
 
     pulse = () => this.state.pulseAnimateRef.pulse();
@@ -103,21 +92,21 @@ class HomeScreen extends Component {
                     </Animatable.View>
                 </View>
 
-                <View style={{ flex: 1, paddingHorizontal: 20, flexDirection: "row", alignItems: "center", backgroundColor: "#00007b99" }}>
+                <View style={{ flex: 1, paddingHorizontal: 20, flexDirection: "row", alignItems: "center", backgroundColor: homeusernamebg }}>
                     <Text style={{ flex: 0.06, fontSize: 18, fontWeight: 600, color: "white", paddingRight: 7 }}>Hi</Text>
                     <Text style={{ flex: 1, fontSize: 18, fontWeight: 600, color: "white" }}>{this.state?.form?.username}</Text>
-                    <Avatar.Text size={40} label="UN" style={{ backgroundColor: "#00007b" }} />
+                    <Avatar.Text size={40} label="UN" style={{ backgroundColor: logocolor }} />
                 </View>
 
                 <View style={{ flex: 1, padding: 20 }}>
-                    <TouchableOpacity style={{ flex: 1, flexDirection: "row", backgroundColor: "#eee", borderWidth: 1, borderRadius: 5, borderColor: "grey", justifyContent: "center", alignItems: "center" }}>
-                        <MaterialIcons style={{ paddingRight: 5, fontWeight: 300, color: "#555" }} name={this.state.uploadIcon} size={25} ></MaterialIcons>
-                        <Text style={{ fontWeight: 500, color: "#555" }} >Upload files</Text>
+                    <TouchableOpacity style={{ flex: 1, flexDirection: "row", backgroundColor: uploadiconbg, borderWidth: 1, borderRadius: 5, borderColor: grey, justifyContent: "center", alignItems: "center" }}>
+                        <MaterialIcons style={{ paddingRight: 5, fontWeight: 300, color: uploadicontext }} name={this.state.uploadIcon} size={25} ></MaterialIcons>
+                        <Text style={{ fontWeight: 500, color: uploadicontext }} >Upload files</Text>
                     </TouchableOpacity>
                 </View>
 
                 <View style={{ flex: 10, backgroundColor: "blue" }}>
-                    <DocumentList directory={this.state.directory} />
+                    <CloudDirectory />
                 </View>
 
 
@@ -129,7 +118,7 @@ class HomeScreen extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: background
     }
 })
 

@@ -111,7 +111,9 @@ class VaultScreen extends Component {
         }).sort((a, b) => b.isDirectory - a.isDirectory)
 
         let isRootDir = true
-        const ifConditionForRootDir = path?.toString().replace(cacheDir.replace(/\/+/, "/"), "")
+        const pathTrim = path?.toString().replace(/\/+/, "/")
+        const cacheDirTrim = cacheDir.replace(/\/+/, "/")
+        const ifConditionForRootDir = pathTrim.replace(cacheDirTrim, "")
         console.log("this.state?.currentPath?.toString().replace(cacheDir,) - ", ifConditionForRootDir)
         if (ifConditionForRootDir !== "") {
             isRootDir = false
