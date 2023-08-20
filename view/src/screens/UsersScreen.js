@@ -3,15 +3,12 @@ import { StyleSheet, Text, TextInput, View, Image, FlatList, TouchableOpacity, A
 import { DataTable } from 'react-native-paper';
 import { Snackbar } from 'react-native-paper';
 
-import Icon from "react-native-vector-icons/Ionicons";
 import { ScrollView } from "react-native-gesture-handler";
 
 import axios from "../api/index"
 import ModelComponent from "../components/ModelComponent";
 
 import { background, lightgrey, primarybutton, babypowder } from "../../colorpalette"
-
-Icon.loadFont();
 
 const UsersScreen = (props) => {
 
@@ -66,6 +63,14 @@ const UsersScreen = (props) => {
         // setSearchBarActive(true)
         setSnackbarVisible(true)
         setSnackbarValue(" User updated successfully ")
+    }
+
+    async function handleDelete() {
+        setTimeout(loadApi, 500)
+        console.log("clicked")
+        // setSearchBarActive(true)
+        setSnackbarVisible(true)
+        setSnackbarValue(" User deleted successfully ")
     }
 
     function onPressSearchBarRightButton() {
@@ -183,7 +188,7 @@ const UsersScreen = (props) => {
             </Snackbar>
             {
                 modalVisible ?
-                    <ModelComponent modalVisible={modalVisible} setModalVisible={(value) => { setModalVisible(value) }} editable={true} selectedTableRow={selectedTableRow} selectedTableRowIndex={selectedTableRowIndex} onSubmit={onSubmit} /> : null
+                    <ModelComponent modalVisible={modalVisible} setModalVisible={(value) => { setModalVisible(value) }} editable={true} selectedTableRow={selectedTableRow} selectedTableRowIndex={selectedTableRowIndex} onSubmit={onSubmit} handleDelete={handleDelete} /> : null
             }
         </View>
     );

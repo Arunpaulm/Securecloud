@@ -1,15 +1,18 @@
 import React, { Component } from 'react';
 import { Alert, Modal, StyleSheet, Text, Pressable, View, FlatList, TouchableOpacity } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+// import { Picker } from '@react-native-picker/picker';
+import Icon from "react-native-vector-icons/Ionicons";
 
-import TextFieldComponent from "../components/TextFieldComponent"
-import PickerComponent from "../components/PickerComponent"
-import CheckboxComponent from "../components/CheckboxComponent"
+// import TextFieldComponent from "../components/TextFieldComponent"
+// import PickerComponent from "../components/PickerComponent"
+// import CheckboxComponent from "../components/CheckboxComponent"
 import FormComponents from '../components/FormComponents';
 
 import axios from "../api/index"
 
 import { background, black, primarybuttonbg, danger, dangerBg, white, primarybutton } from "../../colorpalette"
+
+Icon.loadFont();
 
 class ModelComponent extends Component {
     constructor (props) {
@@ -30,7 +33,8 @@ class ModelComponent extends Component {
                 { id: 8, title: "isActive", dbName: "is_active", placeholder: "password", value: "", active: false, type: "checkbox" },
 
             ],
-            loginButtonText: "Confirm changes",
+            confirmButtonText: "Confirm changes",
+            deleteButtonText: "Delete User",
             closeButtonText: "Close",
             editable: this.props?.route?.params?.editable === undefined ? this.props.editable : this.props?.route?.params?.editable,
             // modalVisible: false
@@ -92,6 +96,20 @@ class ModelComponent extends Component {
         this.props.onSubmit()
     }
 
+
+    handleDelete() {
+        const formData = this.buildApiBody()
+        console.log("formData - ", formData)
+        axios.delete("/user/" + formData.user_id).then((response) => {
+            console.log(response)
+        }).catch(error => { console.log(error) })
+
+        this.props.setModalVisible(false)
+        this.setState({ modalVisible: false })
+        console.log(this.state.form)
+        this.props.handleDelete()
+    }
+
     getActiveTextBox(activeid) {
         const form = this.state.form
         form.map(frm => {
@@ -115,9 +133,21 @@ class ModelComponent extends Component {
                 }}>
                 <View style={styles.centeredView}>
                     <View style={styles.modalView}>
+                        {/* <View style={styles.closeButtonContainer}>
+                        </View> */}
 
-                        <View style={{ flex: 5, justifyContent: "center", alignItems: "center" }} >
+                        <View style={{ flex: 5, width: "100%", flexDirection: "row", paddingTop: 5, justifyContent: "center", alignItems: "center" }} >
                             <Text style={{ fontSize: 20, paddingTop: 5 }}>Edit User</Text>
+                            <TouchableOpacity
+                                style={styles.closeButton}
+                                onPress={() => {
+                                    this.props.setModalVisible(false)
+                                    this.setState({ modalVisible: false })
+                                }}
+                            >
+                                <Icon name={"close"} size={30} color={danger} />
+                                {/* <Text style={styles.closeButtonText}>{this.state.closeButtonText}</Text> */}
+                            </TouchableOpacity>
                         </View>
 
                         <View style={styles.loginTextBoxContainer}>
@@ -132,28 +162,21 @@ class ModelComponent extends Component {
                         </View>
 
                         {this.state.editable ? <>
-                            <View style={styles.loginButtonContainer}>
+                            <View style={styles.confirmContainer}>
                                 <TouchableOpacity
-                                    style={styles.loginButton}
+                                    style={styles.confirmButton}
                                     onPress={() => this.onSubmit()}
                                 >
-                                    <Text style={styles.loginButtonText}>{this.state.loginButtonText}</Text>
+                                    <Text style={styles.confirmButtonText}>{this.state.confirmButtonText}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.deleteButton}
+                                    onPress={() => this.handleDelete()}
+                                >
+                                    <Text style={styles.confirmButtonText}>{this.state.deleteButtonText}</Text>
                                 </TouchableOpacity>
                             </View>
                         </> : null}
-
-                        <View style={styles.closeButtonContainer}>
-                            <TouchableOpacity
-                                style={styles.closeButton}
-                                onPress={() => {
-                                    this.props.setModalVisible(false)
-                                    this.setState({ modalVisible: false })
-                                }}
-                            >
-                                <Text style={styles.closeButtonText}>{this.state.closeButtonText}</Text>
-                            </TouchableOpacity>
-                        </View>
-
                     </View>
                 </View>
             </Modal >
@@ -225,40 +248,53 @@ const styles = StyleSheet.create({
     loginTextBoxSeperator: {
         padding: 15
     },
-    loginButtonContainer: {
+    confirmContainer: {
         flex: 10,
+        flexDirection: "row",
         width: "100%",
         padding: 20,
         paddingBottom: 0,
-        // backgroundColor: "green",
-        justifyContent: "center"
+        justifyContent: "center",
+        alignItems: "center",
     },
-    loginButton: {
+    confirmButton: {
         alignItems: "center",
         backgroundColor: primarybuttonbg,
-        padding: 20,
-        borderRadius: 10
+        padding: 18,
+        borderRadius: 10,
+        margin: 2
     },
-    loginButtonText: {
+    deleteButton: {
+        alignItems: "center",
+        backgroundColor: dangerBg,
+        borderColor: danger,
+        padding: 18,
+        borderRadius: 10,
+        margin: 2,
+        width: 160
+    },
+    confirmButtonText: {
         color: white,
         fontWeight: "500",
         fontSize: 16
     },
     closeButtonContainer: {
-        flex: 10,
-        width: "100%",
-        padding: 20,
+        flex: 5,
+        width: 40,
         paddingTop: 10,
-        // backgroundColor: white,
-        justifyContent: "center"
+        justifyContent: "flex-end",
+        alignItems: "flex-end"
     },
     closeButton: {
-        alignItems: "center",
-        backgroundColor: dangerBg,
-        borderWidth: 1,
-        borderColor: danger,
-        padding: 20,
-        borderRadius: 10
+        position: "absolute",
+        right: 15,
+        top: 13
+        // alignItems: "flex-end",
+        // backgroundColor: dangerBg,
+        // borderWidth: 1,
+        // padding: 20,
+        // borderRadius: 10,
+        // borderColor: danger,
     },
     closeButtonText: {
         color: white,

@@ -240,9 +240,14 @@ async function deleteUser(req, res) {
             });
         }
 
-        res.status(201).json({
+        const result = await UserModel.destroy({
+            where: { user_id: req.params.user_id },
+            force: true,
+        });
+
+        res.status(204).json({
             status: true,
-            data: { user },
+            result,
         });
     } catch (error) {
         res.status(500).json({
