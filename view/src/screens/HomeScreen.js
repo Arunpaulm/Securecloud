@@ -96,13 +96,13 @@ class HomeScreen extends Component {
                 </View>
 
                 <View style={{ flex: 1, padding: 20 }}>
-                    <TouchableOpacity style={{ flex: 1, flexDirection: "row", backgroundColor: uploadiconbg, borderWidth: 1, borderRadius: 5, borderColor: grey, justifyContent: "center", alignItems: "center" }}>
+                    <TouchableOpacity style={{ flex: 1, flexDirection: "row", backgroundColor: uploadiconbg, borderWidth: 1, borderRadius: 10, borderColor: grey, justifyContent: "center", alignItems: "center" }}>
                         <MaterialIcons style={{ paddingRight: 5, fontWeight: 300, color: uploadicontext }} name={this.state.uploadIcon} size={25} ></MaterialIcons>
                         <Text style={{ fontWeight: 500, color: uploadicontext }} >Upload files</Text>
                     </TouchableOpacity>
                 </View>
 
-                <View style={{ flex: 10, borderRadius: 25, overflow: "hidden" }}>
+                <View style={{ flex: 10, borderTopLeftRadius: 25, borderTopRightRadius: 25, overflow: "hidden" }}>
                     <CloudDirectory />
                 </View>
 

@@ -11,7 +11,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import DocumentList from "../components/DocumentList";
 
-import { background, uploadiconbg, uploadicontext } from "../../colorpalette"
+import { background, oxfordblue, uploadiconbg, uploadicontext } from "../../colorpalette"
 
 const cacheDir = FileSystem.cacheDirectory + "securecloud"
 
@@ -162,7 +162,7 @@ class VaultScreen extends Component {
         return (
             <View style={styles.container}>
 
-                <View style={{ flex: 0.1, padding: 20 }}>
+                <View style={{ flex: 0.1, padding: 20, backgroundColor: oxfordblue }}>
                     <TouchableOpacity
                         style={{ flex: 1, flexDirection: "row", backgroundColor: uploadiconbg, borderWidth: 1, borderRadius: 5, borderColor: uploadicontext, justifyContent: "center", alignItems: "center" }}
                         onPress={this.handleDocumentSelection.bind(this)}
