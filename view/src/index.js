@@ -13,11 +13,12 @@ import Router from "./router";
 
 import { oxfordblue, white } from "../colorpalette"
 
+import crypto from './crypto'
 
 SplashScreen.preventAutoHideAsync();
 
 function App() {
-
+    crypto()
     const customTextInputProps = {
         style: {
             fontFamily: 'Roboto'

@@ -171,8 +171,10 @@ class VaultScreen extends Component {
                         <Text style={{ color: uploadicontext }} >Add files</Text>
                     </TouchableOpacity>
                 </View>
+                <View style={{ flex: 1, backgroundColor: oxfordblue }}>
 
-                {this.state.reloadDocumentView ? <DocumentList isRootDir={this.state.isRootDir} currentPath={this.state.currentPath} directory={this.state.directory} getDirectoryInfo={this.getDirectoryInfo.bind(this)} /> : null}
+                    {this.state.reloadDocumentView ? <DocumentList isRootDir={this.state.isRootDir} currentPath={this.state.currentPath} directory={this.state.directory} getDirectoryInfo={this.getDirectoryInfo.bind(this)} /> : null}
+                </View>
             </View>
         );
     }

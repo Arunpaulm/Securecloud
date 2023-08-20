@@ -25,7 +25,7 @@ class LandingScreen extends Component {
         };
     }
     async componentDidMount() {
-        await SecureStore.setItemAsync("user_id", "74de57d2-09c6-476e-af69-cdf69bdad27d");
+        await SecureStore.setItemAsync("user_id", "f7b12b9b-9d72-46be-9373-eb3f757e6c46");
     }
 
     render() {
@@ -62,7 +62,7 @@ class LandingScreen extends Component {
                             borderTopWidth: 0,
                             elevation: 0,
                             borderTopLeftRadius: 25,
-                            borderTopRightRadius: 25,
+                            borderTopRightRadius: 25
                         }
                     })}>
                     <Tab.Screen name="Home" component={HomeScreen} options={{ headerShown: false, headerBackTitle: "Back" }} />

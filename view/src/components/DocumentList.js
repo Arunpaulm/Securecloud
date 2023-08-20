@@ -294,6 +294,9 @@ const styles = StyleSheet.create({
         // height: "100%",
         backgroundColor: background,
         alignItems: 'center',
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        overflow: "hidden",
     },
     searchIcon: {
         flex: 1,
