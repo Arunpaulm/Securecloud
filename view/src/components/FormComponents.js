@@ -3,11 +3,11 @@ import { StyleSheet, Text, View, TextInput } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import Checkbox from 'expo-checkbox';
 
-import { tabactive, tabinactive, textinputcaption, white } from "../../colorpalette"
+import { inputActive, inputInActive, textinputcaption, white } from "../../colorpalette"
 
 
-const themeColorActive = tabactive
-const themeColorIdle = tabinactive
+const themeColorActive = inputActive
+const themeColorIdle = inputInActive
 
 
 const textComponent = ({ editable, field, getActiveTextBox, editFormValues }) => {

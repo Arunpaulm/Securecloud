@@ -11,7 +11,7 @@ import HomeScreen from './HomeScreen';
 import NotificationScreen from './NotificationScreen';
 import * as SecureStore from 'expo-secure-store';
 
-import { tabactive, tabinactive } from "../../colorpalette"
+import { babypowder, blue, oxfordblue, tabactive, tabinactive } from "../../colorpalette"
 
 const Tab = createBottomTabNavigator();
 Icon.loadFont();
@@ -49,12 +49,31 @@ class LandingScreen extends Component {
                 },
                 tabBarActiveTintColor: tabactive,
                 tabBarInactiveTintColor: tabinactive,
+                tabBarStyle: { backgroundColor: oxfordblue, borderWidth: 2, borderColor: oxfordblue }
             })}>
                 <Tab.Screen name="Home" component={HomeScreen} options={{ headerShown: false, headerBackTitle: "Back" }} />
-                <Tab.Screen name="Vault" component={VaultScreen} options={{ title: "Private Vault" }} />
-                <Tab.Screen name="Notification" component={NotificationScreen} options={{ title: "Notification log" }} />
-                <Tab.Screen name="Users" component={UsersScreen} options={{ title: "All Users" }} />
-                <Tab.Screen name="Settings" component={SettingScreen} options={{}} />
+                <Tab.Screen name="Vault" component={VaultScreen}
+                    options={{
+                        title: "Private Vault",
+                        headerStyle: { backgroundColor: oxfordblue },
+                        headerTintColor: babypowder,
+                        headerTitleStyle: { fontWeight: 'bold' },
+                    }} />
+                <Tab.Screen name="Notification" component={NotificationScreen} options={{
+                    title: "Notification log", headerStyle: { backgroundColor: oxfordblue },
+                    headerTintColor: babypowder,
+                    headerTitleStyle: { fontWeight: 'bold' }
+                }} />
+                <Tab.Screen name="Users" component={UsersScreen} options={{
+                    title: "All Users", headerStyle: { backgroundColor: oxfordblue },
+                    headerTintColor: babypowder,
+                    headerTitleStyle: { fontWeight: 'bold' }
+                }} />
+                <Tab.Screen name="Settings" component={SettingScreen} options={{
+                    headerStyle: { backgroundColor: oxfordblue },
+                    headerTintColor: babypowder,
+                    headerTitleStyle: { fontWeight: 'bold' }
+                }} />
                 {/* <Tab.Screen name="Setting" children={() => <ProfileScreen editable={false} />} options={{
                     title: "My Profile", headerBackTitle: "Back", headerRight: () => (
                         <Button

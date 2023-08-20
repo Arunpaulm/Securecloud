@@ -32,8 +32,8 @@ const primarybutton = oxfordblue
 const primarybuttonbg = oxfordblue
 
 const background = babypowder
-const tabactive = blue
-const tabinactive = lightgrey
+const tabactive = babypowder
+const tabinactive = moonstone
 
 const logocolor = blue
 const avataricon = oxfordblue
@@ -48,6 +48,9 @@ const fileoptionsborder = "#888"
 const fileoptionsbg = '#eee'
 
 const textinputcaption = "#6A6EEE"
+
+const inputActive = oxfordblue
+const inputInActive = grey
 
 export {
     oxfordblue,
@@ -88,6 +91,8 @@ export {
 
     fileoptionsborder,
     fileoptionsbg,
+    inputActive,
+    inputInActive,
 
     primarybutton,
     primarybuttonbg

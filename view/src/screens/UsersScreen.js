@@ -115,7 +115,7 @@ const UsersScreen = (props) => {
 
     return (
         <View style={styles.container}>
-            <View style={{ flex: 0.2 }} />
+            <View style={{ flex: 0.7 }} />
             <View style={styles.clientListContainer}>
                 {clientList.length > 0 ?
                     <DataTable style={{ flex: 1 }}>

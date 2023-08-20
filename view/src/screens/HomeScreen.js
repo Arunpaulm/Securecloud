@@ -102,7 +102,7 @@ class HomeScreen extends Component {
                     </TouchableOpacity>
                 </View>
 
-                <View style={{ flex: 10, borderTopRightRadius: 25, borderTopLeftRadius: 25, overflow: "hidden" }}>
+                <View style={{ flex: 10, borderRadius: 25, overflow: "hidden" }}>
                     <CloudDirectory />
                 </View>
 

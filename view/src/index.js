@@ -86,7 +86,6 @@ function App() {
 
                 <Router />
             </SafeAreaView>
-            <View style={{ backgroundColor: white, padding: 18 }}></View>
         </>
     )
 
