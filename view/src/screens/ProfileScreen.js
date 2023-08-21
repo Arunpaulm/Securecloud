@@ -24,11 +24,11 @@ class ProfileScreen extends Component {
                 { id: 4, title: "E-Mail", dbName: "email", placeholder: "example@mail.com", value: "", active: false, type: "text" },
                 { id: 5, title: "Password", placeholder: "password", value: "", active: false, type: "text" },
                 { id: 6, title: "Confirm Password", placeholder: "password", value: "", active: false, type: "text" },
-                {
-                    id: 7, title: "Role", dbName: "type", placeholder: "Customer", value: "", active: false, type: "picker",
-                    options: ["client", "Admin", "Customer", "Developer"]
-                },
-                { id: 8, title: "isActive", dbName: "is_active", placeholder: "password", value: false, active: false, type: "checkbox" },
+                // {
+                //     id: 7, title: "Role", dbName: "type", placeholder: "Customer", value: "", active: false, type: "picker",
+                //     options: ["client", "Admin", "Customer", "Developer"]
+                // },
+                // { id: 8, title: "isActive", dbName: "is_active", placeholder: "password", value: false, active: false, type: "checkbox" },
 
             ],
             loginButtonText: "Confirm changes",

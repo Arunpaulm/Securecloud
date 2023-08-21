@@ -35,7 +35,7 @@ class LoginScreen extends Component {
     onSubmit() {
         console.log("clicked")
         console.log(this.state.form)
-        this.props.navigation.navigate('HomeScreen')
+        this.props.navigation.navigate('Landing')
     }
 
     onClickRememberMe() {

@@ -4,7 +4,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { Avatar } from 'react-native-paper';
 import * as SecureStore from 'expo-secure-store';
 
-import { avataricon, white } from "../../colorpalette"
+import { avatarSettingicon, oxfordblue, white } from "../../colorpalette"
 import axios from "../api/index"
 
 import { background, logocolor, babypowder, primarybutton, primarybuttonbg, success, successBg, warning, warningBg, danger, dangerBg } from "../../colorpalette"
@@ -64,12 +64,12 @@ class SettingScreen extends Component {
         return (
             <View style={styles.container}>
                 <View style={{ flex: 6, justifyContent: "flex-end", alignItems: "center" }}>
-                    <Avatar.Text size={150} label={this.state.form?.[0]?.value?.split("")[0]?.toUpperCase()} color={babypowder} style={{ backgroundColor: logocolor, borderRadius: 30 }} />
+                    <Avatar.Text size={150} label={this.state.form?.[0]?.value?.split("")[0]?.toUpperCase()} color={babypowder} style={{ backgroundColor: avatarSettingicon, borderRadius: 30 }} />
                     {/* <Avatar.Image size={100} source={require('../assets/avatar.png')} /> */}
-                    <Text style={{ fontSize: 25, fontWeight: 600, padding: 25 }}>{this.state.form?.[0]?.value}</Text>
+                    <Text style={{ fontSize: 25, fontWeight: 600, padding: 25, color: white }}>{this.state.form?.[0]?.value}</Text>
                 </View>
 
-                <View style={{ flex: 10, padding: 20, justifyContent: "center", alignItems: "center" }}>
+                <View style={styles.settingOptionsContainer}>
                     <View style={{ marginVertical: 10 }}>
                         <TouchableOpacity style={{ ...styles.buttonContainer, ...styles.primaryButton }}
                             onPress={() => {
@@ -110,8 +110,6 @@ class SettingScreen extends Component {
                     </View>
                 </View>
 
-                <View style={{ flex: 1 }} />
-
             </View >
         );
     }
@@ -120,8 +118,19 @@ class SettingScreen extends Component {
 const styles = StyleSheet.create({
     container: {
         height: "100%",
-        backgroundColor: background,
+        backgroundColor: oxfordblue,
         alignItems: 'center',
+    },
+    settingOptionsContainer: {
+        flex: 10,
+        padding: 20,
+        width: "100%",
+        justifyContent: "center",
+        alignItems: "center",
+        borderTopLeftRadius: 30,
+        borderTopRightRadius: 30,
+        overflow: "hidden",
+        backgroundColor: babypowder
     },
     buttonContainer: {
         padding: 20,

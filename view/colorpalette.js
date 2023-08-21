@@ -37,7 +37,8 @@ const tabactive = babypowder
 const tabinactive = moonstone
 
 const logocolor = blue
-const avataricon = oxfordblue
+const avatarHomeicon = blue
+const avatarSettingicon = blue
 const homeusernamebg = oxfordblue
 
 const filecolor = blue
@@ -73,7 +74,8 @@ export {
 
     background,
 
-    avataricon,
+    avatarHomeicon,
+    avatarSettingicon,
     homeusernamebg,
     logocolor,
 

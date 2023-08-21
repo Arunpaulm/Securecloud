@@ -13,7 +13,7 @@ import HomeScreen from './HomeScreen';
 import NotificationScreen from './NotificationScreen';
 import * as SecureStore from 'expo-secure-store';
 
-import { babypowder, blue, oxfordblue, tabactive, tabinactive } from "../../colorpalette"
+import { babypowder, black, blue, oxfordblue, tabactive, tabinactive } from "../../colorpalette"
 
 const Tab = createBottomTabNavigator();
 Icon.loadFont();
@@ -61,8 +61,8 @@ class LandingScreen extends Component {
                             backgroundColor: oxfordblue,
                             borderTopWidth: 0,
                             elevation: 0,
-                            borderTopLeftRadius: 25,
-                            borderTopRightRadius: 25
+                            borderTopLeftRadius: 30,
+                            borderTopRightRadius: 30
                         }
                     })}>
                     <Tab.Screen name="Home" component={HomeScreen} options={{ headerShown: false, headerBackTitle: "Back" }} />
@@ -74,7 +74,7 @@ class LandingScreen extends Component {
                             headerTitleStyle: { fontWeight: 'bold' },
                         }} />
                     <Tab.Screen name="Notification" component={NotificationScreen} options={{
-                        title: "Notification log", headerStyle: { backgroundColor: oxfordblue },
+                        title: "History", headerStyle: { backgroundColor: oxfordblue },
                         headerTintColor: babypowder,
                         headerTitleStyle: { fontWeight: 'bold' }
                     }} />

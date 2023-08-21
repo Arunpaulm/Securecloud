@@ -10,7 +10,7 @@ import * as SecureStore from 'expo-secure-store';
 import CloudDirectory from "../components/CloudDirectory";
 import axios from "../api/index"
 
-import { background, logocolor, homeusernamebg, uploadicontext, uploadiconbg, grey, success, danger, warning, blue, oxfordblue, white, babypowder } from "../../colorpalette"
+import { logocolor, homeusernamebg, success, danger, warning, oxfordblue, babypowder, avatarHomeicon } from "../../colorpalette"
 
 MaterialIcons.loadFont();
 Ionicons.loadFont();
@@ -89,20 +89,20 @@ class HomeScreen extends Component {
                     </Animatable.View>
                 </View>
 
-                <View style={{ flex: 1, paddingHorizontal: 20, flexDirection: "row", alignItems: "center", backgroundColor: homeusernamebg }}>
+                <View style={{ flex: 1, paddingBottom: 20, paddingHorizontal: 20, flexDirection: "row", alignItems: "center", backgroundColor: homeusernamebg }}>
                     <Text style={{ flex: 0.06, fontSize: 18, fontWeight: 600, color: babypowder, paddingRight: 7 }}>Hi</Text>
                     <Text style={{ flex: 1, fontSize: 18, fontWeight: 600, color: babypowder }}>{this.state?.form?.username}</Text>
-                    <Avatar.Text style={{ marginRight: 10, backgroundColor: logocolor, borderRadius: 20 }} size={50} label={this.state.form?.username?.split("")[0]?.toUpperCase()} />
+                    <Avatar.Text style={{ marginRight: 10, backgroundColor: avatarHomeicon, borderRadius: 20 }} size={50} label={this.state.form?.username?.split("")[0]?.toUpperCase()} />
                 </View>
 
-                <View style={{ flex: 1, padding: 20 }}>
+                {/* <View style={{ flex: 1, padding: 20 }}>
                     <TouchableOpacity style={{ flex: 1, flexDirection: "row", backgroundColor: uploadiconbg, borderWidth: 1, borderRadius: 10, borderColor: grey, justifyContent: "center", alignItems: "center" }}>
                         <MaterialIcons style={{ paddingRight: 5, fontWeight: 300, color: uploadicontext }} name={this.state.uploadIcon} size={25} ></MaterialIcons>
                         <Text style={{ fontWeight: 500, color: uploadicontext }} >Upload files</Text>
                     </TouchableOpacity>
-                </View>
+                </View> */}
 
-                <View style={{ flex: 10, borderTopLeftRadius: 25, borderTopRightRadius: 25, overflow: "hidden" }}>
+                <View style={{ flex: 10, borderTopLeftRadius: 30, borderTopRightRadius: 30, overflow: "hidden" }}>
                     <CloudDirectory />
                 </View>
 

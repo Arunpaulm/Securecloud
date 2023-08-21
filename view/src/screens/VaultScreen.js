@@ -11,7 +11,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import DocumentList from "../components/DocumentList";
 
-import { background, oxfordblue, uploadiconbg, uploadicontext } from "../../colorpalette"
+import { babypowder, background, oxfordblue, uploadiconbg, uploadicontext } from "../../colorpalette"
 
 const cacheDir = FileSystem.cacheDirectory + "securecloud"
 
@@ -171,7 +171,7 @@ class VaultScreen extends Component {
                         <Text style={{ color: uploadicontext }} >Add files</Text>
                     </TouchableOpacity>
                 </View>
-                <View style={{ flex: 1, backgroundColor: oxfordblue }}>
+                <View style={{ flex: 1, borderTopLeftRadius: 30, borderTopRightRadius: 30, overflow: "hidden", backgroundColor: babypowder }}>
 
                     {this.state.reloadDocumentView ? <DocumentList isRootDir={this.state.isRootDir} currentPath={this.state.currentPath} directory={this.state.directory} getDirectoryInfo={this.getDirectoryInfo.bind(this)} /> : null}
                 </View>
@@ -183,7 +183,7 @@ class VaultScreen extends Component {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: background
+        backgroundColor: oxfordblue
     }
 })
 
