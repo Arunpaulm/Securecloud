@@ -1,10 +1,13 @@
 const fs = require('fs')
 const path = require('path');
 const moment = require("moment")
+const { Worker } = require("worker_threads");
+
+
 
 const decimals = 2
 const bucket = process.env.BUCKETPATH
-
+const THREAD_COUNT = 4
 /**
  * 
  * @param {*} size 
@@ -111,24 +114,66 @@ async function getFiles(req, res) {
 
 /**
  * 
- * @param {*} request 
- * @param {*} response 
+ * @param {*} req 
+ * @param {*} res 
  */
-function uploadFile(request, response) {
+async function uploadFile(req, res) {
+    try {
+        let fstream;
+        const encryptedKeys = []
+        const processInThread = []
 
-    var fstream;
-    request.pipe(request.busboy);
-    request.busboy.on('file', function (fieldname, file, filename) {
-        console.log("Uploading: ", filename);
-        console.log("Uploading: ", fieldname);
-        fstream = fs.createWriteStream('../files/' + filename.filename, { flags: "ax" });
-        file.pipe(fstream);
-        fstream.on('close', function () {
-            response.redirect('back');
-        });
-    });
-    // console.log(response)
-    response.send('user ' + request.params.id)
+        req.pipe(req.busboy);
+        req.busboy.on('file', function (fieldname, file, filename) {
+            console.log("Uploading: ", filename);
+            // console.log("Uploading: ", fieldname);
+            fstream = fs.createWriteStream(path.join(bucket, "cache", filename.filename), { flags: "as+" });
+            file.pipe(fstream);
+            fstream.on('close', function () {
+                const spawnThread = new Promise((resolve, reject) => {
+                    const worker = new Worker("./Utility/encryptfile.js", {
+                        workerData: { filename, THREAD_COUNT },
+                    });
+
+                    worker.on("message", result => {
+                        const keyData = {
+                            ...filename,
+                            key: result
+                        }
+                        encryptedKeys.push(keyData)
+                        console.log("worker encryptedKeys - ", encryptedKeys)
+                        resolve(true)
+                    });
+
+                    worker.on("error", error => {
+                        console.log(error);
+                        reject(error)
+                    });
+                })
+
+                processInThread.push(spawnThread)
+            })
+        })
+
+        console.log("processInThread - count - ", processInThread.length)
+        Promise.all([new Promise((resolve) => {
+            setTimeout(resolve, 150, 'foo');
+        }), ...processInThread])
+            .then(result => {
+                console.log("result - ", result)
+                console.log("encryptedKeys - ", encryptedKeys)
+                res.status(200).json({
+                    status: true,
+                    message: "File created",
+                    encryptedKeys
+                })
+            })
+    } catch (err) {
+        res.status(500).send({
+            status: false,
+            error: err
+        })
+    }
 }
 
 /**
@@ -145,8 +190,33 @@ function downloadFile(req, res) {
                 error: "invalid filename"
             })
         }
-        const file = path.join(bucket, req.body?.filename)
-        res.download(file); // Set disposition and send it.
+
+        const processInThread = []
+
+        const worker = new Worker("./Utility/decryptfile.js", {
+            workerData: {
+                filename: req.body?.filename + ".arc",
+                key: req.body?.key,
+                THREAD_COUNT
+            },
+        });
+
+        processInThread.push(worker)
+
+        Promise.all([new Promise((resolve) => {
+            setTimeout(resolve, 150, 'foo');
+        }), ...processInThread])
+            .then(() => {
+                const file = path.join(bucket, req.body?.filename)
+                res.download(file); // Set disposition and send it.
+            })
+            .catch(err => {
+                res.status(500).send({
+                    status: false,
+                    error: err
+                })
+            })
+
     } catch (err) {
         res.status(500).send(err)
     }

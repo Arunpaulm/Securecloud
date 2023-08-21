@@ -18,7 +18,7 @@ import crypto from './crypto'
 SplashScreen.preventAutoHideAsync();
 
 function App() {
-    crypto()
+    // crypto()
     const customTextInputProps = {
         style: {
             fontFamily: 'Roboto'
