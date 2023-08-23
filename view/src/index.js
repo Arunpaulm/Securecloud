@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from "react";
 import { SafeAreaView, StyleSheet, View, StatusBar } from 'react-native';
-import * as SecureStore from 'expo-secure-store';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import {

@@ -125,20 +125,25 @@ class CloudDirectory extends Component {
                         }
                     </View>
 
-                    <TouchableOpacity style={styles.optionButtons} onPress={() => {
+                    {/* <TouchableOpacity style={styles.optionButtons} onPress={() => {
                         if (!this.state.selectedItem?.isDirectory) {
                             Sharing.shareAsync(this.state.selectedItem?.uri)
                         } else {
                             this.setState({ currentPath: this.state.selectedItem?.uri })
                             this.props.getDirectoryInfo(this.state.selectedItem?.uri)
                         }
-                    }}><Text style={{ fontSize: 17, textAlign: "center" }}>Open</Text></TouchableOpacity>
+                    }}><Text style={{ fontSize: 17, textAlign: "center" }}>Open</Text></TouchableOpacity> */}
 
                     {this.state.selectedItem.isDirectory ? null :
                         <TouchableOpacity style={styles.optionButtons} onPress={() => {
                             this.setState({ renameOptionOn: true, newFileName: this.state.selectedItem?.name?.trim().toString() })
-                        }} ><Text style={{ fontSize: 17, textAlign: "center" }}>Rename</Text></TouchableOpacity>
+                        }} ><Text style={{ fontSize: 17, textAlign: "center" }}>Download</Text></TouchableOpacity>
                     }
+                    {/* {this.state.selectedItem.isDirectory ? null :
+                        <TouchableOpacity style={styles.optionButtons} onPress={() => {
+                            this.setState({ renameOptionOn: true, newFileName: this.state.selectedItem?.name?.trim().toString() })
+                        }} ><Text style={{ fontSize: 17, textAlign: "center" }}>Rename</Text></TouchableOpacity>
+                    } */}
 
                     <TouchableOpacity style={styles.optionButtons}
                         onPress={() => { this.setState({ modalVisible: false, moreInfoModalVisible: true }) }}
@@ -217,7 +222,8 @@ class CloudDirectory extends Component {
                         renderItem={({ item, index }) => (<TouchableOpacity style={{ height: 130, margin: 18, paddingVertical: 6, justifyContent: "center", alignItems: "center" }}
                             onPress={() => {
                                 if (!item.isDirectory) {
-                                    Sharing.shareAsync(item.uri)
+                                    this.setState({ selectedItem: item, currentPath: item.uri, modalVisible: true })
+                                    // Sharing.shareAsync(item.uri)
                                 } else {
                                     this.setState({ currentPath: item.uri })
                                     this.props.getDirectoryInfo(item.uri)

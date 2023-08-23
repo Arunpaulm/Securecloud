@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { StyleSheet, Text, TextInput, View, Image, FlatList, TouchableOpacity } from 'react-native';
 import Icon from "react-native-vector-icons/Ionicons";
 import { Snackbar } from 'react-native-paper';
-import * as SecureStore from 'expo-secure-store';
-
+// import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import FormComponents from '../components/FormComponents';
 import axios from "../api/index"
@@ -58,7 +58,8 @@ class ProfileScreen extends Component {
     }
 
     async loadApi() {
-        const userId = await SecureStore.getItemAsync("user_id");
+        // const userId = await SecureStore.getItemAsync("user_id");
+        const userId = await AsyncStorage.getItem("user_id");
         axios.get("/user/" + userId).then((response) => {
             const field = { form: response.data?.data?.user || {} }
             console.log("field before", field)

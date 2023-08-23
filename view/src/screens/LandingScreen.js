@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Icon from "react-native-vector-icons/Ionicons";
-import { BlurView } from 'expo-blur';
-import { View, StyleSheet } from 'react-native';
+// import { BlurView } from 'expo-blur';
+import { View, StyleSheet, Platform } from 'react-native';
 
 
 import SettingScreen from './SettingScreen';
@@ -11,7 +11,8 @@ import UsersScreen from './UsersScreen';
 import VaultScreen from './VaultScreen';
 import HomeScreen from './HomeScreen';
 import NotificationScreen from './NotificationScreen';
-import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+// import * as SecureStore from 'expo-secure-store';
 
 import { babypowder, black, blue, oxfordblue, tabactive, tabinactive } from "../../colorpalette"
 
@@ -25,7 +26,8 @@ class LandingScreen extends Component {
         };
     }
     async componentDidMount() {
-        await SecureStore.setItemAsync("user_id", "f7b12b9b-9d72-46be-9373-eb3f757e6c46");
+        await AsyncStorage.setItem("user_id", "d4084131-7b0c-4196-9803-a59b47c58853");
+        // await SecureStore.setItemAsync("user_id", "d4084131-7b0c-4196-9803-a59b47c58853");
     }
 
     render() {
@@ -54,9 +56,9 @@ class LandingScreen extends Component {
                         },
                         tabBarActiveTintColor: tabactive,
                         tabBarInactiveTintColor: tabinactive,
-                        tabBarBackground: () => (
-                            <BlurView tint={babypowder} intensity={100} style={{}} />
-                        ),
+                        // tabBarBackground: () => (
+                        //     <BlurView tint={babypowder} intensity={100} style={{}} />
+                        // ),
                         tabBarStyle: {
                             backgroundColor: oxfordblue,
                             borderTopWidth: 0,
@@ -66,13 +68,13 @@ class LandingScreen extends Component {
                         }
                     })}>
                     <Tab.Screen name="Home" component={HomeScreen} options={{ headerShown: false, headerBackTitle: "Back" }} />
-                    <Tab.Screen name="Vault" component={VaultScreen}
+                    {Platform.OS === "web" ? null : <Tab.Screen name="Vault" component={VaultScreen}
                         options={{
                             title: "Private Vault",
                             headerStyle: { backgroundColor: oxfordblue, borderBottomColor: 0, elevation: 0 },
                             headerTintColor: babypowder,
                             headerTitleStyle: { fontWeight: 'bold' },
-                        }} />
+                        }} />}
                     <Tab.Screen name="Notification" component={NotificationScreen} options={{
                         title: "History", headerStyle: { backgroundColor: oxfordblue },
                         headerTintColor: babypowder,

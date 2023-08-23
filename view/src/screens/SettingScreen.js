@@ -1,8 +1,9 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, TextInput, View, Image, FlatList, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, Platform, View, TouchableOpacity, Alert } from 'react-native';
 import Icon from "react-native-vector-icons/Ionicons";
 import { Avatar } from 'react-native-paper';
-import * as SecureStore from 'expo-secure-store';
+// import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { avatarSettingicon, oxfordblue, white } from "../../colorpalette"
 import axios from "../api/index"
@@ -41,7 +42,8 @@ class SettingScreen extends Component {
     }
 
     async loadApi() {
-        const userId = await SecureStore.getItemAsync("user_id");
+        // const userId = await SecureStore.getItemAsync("user_id");
+        const userId = await AsyncStorage.getItem("user_id");
         axios.get("/user/" + userId).then((response) => {
             const field = { form: response.data?.data?.user || {} }
             console.log("field before", field)
@@ -78,15 +80,16 @@ class SettingScreen extends Component {
                             <Text style={{ fontSize: 15, fontWeight: 600, color: white }}>EDIT PROFILE</Text>
                         </TouchableOpacity>
                     </View>
-
-                    <View style={{ marginVertical: 10 }}>
-                        <TouchableOpacity style={{ ...styles.buttonContainer, ...(this.state.screenLock ? styles.successButton : styles.warningButton) }} onPress={async () => {
-                            await SecureStore.setItemAsync("screen_lock", String(!this.state.screenLock));
-                            this.setState({ screenLock: !this.state.screenLock })
-                        }}>
-                            <Text style={{ fontSize: 15, fontWeight: 600, color: white }}>SCREEN LOCK - {this.state.screenLock ? "ON" : "OFF"}</Text>
-                        </TouchableOpacity>
-                    </View>
+                    {Platform.OS === "web" ? null :
+                        <View style={{ marginVertical: 10 }}>
+                            <TouchableOpacity style={{ ...styles.buttonContainer, ...(this.state.screenLock ? styles.successButton : styles.warningButton) }} onPress={async () => {
+                                // await SecureStore.setItemAsync("screen_lock", String(!this.state.screenLock));
+                                await AsyncStorage.getItem("screen_lock", String(!this.state.screenLock));
+                                this.setState({ screenLock: !this.state.screenLock })
+                            }}>
+                                <Text style={{ fontSize: 15, fontWeight: 600, color: white }}>SCREEN LOCK - {this.state.screenLock ? "ON" : "OFF"}</Text>
+                            </TouchableOpacity>
+                        </View>}
 
                     <View style={{ marginVertical: 10 }}>
                         <TouchableOpacity style={{ ...styles.buttonContainer, ...styles.primaryButton }}>
@@ -95,16 +98,30 @@ class SettingScreen extends Component {
                     </View>
 
                     <View style={{ marginVertical: 10 }}>
-                        <TouchableOpacity style={{ ...styles.buttonContainer, ...styles.dangerButton }} onPress={() => {
-                            Alert.alert(
-                                'Logout User',
-                                'Are you sure?',
-                                [
-                                    { text: 'No', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
-                                    { text: 'Yes', onPress: () => { console.log("User logout logic") } },
-                                ],
-                                { cancelable: false });
-                        }}>
+                        <TouchableOpacity style={{ ...styles.buttonContainer, ...styles.dangerButton }} onPress={async () => {
+                            if (Platform.OS === "web") {
+                                await AsyncStorage.setItem("user_id", "");
+                                this.props.navigation.navigate("Login")
+                                console.log("User logout logic")
+                            } else if (["ios", "android"].indexOf(Platform.OS) > -1) {
+
+                                Alert.alert(
+                                    'Logout User',
+                                    'Are you sure?',
+                                    [
+                                        { text: 'No', onPress: () => console.log('Cancel Pressed'), style: 'cancel' },
+                                        {
+                                            text: 'Yes', onPress: async () => {
+                                                await AsyncStorage.setItem("user_id", "");
+                                                this.props.navigation.navigate("Login")
+                                                console.log("User logout logic")
+                                            }
+                                        },
+                                    ],
+                                    { cancelable: false });
+                            }
+                        }}
+                        >
                             <Text style={{ fontSize: 15, fontWeight: 600, color: white }}>LOGOUT</Text>
                         </TouchableOpacity>
                     </View>

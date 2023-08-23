@@ -16,7 +16,7 @@ function Routes() {
     return (
         <PaperProvider>
             <NavigationContainer>
-                <Stack.Navigator initialRouteName="Login">
+                <Stack.Navigator initialRouteName="Landing">
                     <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false, headerBackTitle: "Back" }} />
                     <Stack.Screen name="Signup" component={SignupScreen} options={{ headerShown: false, headerBackTitle: "Back" }} />
                     <Stack.Screen name="Landing" component={LandingScreen} options={{ headerShown: false, headerBackTitle: "Back" }} />

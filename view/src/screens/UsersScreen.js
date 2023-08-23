@@ -18,7 +18,7 @@ const UsersScreen = (props) => {
     const placeholder = "Search"
     const [searchBarActive, setSearchBarActive] = React.useState(false)
     const [page, setPage] = React.useState(0);
-    const [numberOfItemsPerPageList] = React.useState([15, 30]);
+    const [numberOfItemsPerPageList] = React.useState([10, 20]);
     const [itemsPerPage, setItemsPerPage] = React.useState(
         numberOfItemsPerPageList[0]
     );

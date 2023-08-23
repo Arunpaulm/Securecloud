@@ -5,7 +5,8 @@ import { Avatar } from 'react-native-paper';
 import * as Animatable from 'react-native-animatable';
 import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import * as SecureStore from 'expo-secure-store';
+// import * as SecureStore from 'expo-secure-store';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import CloudDirectory from "../components/CloudDirectory";
 import axios from "../api/index"
@@ -61,7 +62,8 @@ class HomeScreen extends Component {
     }
 
     async loadApi() {
-        const userId = await SecureStore.getItemAsync("user_id");
+        // const userId = await SecureStore.getItemAsync("user_id");
+        const userId = await AsyncStorage.getItem("user_id");
         axios.get("/user/" + userId).then((response) => {
             const field = { form: response.data?.data?.user || {} }
             console.log("field before", field)

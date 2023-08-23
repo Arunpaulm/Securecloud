@@ -197,7 +197,7 @@ async function getAllUsers(req, res) {
     try {
         console.log(" getall user ")
         const page = req.query.page || 1;
-        const limit = req.query.limit || 10;
+        const limit = req.query.limit || 20;
         const skip = (page - 1) * limit;
 
         const users = await UserModel.findAll({ limit, offset: skip });
