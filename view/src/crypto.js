@@ -8,7 +8,7 @@ async function start() {
         Crypto.CryptoDigestAlgorithm.SHA256,
         'GitHub stars are neat 🌟'
     );
-    console.log('Digest: ', digest);
+    // console.log('Digest: ', digest);
     /* Some crypto operation... */
 
 }

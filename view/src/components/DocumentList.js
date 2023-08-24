@@ -1,11 +1,15 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, TextInput, View, FlatList, TouchableOpacity, Dimensions, Modal, Alert, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Text, TextInput, View, FlatList, TouchableOpacity, Dimensions, Modal } from 'react-native';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
+import * as mime from 'react-native-mime-types';
+import uuid from 'react-native-uuid';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
+import axios from "../api/index"
 import { background, filecolor, searchbarbg, searchicon, fileoptionsborder, black, fileoptionsbg, danger } from "../../colorpalette"
 
 
@@ -38,7 +42,7 @@ class DocumentList extends Component {
 
     componentDidMount() {
 
-        console.log("---------------")
+        // console.log("---------------")
 
         // console.log(FileSystem.readDirectoryAsync(FileSystem.documentDirectory))
         // console.log("this.props - ", this.props)
@@ -75,7 +79,7 @@ class DocumentList extends Component {
     }
 
     componentDidUpdate() {
-        console.log(this.state.newFileName)
+        // console.log(this.state.newFileName)
         // console.log("updating")
         // console.log("this.state?.currentPath - ", this.state.currentPath)
         // console.log("this.state.isRootDir - ", this.state.isRootDir)
@@ -109,6 +113,73 @@ class DocumentList extends Component {
 
         //     }
         // }
+    }
+
+    async uploadFileDirApi() {
+
+        const form = new FormData();
+        const formData = {}
+
+        async function addFileToFormData(uri) {
+            const fileDetail = await FileSystem
+                .getInfoAsync(uri)
+                .catch(e => { })
+
+            // console.log(fileDetail)
+            if (fileDetail.isDirectory) {
+                await addDirToFormData(uri)
+                return
+            }
+
+            const fileName = fileDetail.uri.split("/").pop()
+            const fileType = mime.contentType(fileName)
+            if (fileDetail?.uri) {
+                const cloudfiles = await AsyncStorage.getItem("cloudfiles") || "[]";
+                const hashtable = JSON.parse(cloudfiles)
+                const hashTableCF = {}
+                hashtable.map(htt => {
+                    hashTableCF[htt.uri] = htt.id
+                })
+
+                const formFileId = hashTableCF[fileDetail?.uri] ? hashTableCF[fileDetail?.uri] : uuid.v4().toString()
+                const formFileContent = {
+                    uri: fileDetail?.uri,
+                    type: fileType ? fileType : "",
+                    name: fileName
+                }
+
+                formData[formFileId] = { ...formFileContent, id: formFileId }
+                form.append(formFileId, formFileContent);
+            }
+        }
+
+        async function addDirToFormData(uri) {
+            const dir = await FileSystem.readDirectoryAsync(uri);
+            // console.log(dir)
+            for (const dirItem of dir) {
+                const path = [uri, dirItem].join("/")
+                await addFileToFormData(path)
+            }
+        }
+
+        await addFileToFormData(this.state.selectedItem?.uri)
+
+        axios.post("/file/upload", form).then(async (response) => {
+            const cloudfiles = await AsyncStorage.getItem("cloudfiles") || "[]";
+            let hashtable = JSON.parse(cloudfiles)
+            const hashTableCF = {}
+            hashtable.map(htt => { hashTableCF[htt.id] = htt.uri })
+            response.data.encryptedKeys.map(enFiles => {
+                const formFileLocalData = formData[enFiles.id]
+                if (hashTableCF[enFiles.id]) {
+                    hashtable = hashtable.filter(fil => fil.id !== enFiles.id)
+                    hashtable.push({ ...enFiles, uri: formFileLocalData?.uri })
+                } else {
+                    hashtable.push({ ...enFiles, uri: formFileLocalData?.uri })
+                }
+            })
+            await AsyncStorage.setItem("cloudfiles", JSON.stringify(hashtable));
+        }).catch(error => { console.log(error) })
     }
 
     onChangeInText(inputValue) {
@@ -184,6 +255,10 @@ class DocumentList extends Component {
                         }
                     }}><Text style={{ fontSize: 17, textAlign: "center" }}>Open</Text></TouchableOpacity>
 
+                    <TouchableOpacity style={styles.optionButtons} onPress={() => {
+                        this.uploadFileDirApi()
+                    }}><Text style={{ fontSize: 17, textAlign: "center" }}>Upload</Text></TouchableOpacity>
+
                     {this.state.selectedItem.isDirectory ? null :
                         <TouchableOpacity style={styles.optionButtons} onPress={() => {
                             this.setState({ renameOptionOn: true, newFileName: this.state.selectedItem?.name?.trim().toString() })
@@ -209,7 +284,7 @@ class DocumentList extends Component {
         return <Modal
             animationType="slide"
             transparent={true}
-            visible={this.state.moreInfoModalVisible} // this.state.modalVisible
+            visible={this.state.moreInfoModalVisible}
             onRequestClose={() => {
                 console.log('Modal has been closed.');
                 this.setState({ moreInfoModalVisible: false })
@@ -221,17 +296,14 @@ class DocumentList extends Component {
                         <Text style={{ fontSize: 18, textAlign: "center", paddingBottom: 10 }}
                             adjustsFontSizeToFit={false}
                             numberOfLines={2}
-                        >{
-                                this.state.selectedItem?.name?.trim()
-
-                            }</Text>
+                        >{this.state.selectedItem?.name?.trim()}</Text>
                     </View>
                     <Text style={{ fontSize: 17, textAlign: "left", padding: 4 }}>Size: </Text>
                     <Text style={{ fontSize: 17, textAlign: "right", padding: 2 }}>{this.state.selectedItem.size}</Text>
                     <Text style={{ fontSize: 17, textAlign: "center", padding: 4 }}>Last modified:</Text>
                     <Text style={{ fontSize: 17, textAlign: "center", padding: 2 }}>{this.state.selectedItem.lastUpdated}</Text>
                     <Text style={{ fontSize: 17, textAlign: "center", padding: 4 }}>Absolute path:</Text>
-                    <Text style={{ fontSize: 17, textAlign: "center", padding: 2 }}>{this.state.selectedItem.uri}</Text>
+                    <Text style={{ fontSize: 17, textAlign: "center", padding: 2 }}>{decodeURI(this.state.selectedItem.uri || "")}</Text>
                 </View>
             </TouchableOpacity>
         </Modal >

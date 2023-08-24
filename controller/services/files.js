@@ -3,11 +3,10 @@ const path = require('path');
 const moment = require("moment")
 const { Worker } = require("worker_threads");
 
-
-
 const decimals = 2
 const bucket = process.env.BUCKETPATH
 const THREAD_COUNT = 4
+
 /**
  * 
  * @param {*} size 
@@ -125,20 +124,29 @@ async function uploadFile(req, res) {
 
         req.pipe(req.busboy);
         req.busboy.on('file', function (fieldname, file, filename) {
-            console.log("Uploading: ", filename);
+
+            console.log("Uploading fieldname: ", fieldname);
+
+            console.log("Uploading file: ", file);
+
+            console.log("Uploading filename: ", filename);
             // console.log("Uploading: ", fieldname);
-            fstream = fs.createWriteStream(path.join(bucket, "cache", filename.filename), { flags: "as+" });
+            // const [inputFileName, inputFileType] = filename?.filename?.split(".")
+            const generatedFileName = [filename?.filename, "[" + fieldname + "]"].join("")
+            fstream = fs.createWriteStream(path.join(bucket, "cache", generatedFileName), { flags: "as+" });
             file.pipe(fstream);
             fstream.on('close', function () {
                 const spawnThread = new Promise((resolve, reject) => {
                     const worker = new Worker("./Utility/encryptfile.js", {
-                        workerData: { filename, THREAD_COUNT },
+                        workerData: { filename: { ...filename, filename: generatedFileName }, THREAD_COUNT },
                     });
 
                     worker.on("message", result => {
                         const keyData = {
                             ...filename,
-                            key: result
+                            archivefileName: generatedFileName + ".arc",
+                            key: result,
+                            id: fieldname
                         }
                         encryptedKeys.push(keyData)
                         console.log("worker encryptedKeys - ", encryptedKeys)
@@ -195,8 +203,7 @@ function downloadFile(req, res) {
 
         const worker = new Worker("./Utility/decryptfile.js", {
             workerData: {
-                filename: req.body?.filename + ".arc",
-                key: req.body?.key,
+                ...req.body,
                 THREAD_COUNT
             },
         });
@@ -204,7 +211,7 @@ function downloadFile(req, res) {
         processInThread.push(worker)
 
         Promise.all([new Promise((resolve) => {
-            setTimeout(resolve, 150, 'foo');
+            setTimeout(resolve, 200, 'foo');
         }), ...processInThread])
             .then(() => {
                 const file = path.join(bucket, req.body?.filename)

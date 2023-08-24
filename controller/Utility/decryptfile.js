@@ -51,11 +51,11 @@ function decryptFile(ciphertext, key, output) {
  * @param {*} { filename, key } 
  * @returns 
  */
-function mainDecryptFile({ filename, key }) {
+function mainDecryptFile({ filename, archivefileName, key }) {
     console.log("filename - ", filename)
     console.log("key - ", key)
     return new Promise((resolve, reject) => {
-        fs.readFile(path.join(bucket, filename), (err, inputD) => {
+        fs.readFile(path.join(bucket, archivefileName), (err, inputD) => {
             if (err) {
                 console.log(err)
                 reject(err)
@@ -64,7 +64,7 @@ function mainDecryptFile({ filename, key }) {
             console.log(data)
             const content = Buffer.from(data.content, "base64")
             console.log(content)
-            decryptFile(content, key, path.join(bucket, data.filename))
+            decryptFile(content, key, path.join(bucket, filename))
                 .then(() => {
                     resolve(true)
                 })

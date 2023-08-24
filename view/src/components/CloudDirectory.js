@@ -4,6 +4,8 @@ import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+// import ReactNativeBlobUtil from 'react-native-blob-util'
 
 import axios from "../api/index"
 
@@ -14,6 +16,8 @@ const SCREEHEIGHT = Dimensions.get('window').height;
 
 MaterialCommunityIcons.loadFont();
 Ionicons.loadFont();
+
+const downloadDir = FileSystem.cacheDirectory + "securecloud/Download"
 
 class CloudDirectory extends Component {
     constructor (props) {
@@ -58,10 +62,52 @@ class CloudDirectory extends Component {
     async loadDirApi() {
         axios.get("/file").then((response) => {
             const field = { directory: response.data?.data || {}, directorydisplay: response.data?.data || {} }
-            console.log("field before", field)
+            // console.log("field before", field)
             this.setState(field)
-            console.log("this.state.form ", this.state.form)
+            // console.log("this.state.form ", this.state.form)
         }).catch(error => { console.log(error) })
+    }
+
+    async downloadFileApi() {
+        const cloudfiles = await AsyncStorage.getItem("cloudfiles") || "[]";
+        const hashtable = JSON.parse(cloudfiles)
+
+        const [formData] = hashtable.filter(fData => fData.archivefileName === this.state.selectedItem?.name) || []
+
+        console.log(formData)
+        if (formData?.id) {
+
+            // const { dirs } = RNFetchBlob.fs;
+            // console.log(dirs)
+
+            // ReactNativeBlobUtil.config({
+            //     fileCache: true
+            // })
+            //     .fetch('post', 'localhost:2021/file/download', formData)
+            //     .then((res) => {
+            //         console.log('The file saved to ', res.path());
+            //     })
+            //     .catch((e) => {
+            //         console.log(e)
+            //     });
+
+            axios.post("/file/download", formData, { responseType: 'blob' }).then((response) => {
+
+                console.log(" --------------- ", (response.data instanceof Blob))
+                console.log(response.headers)
+                console.log(response.data)
+
+                const fr = new FileReader();
+                fr.onload = async () => {
+                    const fileUri = `${downloadDir}/${formData.filename}`;
+                    await FileSystem.writeAsStringAsync(fileUri, fr.result.split(',')[1], { encoding: FileSystem.EncodingType.Base64 });
+                    // Sharing.shareAsync(fileUri);
+                };
+                fr.readAsDataURL(response.data);
+            }).catch(error => { console.log(error) })
+        } else {
+            console.log("file not found")
+        }
     }
 
     onChangeInText(inputValue) {
@@ -84,7 +130,7 @@ class CloudDirectory extends Component {
             transparent={true}
             visible={this.state.modalVisible} // this.state.modalVisible
             onRequestClose={() => {
-                console.log('Modal has been closed.');
+                // console.log('Modal has been closed.');
                 this.setState({ modalVisible: false })
             }}>
             <TouchableOpacity style={styles.centeredView} onPressIn={() => { this.setState({ modalVisible: false, renameOptionOn: false, newFileName: "" }) }}>
@@ -97,7 +143,7 @@ class CloudDirectory extends Component {
                                 <TextInput autoFocus style={{ fontSize: 18, textAlign: "center", paddingBottom: 10 }}
                                     numberOfLines={2} value={this.state.newFileName}
                                     onChange={(inputValue) => {
-                                        console.log(inputValue)
+                                        // console.log(inputValue)
                                         this.setState({
                                             newFileName: inputValue.nativeEvent.text.toString()
                                         })
@@ -110,7 +156,7 @@ class CloudDirectory extends Component {
                                         currentDir.pop()
                                         const toFile = currentDir.join("/") + "/" + this.state.newFileName.replace(" ", "%20")
                                         const options = { from: this.state.selectedItem?.uri, to: toFile }
-                                        console.log(options)
+                                        // console.log(options)
                                         FileSystem.moveAsync(options)
                                         this.setState({ modalVisible: false, renameOptionOn: false, newFileName: "" })
                                         this.props.getDirectoryInfo(this.state.currentPath)
@@ -136,7 +182,7 @@ class CloudDirectory extends Component {
 
                     {this.state.selectedItem.isDirectory ? null :
                         <TouchableOpacity style={styles.optionButtons} onPress={() => {
-                            this.setState({ renameOptionOn: true, newFileName: this.state.selectedItem?.name?.trim().toString() })
+                            this.downloadFileApi()
                         }} ><Text style={{ fontSize: 17, textAlign: "center" }}>Download</Text></TouchableOpacity>
                     }
                     {/* {this.state.selectedItem.isDirectory ? null :
@@ -144,6 +190,10 @@ class CloudDirectory extends Component {
                             this.setState({ renameOptionOn: true, newFileName: this.state.selectedItem?.name?.trim().toString() })
                         }} ><Text style={{ fontSize: 17, textAlign: "center" }}>Rename</Text></TouchableOpacity>
                     } */}
+
+                    <TouchableOpacity style={styles.optionButtons}
+                        onPress={() => { Sharing.shareAsync(this.state.selectedItem?.uri) }}
+                    ><Text style={{ fontSize: 17, textAlign: "center" }}>Share</Text></TouchableOpacity>
 
                     <TouchableOpacity style={styles.optionButtons}
                         onPress={() => { this.setState({ modalVisible: false, moreInfoModalVisible: true }) }}
@@ -166,7 +216,7 @@ class CloudDirectory extends Component {
             transparent={true}
             visible={this.state.moreInfoModalVisible} // this.state.modalVisible
             onRequestClose={() => {
-                console.log('Modal has been closed.');
+                // console.log('Modal has been closed.');
                 this.setState({ moreInfoModalVisible: false })
             }} style={{ backgroundColor: danger }}>
             <TouchableOpacity style={styles.centeredView} onPressIn={() => { this.setState({ moreInfoModalVisible: false }) }}>
@@ -229,7 +279,10 @@ class CloudDirectory extends Component {
                                     this.props.getDirectoryInfo(item.uri)
                                 }
                             }}
-                            onLongPress={() => { if (item.name !== "Go Back") this.setState({ modalVisible: true, selectedItem: item }) }}>
+                            onLongPress={() => {
+                                this.setState({ selectedItem: item, currentPath: item.uri, modalVisible: true })
+                                if (item.name !== "Go Back") this.setState({ modalVisible: true, selectedItem: item })
+                            }}>
                             <View style={{ flex: 1 }}>{this.generateIcon(item)}</View>
                             <Text style={{ flex: 0.4, height: 20, width: 65, textAlign: "center" }} adjustsFontSizeToFit={false} numberOfLines={2}
                             >{item?.name?.trim()}</Text>
