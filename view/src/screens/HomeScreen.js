@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, StatusBar } from 'react-native';
-import { Avatar } from 'react-native-paper';
+import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import { Avatar, Snackbar } from 'react-native-paper'
 
 import * as Animatable from 'react-native-animatable';
 import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -20,11 +20,13 @@ class HomeScreen extends Component {
     constructor (props) {
         super(props);
         this.state = {
+            onLoading: true,
             color: logocolor,
             internetIcon: "wifi",
             uploadIcon: "cloud-upload",
             internetIconColors: { disconnected: danger, warning: warning, connected: success },
-            intervalID: ""
+            intervalID: "",
+            snackbarVisible: false
         };
     }
 
@@ -61,7 +63,12 @@ class HomeScreen extends Component {
 
     }
 
+    onDownload() {
+        this.setState({ snackbarVisible: true, snackbarValue: "File downloaded successfully. saved to Download folder." })
+    }
+
     async loadApi() {
+        this.setState({ onLoading: true })
         // const userId = await SecureStore.getItemAsync("user_id");
         const userId = await AsyncStorage.getItem("user_id");
         axios.get("/user/" + userId).then((response) => {
@@ -105,10 +112,15 @@ class HomeScreen extends Component {
                 </View> */}
 
                 <View style={{ flex: 10, borderTopLeftRadius: 30, borderTopRightRadius: 30, overflow: "hidden" }}>
-                    <CloudDirectory />
+                    <CloudDirectory onDownload={this.onDownload.bind(this)} />
                 </View>
 
-
+                <Snackbar
+                    visible={this.state.snackbarVisible}
+                    onDismiss={() => { this.setState({ snackbarVisible: false }) }}
+                    duration={2000}>
+                    {this.state.snackbarValue}
+                </Snackbar>
             </View >
         );
     }

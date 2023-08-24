@@ -1,17 +1,17 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, TextInput, View, FlatList, TouchableOpacity, Dimensions } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import moment from 'moment'
+import { Snackbar } from 'react-native-paper'
 
 import * as DocumentPicker from 'expo-document-picker';
-
 
 import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import DocumentList from "../components/DocumentList";
 
-import { babypowder, background, oxfordblue, uploadiconbg, uploadicontext } from "../../colorpalette"
+import { babypowder, background, oxfordblue, uploadiconbg, uploadicontext, white } from "../../colorpalette"
 
 const cacheDir = FileSystem.cacheDirectory + "securecloud"
 
@@ -25,12 +25,14 @@ class VaultScreen extends Component {
         super(props);
         this.state = {
             directory: [],
+            onLoading: true,
             uploadIcon: "cloud-upload",
             currentPath: cacheDir,
             reloadPage: 0,
             reloadDocumentView: true,
             isRootDir: true,
-            refreshPage: 0
+            refreshPage: 0,
+            snackbarVisible: false
         };
     }
 
@@ -60,7 +62,7 @@ class VaultScreen extends Component {
         console.log()
         console.log()
         console.log()
-        this.setState({ reloadDocumentView: false })
+        this.setState({ onLoading: true, reloadDocumentView: false })
         console.log("path - ", path)
         console.log("cacheDir - ", cacheDir)
         // const fileDir = path ? cacheDir + path : cacheDir
@@ -125,7 +127,7 @@ class VaultScreen extends Component {
             isRootDir
         })
 
-        this.setState({ reloadDocumentView: true })
+        this.setState({ onLoading: false, reloadDocumentView: true })
 
         // console.log("dirInfo - ", dirInfo)
         // dir.forEach(async (val) => {
@@ -158,6 +160,10 @@ class VaultScreen extends Component {
         }
     }
 
+    onUpload() {
+        this.setState({ snackbarVisible: true, snackbarValue: "File uploaded successfully. check history for details." })
+    }
+
     render() {
         return (
             <View style={styles.container}>
@@ -173,8 +179,18 @@ class VaultScreen extends Component {
                 </View>
                 <View style={{ flex: 1, borderTopLeftRadius: 30, borderTopRightRadius: 30, overflow: "hidden", backgroundColor: babypowder }}>
 
-                    {this.state.reloadDocumentView ? <DocumentList isRootDir={this.state.isRootDir} currentPath={this.state.currentPath} directory={this.state.directory} getDirectoryInfo={this.getDirectoryInfo.bind(this)} /> : null}
+                    {this.state.reloadDocumentView ? <DocumentList isRootDir={this.state.isRootDir} currentPath={this.state.currentPath} directory={this.state.directory} getDirectoryInfo={this.getDirectoryInfo.bind(this)} onUpload={this.onUpload.bind(this)} /> : null}
                 </View>
+                <Snackbar
+                    visible={this.state.snackbarVisible}
+                    onDismiss={() => { this.setState({ snackbarVisible: false }) }}
+                    duration={2000}>
+                    {this.state.snackbarValue}
+                </Snackbar>
+
+                {this.state.onLoading ? <View style={{ flex: 1, height: "100%", width: "100%", position: "absolute", backgroundColor: babypowder, justifyContent: "center", alignContent: "center" }}>
+                    <ActivityIndicator size="large" />
+                </View> : null}
             </View>
         );
     }

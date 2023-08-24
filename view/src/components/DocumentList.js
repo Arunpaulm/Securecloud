@@ -39,7 +39,6 @@ class DocumentList extends Component {
         };
     }
 
-
     componentDidMount() {
 
         // console.log("---------------")
@@ -179,6 +178,7 @@ class DocumentList extends Component {
                 }
             })
             await AsyncStorage.setItem("cloudfiles", JSON.stringify(hashtable));
+            this.props.onUpload()
         }).catch(error => { console.log(error) })
     }
 

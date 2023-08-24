@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, TextInput, View, FlatList, TouchableOpacity, Dimensions, Modal, Alert, TouchableWithoutFeedback } from 'react-native';
+import { StyleSheet, Text, TextInput, View, FlatList, TouchableOpacity, Dimensions, Modal, ActivityIndicator } from 'react-native';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -9,7 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import axios from "../api/index"
 
-import { background, filecolor, searchbarbg, searchicon, fileoptionsborder, black, fileoptionsbg, danger } from "../../colorpalette"
+import { background, filecolor, searchbarbg, searchicon, fileoptionsborder, black, fileoptionsbg, danger, babypowder } from "../../colorpalette"
 
 const SCREENWIDTH = Dimensions.get('window').width;
 const SCREEHEIGHT = Dimensions.get('window').height;
@@ -60,11 +60,13 @@ class CloudDirectory extends Component {
     }
 
     async loadDirApi() {
+        this.setState({ onLoading: true })
         axios.get("/file").then((response) => {
             const field = { directory: response.data?.data || {}, directorydisplay: response.data?.data || {} }
             // console.log("field before", field)
             this.setState(field)
             // console.log("this.state.form ", this.state.form)
+            this.setState({ onLoading: false })
         }).catch(error => { console.log(error) })
     }
 
@@ -76,34 +78,19 @@ class CloudDirectory extends Component {
 
         console.log(formData)
         if (formData?.id) {
-
-            // const { dirs } = RNFetchBlob.fs;
-            // console.log(dirs)
-
-            // ReactNativeBlobUtil.config({
-            //     fileCache: true
-            // })
-            //     .fetch('post', 'localhost:2021/file/download', formData)
-            //     .then((res) => {
-            //         console.log('The file saved to ', res.path());
-            //     })
-            //     .catch((e) => {
-            //         console.log(e)
-            //     });
-
             axios.post("/file/download", formData, { responseType: 'blob' }).then((response) => {
 
-                console.log(" --------------- ", (response.data instanceof Blob))
-                console.log(response.headers)
-                console.log(response.data)
+                // console.log(" --------------- ", (response.data instanceof Blob))
+                // console.log(response.headers)
+                // console.log(response.data)
 
                 const fr = new FileReader();
                 fr.onload = async () => {
                     const fileUri = `${downloadDir}/${formData.filename}`;
                     await FileSystem.writeAsStringAsync(fileUri, fr.result.split(',')[1], { encoding: FileSystem.EncodingType.Base64 });
-                    // Sharing.shareAsync(fileUri);
                 };
                 fr.readAsDataURL(response.data);
+                this.props.onDownload()
             }).catch(error => { console.log(error) })
         } else {
             console.log("file not found")
@@ -291,6 +278,10 @@ class CloudDirectory extends Component {
                         numColumns={4}
                     />
                 </View>
+
+                {this.state.onLoading ? <View style={{ flex: 1, height: "100%", width: "100%", position: "absolute", backgroundColor: babypowder, justifyContent: "center", alignContent: "center" }}>
+                    <ActivityIndicator size="large" />
+                </View> : null}
 
                 {this.optionsModel()}
                 {this.getInfoModel()}
