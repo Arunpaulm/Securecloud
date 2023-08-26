@@ -1,6 +1,7 @@
 const { dbConnect, sequelize, DataTypes } = require('./index')
 const usersModel = require('./model/users')
 const roleModel = require('./model/role')
+const logsModel = require('./model/logs')
 
 dbConnect()
 

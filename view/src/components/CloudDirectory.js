@@ -119,7 +119,8 @@ class CloudDirectory extends Component {
             console.log("docId - ", docId)
             const documentDetails = JSON.parse(cloudfiles).filter(file => file.id === docId).pop()
 
-            console.log("documentDetails - ", documentDetails.key)
+            console.log("documentDetails - ", documentDetails)
+            console.log("key - ", documentDetails.key)
             const result = await Share.share({ message: documentDetails.key });
             this.setState({ modalVisible: false })
             if (result.action === Share.sharedAction) {
