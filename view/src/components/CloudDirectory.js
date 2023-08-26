@@ -292,7 +292,7 @@ class CloudDirectory extends Component {
                         keyExtractor={(item) => item?.id?.toString()}
                         refreshing={this.state.isRefreshing}
                         onRefresh={() => this.loadDirApi()}
-                        renderItem={({ item, index }) => (<TouchableOpacity style={{ height: 130, margin: 18, paddingVertical: 6, justifyContent: "center", alignItems: "center" }}
+                        renderItem={({ item, index }) => (<TouchableOpacity style={{ height: 150, justifyContent: "center", alignItems: "center" }}
                             onPress={() => {
                                 if (!item.isDirectory) {
                                     this.setState({ selectedItem: item, currentPath: item.uri, modalVisible: true })
@@ -306,10 +306,8 @@ class CloudDirectory extends Component {
                                 this.setState({ selectedItem: item, currentPath: item.uri, modalVisible: true })
                                 if (item.name !== "Go Back") this.setState({ modalVisible: true, selectedItem: item })
                             }}>
-                            <View style={{ flex: 1 }}>{this.generateIcon(item)}</View>
-                            <Text style={{ flex: 0.4, height: 20, width: 65, textAlign: "center" }} adjustsFontSizeToFit={false}
-                            // numberOfLines={2}
-                            >{item?.name?.trim()}</Text>
+                            <View style={{ flex: 6, margin: 18 }}>{this.generateIcon(item)}</View>
+                            <Text style={{ flex: 4, width: 90, textAlign: "center" }} adjustsFontSizeToFit={false} numberOfLines={2} >{item?.name?.trim()}</Text>
                         </TouchableOpacity>
                         )}
                         numColumns={4}

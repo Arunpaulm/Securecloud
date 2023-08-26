@@ -363,7 +363,7 @@ class DocumentList extends Component {
                         keyExtractor={(item) => item?.id?.toString()}
                         refreshing={this.state.isRefreshing}
                         onRefresh={() => this.props.getDirectoryInfo(this.state.currentPath)}
-                        renderItem={({ item, index }) => (<TouchableOpacity style={{ height: 130, margin: 18, paddingVertical: 6, justifyContent: "center", alignItems: "center" }}
+                        renderItem={({ item, index }) => (<TouchableOpacity style={{ height: 150, justifyContent: "center", alignItems: "center" }}
                             onPress={() => {
                                 if (!item.isDirectory) {
                                     Sharing.shareAsync(item.uri)
@@ -373,9 +373,8 @@ class DocumentList extends Component {
                                 }
                             }}
                             onLongPress={() => { if (item.name !== "Go Back") this.setState({ modalVisible: true, selectedItem: item }) }}>
-                            <View style={{ flex: 1 }}>{this.generateIcon(item)}</View>
-                            <Text style={{ flex: 0.4, height: 20, width: 65, textAlign: "center" }} adjustsFontSizeToFit={false} numberOfLines={2}
-                            >{item?.name?.trim()}</Text>
+                            <View style={{ flex: 6, margin: 18 }}>{this.generateIcon(item)}</View>
+                            <Text style={{ flex: 4, width: 100, textAlign: "center" }} adjustsFontSizeToFit={false} numberOfLines={2} >{item?.name?.trim()}</Text>
                         </TouchableOpacity>
                         )}
                         numColumns={4}
