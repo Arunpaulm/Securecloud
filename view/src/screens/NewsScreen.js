@@ -7,8 +7,10 @@ import * as WebBrowser from 'expo-web-browser';
 
 import axios from '../api/index'
 
-import { babypowder, success } from "../../colorpalette"
+import { babypowder, success, white } from "../../colorpalette"
 import { FlatList } from "react-native-gesture-handler";
+import { grey } from "../../colorpalette";
+import { oxfordblue } from "../../colorpalette";
 
 Ionicons.loadFont();
 
@@ -48,7 +50,7 @@ class NewsScreen extends Component {
                     refreshing={this.state.isRefreshing}
                     onRefresh={() => this.loadApi()}
                     renderItem={({ item, index }) => (
-                        <TouchableOpacity style={{ flex: 1, backgroundColor: "#fff", borderWidth: 1, borderColor: "#ddd" }}
+                        <TouchableOpacity style={{ flex: 1, backgroundColor: white, borderWidth: 1, borderColor: oxfordblue }}
                             onPress={async () => {
                                 let result = await WebBrowser.openBrowserAsync(item.url);
                             }}>
@@ -57,16 +59,17 @@ class NewsScreen extends Component {
                                 key={"log list" + index}
                                 title={item.title}
                                 titleNumberOfLines={3}
+                                titleStyle={{ color: oxfordblue }}
                                 description={
                                     <View style={{ padding: 5 }}>
                                         <Text style={{ paddingTop: 15 }}>Source: {item.source.Name}</Text>
-                                        <Text style={{ paddingTop: 5 }}>Upload on : {moment(item.publishedAt).format("DD/MM/YYYY hh:mm:ss a")}</Text>
+                                        <Text style={{ paddingTop: 5 }}>Published on: {moment(item.publishedAt).format("DD/MM/YYYY hh:mm:ss a")}</Text>
 
-                                        <Text style={{ paddingTop: 15, alignSelf: "center", fontSize: 10 }}>click to view</Text>
+                                        <Text style={{ paddingTop: 15, paddingLeft: 10, alignSelf: "center", fontSize: 10 }}>click to view</Text>
                                     </View>
                                 }
                                 left={props => {
-                                    return <Ionicons name="newspaper-outline" style={{ paddingVertical: 30, paddingLeft: 10 }} size={30} />
+                                    return <Ionicons name="newspaper-outline" style={{ paddingVertical: 30, paddingLeft: 10 }} size={50} />
                                 }}
                             />
                         </TouchableOpacity>
