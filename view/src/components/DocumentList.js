@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, TextInput, View, FlatList, TouchableOpacity, Dimensions, Modal } from 'react-native';
+import { StyleSheet, Text, TextInput, View, FlatList, TouchableOpacity, Dimensions, Modal, ActivityIndicator } from 'react-native';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import * as mime from 'react-native-mime-types';
@@ -10,7 +10,7 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import Ionicons from "react-native-vector-icons/Ionicons";
 
 import axios from "../api/index"
-import { background, filecolor, searchbarbg, searchicon, fileoptionsborder, black, fileoptionsbg, danger } from "../../colorpalette"
+import { background, filecolor, searchbarbg, searchicon, fileoptionsborder, black, fileoptionsbg, danger, babypowder } from "../../colorpalette"
 
 
 const SCREENWIDTH = Dimensions.get('window').width;
@@ -24,6 +24,7 @@ class DocumentList extends Component {
     constructor (props) {
         super(props);
         this.state = {
+            onLoading: false,
             placeholder: "Search",
             searchTextBoxValue: "",
             directorydisplay: this.props?.directory || [],
@@ -179,6 +180,7 @@ class DocumentList extends Component {
             })
             await AsyncStorage.setItem("cloudfiles", JSON.stringify(hashtable));
             this.props.onUpload()
+            this.setState({ modalVisible: false })
         }).catch(error => { console.log(error) })
     }
 
@@ -355,6 +357,9 @@ class DocumentList extends Component {
 
                 {this.optionsModel()}
                 {this.getInfoModel()}
+                {this.state.onLoading ? <View style={{ flex: 1, height: "100%", width: "100%", position: "absolute", backgroundColor: babypowder, justifyContent: "center", alignContent: "center" }}>
+                    <ActivityIndicator size="large" />
+                </View> : null}
             </View >
         );
     }

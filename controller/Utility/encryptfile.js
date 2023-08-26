@@ -46,13 +46,13 @@ async function encryptFile(file) {
  * 
  * @param {*} filename 
  */
-async function mainEncryptfile(filename) {
+async function mainEncryptfile({ filename, userId }) {
     console.log("called")
     const encryptedFile = await encryptFile(path.join(bucket, "cache", filename.filename))
     console.log("encryptedFile - ", encryptedFile)
     const data = { ...filename, content: encryptedFile.toString("base64") }
-    fs.writeFileSync(path.join(bucket, filename.filename) + ".arc", JSON.stringify(data, null, 1), { flag: 'w+' })
+    fs.writeFileSync(path.join(bucket, userId, filename.filename) + ".arc", JSON.stringify(data, null, 1), { flag: 'w+' })
     parentPort.postMessage(key)
 }
 
-mainEncryptfile(workerData.filename)
+mainEncryptfile(workerData)

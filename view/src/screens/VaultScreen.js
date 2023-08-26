@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
 import * as FileSystem from 'expo-file-system';
 import moment from 'moment'
 import { Snackbar } from 'react-native-paper'
@@ -11,7 +11,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 
 import DocumentList from "../components/DocumentList";
 
-import { babypowder, background, oxfordblue, uploadiconbg, uploadicontext, white } from "../../colorpalette"
+import { babypowder, oxfordblue, uploadiconbg, uploadicontext } from "../../colorpalette"
 
 const cacheDir = FileSystem.cacheDirectory + "securecloud"
 
@@ -187,10 +187,6 @@ class VaultScreen extends Component {
                     duration={2000}>
                     {this.state.snackbarValue}
                 </Snackbar>
-
-                {this.state.onLoading ? <View style={{ flex: 1, height: "100%", width: "100%", position: "absolute", backgroundColor: babypowder, justifyContent: "center", alignContent: "center" }}>
-                    <ActivityIndicator size="large" />
-                </View> : null}
             </View>
         );
     }

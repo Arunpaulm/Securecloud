@@ -7,7 +7,6 @@ import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Ionicons from "react-native-vector-icons/Ionicons";
 // import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
 import CloudDirectory from "../components/CloudDirectory";
 import axios from "../api/index"
 

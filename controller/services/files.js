@@ -29,9 +29,9 @@ function getSize(size) {
  * 
  * @returns 
  */
-function readDir() {
+function readDir(userId) {
     return new Promise((resolve, reject) => {
-        fs.readdir(bucket, (err, files) => {
+        fs.readdir(path.join(bucket, userId), (err, files) => {
             if (err) {
                 console.log(err);
                 return reject(err)
@@ -78,14 +78,14 @@ function getFileStat(filePath, file) {
  * 
  * @returns 
  */
-function getDirInformation() {
+function getDirInformation(userId) {
     return new Promise(async (resolve, reject) => {
         const dirDetails = []
-        const files = await readDir()
+        const files = await readDir(userId)
 
         let id = 1
         for (const file of files) {
-            const filePath = path.join(bucket, file)
+            const filePath = path.join(bucket, userId, file)
             const fileData = await getFileStat(filePath, file)
             fileData.id = id
             dirDetails.push(fileData)
@@ -103,7 +103,8 @@ function getDirInformation() {
  * @param {*} res 
  */
 async function getFiles(req, res) {
-    getDirInformation().then(dirDetails => {
+    const userId = req.headers["x-api-key"]
+    getDirInformation(userId).then(dirDetails => {
         res.status(200).json({
             status: true,
             data: dirDetails,
@@ -118,10 +119,12 @@ async function getFiles(req, res) {
  */
 async function uploadFile(req, res) {
     try {
+        const userId = req.headers["x-api-key"]
+        console.log("userId - ", userId)
         let fstream;
         const encryptedKeys = []
         const processInThread = []
-
+        const allInputFiles = []
         req.pipe(req.busboy);
         req.busboy.on('file', function (fieldname, file, filename) {
 
@@ -133,12 +136,14 @@ async function uploadFile(req, res) {
             // console.log("Uploading: ", fieldname);
             // const [inputFileName, inputFileType] = filename?.filename?.split(".")
             const generatedFileName = [filename?.filename, "[" + fieldname + "]"].join("")
-            fstream = fs.createWriteStream(path.join(bucket, "cache", generatedFileName), { flags: "as+" });
+            const inputFile = path.join(bucket, "cache", generatedFileName)
+            allInputFiles.push(inputFile)
+            fstream = fs.createWriteStream(inputFile, { flags: "as+" });
             file.pipe(fstream);
             fstream.on('close', function () {
                 const spawnThread = new Promise((resolve, reject) => {
                     const worker = new Worker("./Utility/encryptfile.js", {
-                        workerData: { filename: { ...filename, filename: generatedFileName }, THREAD_COUNT },
+                        workerData: { filename: { ...filename, filename: generatedFileName }, THREAD_COUNT, userId },
                     });
 
                     worker.on("message", result => {
@@ -170,6 +175,13 @@ async function uploadFile(req, res) {
             .then(result => {
                 console.log("result - ", result)
                 console.log("encryptedKeys - ", encryptedKeys)
+                setTimeout(() => {
+                    allInputFiles.map(aIf => {
+                        fs.unlink(aIf, (err) => {
+                            console.log(err)
+                        })
+                    })
+                }, 2000)
                 res.status(200).json({
                     status: true,
                     message: "File created",
@@ -191,6 +203,7 @@ async function uploadFile(req, res) {
  */
 function downloadFile(req, res) {
     try {
+        const userId = req.headers["x-api-key"]
 
         if (!req.body?.filename) {
             res.status(404).send({
@@ -204,6 +217,7 @@ function downloadFile(req, res) {
         const worker = new Worker("./Utility/decryptfile.js", {
             workerData: {
                 ...req.body,
+                userId,
                 THREAD_COUNT
             },
         });
@@ -216,6 +230,11 @@ function downloadFile(req, res) {
             .then(() => {
                 const file = path.join(bucket, req.body?.filename)
                 res.download(file); // Set disposition and send it.
+                setTimeout(() => {
+                    fs.unlink(file, (err) => {
+                        console.log(err)
+                    })
+                }, 2000)
             })
             .catch(err => {
                 res.status(500).send({

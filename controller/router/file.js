@@ -2,11 +2,12 @@ const router = require('express').Router()
 const busboy = require('connect-busboy');
 const { getFiles, uploadFile, downloadFile } = require('../services/files')
 
-router.use(busboy())
+router
+    .use(busboy())
 
 router
     .route("/")
-    .get(getFiles);
+    .get(getFiles)
 
 router
     .route("/upload")

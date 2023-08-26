@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, TextInput, View, FlatList, TouchableOpacity, Dimensions, Modal, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, TextInput, View, FlatList, TouchableOpacity, Dimensions, Modal, Share, ActivityIndicator } from 'react-native';
 import * as Sharing from 'expo-sharing';
 import * as FileSystem from 'expo-file-system';
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
@@ -91,6 +91,7 @@ class CloudDirectory extends Component {
                 };
                 fr.readAsDataURL(response.data);
                 this.props.onDownload()
+                this.setState({ modalVisible: false })
             }).catch(error => { console.log(error) })
         } else {
             console.log("file not found")
@@ -108,6 +109,30 @@ class CloudDirectory extends Component {
             return <MaterialCommunityIcons style={styles.searchIcon} name={'folder'} size={71} color={filecolor} />
         } else {
             return <MaterialCommunityIcons style={styles.searchIcon} name={'archive-lock'} size={71} color={filecolor} />
+        }
+    }
+
+    async onShare() {
+        try {
+            const cloudfiles = await AsyncStorage.getItem("cloudfiles") || "[]";
+            const docId = this.state.selectedItem.name.replace(/.*\[(.*)\].*/, "$1")
+            console.log("docId - ", docId)
+            const documentDetails = JSON.parse(cloudfiles).filter(file => file.id === docId).pop()
+
+            console.log("documentDetails - ", documentDetails.key)
+            const result = await Share.share({ message: documentDetails.key });
+            this.setState({ modalVisible: false })
+            if (result.action === Share.sharedAction) {
+                if (result.activityType) {
+                    // shared with activity type of result.activityType
+                } else {
+                    // shared
+                }
+            } else if (result.action === Share.dismissedAction) {
+                // dismissed
+            }
+        } catch (error) {
+            console.log(error.message);
         }
     }
 
@@ -172,6 +197,7 @@ class CloudDirectory extends Component {
                             this.downloadFileApi()
                         }} ><Text style={{ fontSize: 17, textAlign: "center" }}>Download</Text></TouchableOpacity>
                     }
+
                     {/* {this.state.selectedItem.isDirectory ? null :
                         <TouchableOpacity style={styles.optionButtons} onPress={() => {
                             this.setState({ renameOptionOn: true, newFileName: this.state.selectedItem?.name?.trim().toString() })
@@ -179,8 +205,15 @@ class CloudDirectory extends Component {
                     } */}
 
                     <TouchableOpacity style={styles.optionButtons}
-                        onPress={() => { Sharing.shareAsync(this.state.selectedItem?.uri) }}
-                    ><Text style={{ fontSize: 17, textAlign: "center" }}>Share</Text></TouchableOpacity>
+                        onPress={() => {
+                            Sharing.shareAsync(this.state.selectedItem?.uri)
+                            this.setState({ modalVisible: false })
+                        }}
+                    ><Text style={{ fontSize: 17, textAlign: "center" }}>Share Encrypted File</Text></TouchableOpacity>
+
+                    <TouchableOpacity style={styles.optionButtons}
+                        onPress={this.onShare.bind(this)}
+                    ><Text style={{ fontSize: 17, textAlign: "center" }}>Share Decryption key</Text></TouchableOpacity>
 
                     <TouchableOpacity style={styles.optionButtons}
                         onPress={() => { this.setState({ modalVisible: false, moreInfoModalVisible: true }) }}
@@ -271,7 +304,8 @@ class CloudDirectory extends Component {
                                 if (item.name !== "Go Back") this.setState({ modalVisible: true, selectedItem: item })
                             }}>
                             <View style={{ flex: 1 }}>{this.generateIcon(item)}</View>
-                            <Text style={{ flex: 0.4, height: 20, width: 65, textAlign: "center" }} adjustsFontSizeToFit={false} numberOfLines={2}
+                            <Text style={{ flex: 0.4, height: 20, width: 65, textAlign: "center" }} adjustsFontSizeToFit={false}
+                            // numberOfLines={2}
                             >{item?.name?.trim()}</Text>
                         </TouchableOpacity>
                         )}

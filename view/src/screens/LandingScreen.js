@@ -67,13 +67,14 @@ class LandingScreen extends Component {
                             borderTopRightRadius: 30
                         }
                     })}>
-                    <Tab.Screen name="Home" component={HomeScreen} options={{ headerShown: false, headerBackTitle: "Back" }} />
+                    <Tab.Screen name="Home" component={HomeScreen} options={{ headerShown: false, headerBackTitle: "Back", unmountOnBlur: true }} />
                     {Platform.OS === "web" ? null : <Tab.Screen name="Vault" component={VaultScreen}
                         options={{
                             title: "Private Vault",
                             headerStyle: { backgroundColor: oxfordblue, borderBottomColor: 0, elevation: 0 },
                             headerTintColor: babypowder,
                             headerTitleStyle: { fontWeight: 'bold' },
+                            unmountOnBlur: true
                         }} />}
                     <Tab.Screen name="Notification" component={NotificationScreen} options={{
                         title: "History", headerStyle: { backgroundColor: oxfordblue },
