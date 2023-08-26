@@ -12,6 +12,7 @@ import UsersScreen from './UsersScreen';
 import VaultScreen from './VaultScreen';
 import HomeScreen from './HomeScreen';
 import HistoryScreen from './HistoryScreen';
+import NewsScreen from './NewsScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // import * as SecureStore from 'expo-secure-store';
 
@@ -50,6 +51,8 @@ class LandingScreen extends Component {
                                     return <MIcon name={'history'} size={size} color={focused ? tabactive : tabinactive} />
                                 else
                                     return <MIcon name={'history'} size={size} color={focused ? tabactive : tabinactive} />
+                            } else if (route.name === 'News') {
+                                iconName = focused ? 'newspaper' : 'newspaper-outline';
                             } else if (route.name === 'Settings') {
                                 iconName = focused ? 'settings' : 'settings-outline';
                             } else if (route.name === 'Users') {
@@ -83,6 +86,12 @@ class LandingScreen extends Component {
                         }} />}
                     <Tab.Screen name="History" component={HistoryScreen} options={{
                         title: "History", headerStyle: { backgroundColor: oxfordblue },
+                        headerTintColor: babypowder,
+                        headerTitleStyle: { fontWeight: 'bold' },
+                        unmountOnBlur: true
+                    }} />
+                    <Tab.Screen name="News" component={NewsScreen} options={{
+                        title: "News", headerStyle: { backgroundColor: oxfordblue },
                         headerTintColor: babypowder,
                         headerTitleStyle: { fontWeight: 'bold' },
                         unmountOnBlur: true

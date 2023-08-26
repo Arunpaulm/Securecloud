@@ -1,9 +1,9 @@
 import React, { Component } from "react";
-import { StyleSheet, View, Text, Dimensions, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, Dimensions, ActivityIndicator, TouchableOpacity } from 'react-native';
 import Ionicons from "react-native-vector-icons/Ionicons";
 import moment from "moment"
 import { List, ProgressBar, MD3Colors } from 'react-native-paper';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import * as WebBrowser from 'expo-web-browser';
 
 import axios from '../api/index'
 
@@ -14,13 +14,11 @@ Ionicons.loadFont();
 
 const SCREENWIDTH = Dimensions.get('window').width;
 const SCREEHEIGHT = Dimensions.get('window').height;
-class HistoryScreen extends Component {
+class NewsScreen extends Component {
     constructor (props) {
         super(props);
         this.state = {
             onLoading: true,
-            logs: []
-
         };
     }
 
@@ -30,53 +28,48 @@ class HistoryScreen extends Component {
 
     async loadApi() {
         this.setState({ isRefreshing: true, onLoading: true })
-        axios.get("/log").then((response) => {
+        axios.get("/news").then((response) => {
             console.log(response.data)
-            const field = { logs: response.data?.logs || {} }
-            console.log("field before", field)
+            const field = { articles: response.data?.articles, isRefreshing: false, onLoading: false }
             this.setState(field)
-            this.setState({ isRefreshing: false, onLoading: false })
         }).catch(error => { console.log(error) })
     }
 
 
     componentDidUpdate() { }
+
     render() {
         return (
             <View style={styles.container}>
-
                 <FlatList
                     style={{ flex: 1, width: SCREENWIDTH }}
-                    data={this.state.logs}
-                    keyExtractor={(item) => item?.id?.toString()}
+                    data={this.state.articles}
+                    keyExtractor={(item) => item?.title?.toString()}
                     refreshing={this.state.isRefreshing}
                     onRefresh={() => this.loadApi()}
                     renderItem={({ item, index }) => (
-                        <View style={{ flex: 1, backgroundColor: "#fff", borderWidth: 1, borderColor: "#ddd" }} key={"log list view" + index}>
+                        <TouchableOpacity style={{ flex: 1, backgroundColor: "#fff", borderWidth: 1, borderColor: "#ddd" }}
+                            onPress={async () => {
+                                let result = await WebBrowser.openBrowserAsync(item.url);
+                            }}>
                             <List.Item
+                                style={{ height: 150 }}
                                 key={"log list" + index}
-                                title={item.filename}
+                                title={item.title}
+                                titleNumberOfLines={3}
                                 description={
-                                    <View style={{ height: 50, padding: 5 }}>
-                                        <Text style={{}}>Size: {item.size}</Text>
-                                        {item.action === "upload" ?
-                                            <Text style={{}}>Upload on : {moment(item.createdAt).format("DD/MM/YYYY hh:mm:ss a")}</Text> :
-                                            <Text style={{}}>Download on : {moment(item.createdAt).format("DD/MM/YYYY hh:mm:ss a")}</Text>
-                                        }
+                                    <View style={{ padding: 5 }}>
+                                        <Text style={{ paddingTop: 15 }}>Source: {item.source.Name}</Text>
+                                        <Text style={{ paddingTop: 5 }}>Upload on : {moment(item.publishedAt).format("DD/MM/YYYY hh:mm:ss a")}</Text>
 
-                                        <Text style={{}}>Status: Completed</Text>
-                                        <ProgressBar style={{ position: "absolute", top: 8, left: -60, width: 417 }} progress={5} color={success} />
+                                        <Text style={{ paddingTop: 15, alignSelf: "center", fontSize: 10 }}>click to view</Text>
                                     </View>
                                 }
                                 left={props => {
-                                    if (item.action === "upload") {
-                                        return <Ionicons name="cloud-upload-outline" style={{ paddingVertical: 20, paddingLeft: 20 }} size={25} />
-                                    } else if (item.action === "download") {
-                                        return <Ionicons name="cloud-download-outline" style={{ paddingVertical: 20, paddingLeft: 20 }} size={25} />
-                                    }
+                                    return <Ionicons name="newspaper-outline" style={{ paddingVertical: 30, paddingLeft: 10 }} size={30} />
                                 }}
                             />
-                        </View>
+                        </TouchableOpacity>
                     )}
                     ListEmptyComponent={() => (<View style={{ flex: 1, justifyContent: "center", alignItems: "center", paddingTop: 20 }}><Text>No History found</Text></View>)}
                     numColumns={1}
@@ -98,5 +91,4 @@ const styles = StyleSheet.create({
 
 })
 
-
-export default HistoryScreen;
+export default NewsScreen;
