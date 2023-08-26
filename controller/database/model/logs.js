@@ -16,8 +16,7 @@ const logsModel = sequelize.define("logs", {
         }
     },
     file_id: {
-        type: DataTypes.UUID,
-        unique: true
+        type: DataTypes.UUID
     },
     filename: {
         type: DataTypes.STRING,
@@ -35,6 +34,12 @@ const logsModel = sequelize.define("logs", {
         type: DataTypes.STRING
     },
     encoding: {
+        type: DataTypes.STRING,
+    },
+    status: {
+        type: DataTypes.BOOLEAN
+    },
+    action: {
         type: DataTypes.STRING,
     },
     createdAt: {

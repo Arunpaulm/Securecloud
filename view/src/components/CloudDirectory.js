@@ -59,6 +59,12 @@ class CloudDirectory extends Component {
         // console.log(this.state.newFileName)
     }
 
+    createLog({ id: fileId, filename, size, status = true, action, archivefileName, mimeType, encoding }) {
+        axios.post("/log", { fileId, filename, size, status, action, archivefileName, mimeType, encoding }).then((response) => {
+
+        }).catch(error => { console.log(error) })
+    }
+
     async loadDirApi() {
         this.setState({ onLoading: true })
         axios.get("/file").then((response) => {
@@ -76,14 +82,10 @@ class CloudDirectory extends Component {
 
         const [formData] = hashtable.filter(fData => fData.archivefileName === this.state.selectedItem?.name) || []
 
-        console.log(formData)
+        console.log("formData - ", formData)
         if (formData?.id) {
             axios.post("/file/download", formData, { responseType: 'blob' }).then((response) => {
-
-                // console.log(" --------------- ", (response.data instanceof Blob))
-                // console.log(response.headers)
-                // console.log(response.data)
-
+                this.createLog({ ...formData, size: this.state.selectedItem.size, action: "download" })
                 const fr = new FileReader();
                 fr.onload = async () => {
                     const fileUri = `${downloadDir}/${formData.filename}`;

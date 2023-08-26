@@ -115,6 +115,12 @@ class DocumentList extends Component {
         // }
     }
 
+    createLog({ id: fileId, filename, size, status = true, action, archivefileName, mimeType, encoding }) {
+        axios.post("/log", { fileId, filename, size, status, action, archivefileName, mimeType, encoding }).then((response) => {
+
+        }).catch(error => { console.log(error) })
+    }
+
     async uploadFileDirApi() {
 
         const form = new FormData();
@@ -148,7 +154,26 @@ class DocumentList extends Component {
                     name: fileName
                 }
 
-                formData[formFileId] = { ...formFileContent, id: formFileId }
+                const decimals = 2
+                let size = fileDetail?.size
+
+                if (size !== undefined) {
+                    const convert = 1024
+                    const nearDeci = decimals < 0 ? 0 : decimals
+                    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB']
+
+                    const i = Math.floor(Math.log(size) / Math.log(convert))
+
+                    const sizeName = sizes[i]
+                    const sizeConvert = size / Math.pow(convert, i)
+                    const sizeConverted = parseFloat(sizeConvert).toFixed(nearDeci)
+
+                    size = `${sizeConverted} ${sizeName}`
+                } else {
+                    size = '0 B'
+                }
+
+                formData[formFileId] = { ...formFileContent, id: formFileId, size }
                 form.append(formFileId, formFileContent);
             }
         }
@@ -171,6 +196,8 @@ class DocumentList extends Component {
             hashtable.map(htt => { hashTableCF[htt.id] = htt.uri })
             response.data.encryptedKeys.map(enFiles => {
                 const formFileLocalData = formData[enFiles.id]
+                console.log("formFileLocalData - ", formFileLocalData)
+                this.createLog({ ...enFiles, size: formFileLocalData.size, action: "upload" })
                 if (hashTableCF[enFiles.id]) {
                     hashtable = hashtable.filter(fil => fil.id !== enFiles.id)
                     hashtable.push({ ...enFiles, uri: formFileLocalData?.uri })

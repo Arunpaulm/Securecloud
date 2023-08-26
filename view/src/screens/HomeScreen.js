@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, View, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { Avatar, Snackbar } from 'react-native-paper'
 
 import * as Animatable from 'react-native-animatable';

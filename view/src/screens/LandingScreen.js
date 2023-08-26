@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import Icon from "react-native-vector-icons/Ionicons";
+import MIcon from "react-native-vector-icons/MaterialCommunityIcons";
 // import { BlurView } from 'expo-blur';
 import { View, StyleSheet, Platform } from 'react-native';
 
@@ -10,7 +11,7 @@ import SettingScreen from './SettingScreen';
 import UsersScreen from './UsersScreen';
 import VaultScreen from './VaultScreen';
 import HomeScreen from './HomeScreen';
-import NotificationScreen from './NotificationScreen';
+import HistoryScreen from './HistoryScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // import * as SecureStore from 'expo-secure-store';
 
@@ -18,6 +19,7 @@ import { babypowder, black, blue, oxfordblue, tabactive, tabinactive } from "../
 
 const Tab = createBottomTabNavigator();
 Icon.loadFont();
+MIcon.loadFont();
 
 class LandingScreen extends Component {
     constructor (props) {
@@ -34,7 +36,7 @@ class LandingScreen extends Component {
         return (
             <View style={styles.container}>
                 <Tab.Navigator
-                    initialRouteName="Home"
+                    initialRouteName="History"
                     screenOptions={({ route }) => ({
                         tabBarIcon: ({ focused, color, size }) => {
                             let iconName;
@@ -43,8 +45,11 @@ class LandingScreen extends Component {
                                 iconName = focused ? 'home' : 'home-outline';
                             } else if (route.name === 'Vault') {
                                 iconName = focused ? 'lock-open' : 'lock-closed-outline';
-                            } else if (route.name === 'Notification') {
-                                iconName = focused ? 'notifications' : 'notifications-outline';
+                            } else if (route.name === 'History') {
+                                if (focused)
+                                    return <MIcon name={'history'} size={size} color={focused ? tabactive : tabinactive} />
+                                else
+                                    return <MIcon name={'history'} size={size} color={focused ? tabactive : tabinactive} />
                             } else if (route.name === 'Settings') {
                                 iconName = focused ? 'settings' : 'settings-outline';
                             } else if (route.name === 'Users') {
@@ -76,10 +81,11 @@ class LandingScreen extends Component {
                             headerTitleStyle: { fontWeight: 'bold' },
                             unmountOnBlur: true
                         }} />}
-                    <Tab.Screen name="Notification" component={NotificationScreen} options={{
+                    <Tab.Screen name="History" component={HistoryScreen} options={{
                         title: "History", headerStyle: { backgroundColor: oxfordblue },
                         headerTintColor: babypowder,
-                        headerTitleStyle: { fontWeight: 'bold' }
+                        headerTitleStyle: { fontWeight: 'bold' },
+                        unmountOnBlur: true
                     }} />
                     <Tab.Screen name="Users" component={UsersScreen} options={{
                         title: "All Users", headerStyle: { backgroundColor: oxfordblue },
@@ -92,7 +98,7 @@ class LandingScreen extends Component {
                         headerTitleStyle: { fontWeight: 'bold' }
                     }} />
                 </Tab.Navigator>
-            </View>
+            </View >
         );
     }
 }

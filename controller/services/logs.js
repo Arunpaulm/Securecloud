@@ -10,13 +10,18 @@ async function createLogs(req, res) {
     try {
         console.log(" create logs ")
         const userId = req.headers["x-api-key"]
-        const { fileId, filename, size, archivefileName, mimeType, encoding } = req.body;
+        const { fileId, filename, size, status, archivefileName, action, mimeType, encoding } = req.body;
+
+        console.log("userId - ", userId)
+        console.log("req.body - ", req.body)
 
         const Log = await LogsModel.create({
             file_id: fileId,
             user_id: userId,
             filename,
             size,
+            status,
+            action,
             archivefileName,
             mimeType,
             encoding
@@ -58,12 +63,12 @@ async function getAllLogs(req, res) {
         const limit = req.query.limit || 20;
         const skip = (page - 1) * limit;
 
-        const Logs = await LogsModel.findAll({ where: { user_id: userId }, limit, offset: skip });
+        const logs = await LogsModel.findAll({ where: { user_id: userId }, limit, offset: skip });
 
         res.status(200).json({
             status: true,
-            length: Logs.length,
-            Logs,
+            length: logs.length,
+            logs,
         });
     } catch (error) {
         res.status(500).json({
