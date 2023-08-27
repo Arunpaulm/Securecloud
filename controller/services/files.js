@@ -116,7 +116,7 @@ async function getFiles(req, res) {
     }).catch(err => { res.status(500).send(err) })
 }
 
-async function createAntiVirusReport({ id: fileId, userId, filename, avfileid, size, status }) {
+async function createAntiVirusReport({ id: fileId, userId, filename, avfileid, analysisId, size, status }) {
     const antiVirusModel = await AntiVirusModel
         .findOne({ where: { user_id: userId, file_id: fileId, } })
         .then(function (obj) {
@@ -125,6 +125,7 @@ async function createAntiVirusReport({ id: fileId, userId, filename, avfileid, s
                     file_id: fileId,
                     user_id: userId,
                     avfile_id: avfileid,
+                    analysisId,
                     filename,
                     size,
                     status
@@ -134,6 +135,7 @@ async function createAntiVirusReport({ id: fileId, userId, filename, avfileid, s
                     file_id: fileId,
                     user_id: userId,
                     avfile_id: avfileid,
+                    analysisId,
                     filename,
                     size,
                     status
@@ -162,14 +164,14 @@ function scanFile(inputFile, keyData) {
     axiosInstance.post("/files", form, {
         headers: { ...form.getHeaders() }
     }).then(filesresponse => {
-        const fileId = filesresponse.data?.data?.id
-        axiosInstance.get("/analyses/" + fileId).then(analysesresponse => {
+        const analysisId = filesresponse.data?.data?.id
+        axiosInstance.get("/analyses/" + analysisId).then(analysesresponse => {
             console.log("analysesresponse - ", analysesresponse.data)
             const size = analysesresponse.data?.meta?.file_info?.size
             const sha256 = analysesresponse.data?.meta?.file_info?.sha256
 
             const status = analysesresponse.data?.data?.attributes?.status
-            const payload = { ...keyData, size, avfileid: sha256, status }
+            const payload = { ...keyData, size, avfileid: sha256, analysisId, status }
             return createAntiVirusReport(payload)
 
         }).catch(anerr => {

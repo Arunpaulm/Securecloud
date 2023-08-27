@@ -21,6 +21,9 @@ const AntiVirusModel = sequelize.define("antivirus", {
     avfile_id: {
         type: DataTypes.STRING
     },
+    analysisId: {
+        type: DataTypes.STRING
+    },
     filename: {
         type: DataTypes.STRING,
         allowNull: false,

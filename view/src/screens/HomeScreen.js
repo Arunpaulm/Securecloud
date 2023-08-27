@@ -19,7 +19,6 @@ class HomeScreen extends Component {
     constructor (props) {
         super(props);
         this.state = {
-            onLoading: true,
             color: logocolor,
             internetIcon: "wifi",
             uploadIcon: "cloud-upload",

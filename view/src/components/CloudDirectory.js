@@ -6,10 +6,12 @@ import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityI
 import Ionicons from "react-native-vector-icons/Ionicons";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 // import ReactNativeBlobUtil from 'react-native-blob-util'
+import { DataTable } from 'react-native-paper';
+
 
 import axios from "../api/index"
 
-import { background, filecolor, searchbarbg, searchicon, fileoptionsborder, black, fileoptionsbg, danger, babypowder } from "../../colorpalette"
+import { background, filecolor, searchbarbg, searchicon, fileoptionsborder, black, fileoptionsbg, danger, babypowder, success } from "../../colorpalette"
 
 const SCREENWIDTH = Dimensions.get('window').width;
 const SCREEHEIGHT = Dimensions.get('window').height;
@@ -23,18 +25,21 @@ class CloudDirectory extends Component {
     constructor (props) {
         super(props);
         this.state = {
+            onLoading: false,
             placeholder: "Search",
             searchTextBoxValue: "",
             directorydisplay: this.props?.directory || [],
             directory: this.props?.directory || [],
             modalVisible: false,
+            securityModalVisible: false,
             moreInfoModalVisible: false,
             selectedItem: {},
             isRootDir: true,
             currentPath: '/',
             isRefreshing: false,
             newFileName: "",
-            renameOptionOn: false
+            renameOptionOn: false,
+            analysisReport: {}
         };
     }
 
@@ -139,6 +144,110 @@ class CloudDirectory extends Component {
         }
     }
 
+    getSecurityReportInfo() {
+        this.setState({ onLoading: true })
+        const fileId = this.state.selectedItem.name.replace(/.*\[(.*)\].*/, "$1")
+        console.log()
+        axios.get("/antivirus/" + fileId).then(response => {
+            this.setState({ securityModalVisible: true, modalVisible: false })
+            // console.log(" response - ", response)
+            const analysisReport = {
+
+                status: response.data?.data?.attributes?.status,
+                isSafe: response.data?.data?.attributes?.stats?.malicious === 0,
+                results: []
+            }
+
+            const results = response.data?.data?.attributes?.results
+
+            Object.keys(results).map((key) => {
+
+                const pLoad = {
+                    database: key,
+                    result: results[key].category
+                }
+
+                analysisReport.results.push(pLoad)
+            })
+
+            console.log("analysisReport - ", analysisReport)
+
+            this.setState({ analysisReport, onLoading: false })
+
+        })
+    }
+
+
+    getSecurityReportInfoModel() {
+        return <Modal
+            animationType="slide"
+            transparent={true}
+            visible={this.state.securityModalVisible} // this.state.modalVisible
+            onRequestClose={() => {
+                // console.log('Modal has been closed.');
+                // this.setState({ securityModalVisible: false })
+            }} style={{ backgroundColor: danger }}>
+            {/* <TouchableOpacity style={styles.centeredView} onPressIn={() => { this.setState({ securityModalVisible: false }) }}> */}
+            <View style={styles.centeredView} >
+                <View style={{ ...styles.modalView, flex: 0.7 }}>
+                    <TouchableOpacity style={{ alignSelf: "flex-end", padding: 4 }} onPress={() => { this.setState({ securityModalVisible: false }) }}><MaterialCommunityIcons name={'close'} size={30} color={danger} /></TouchableOpacity>
+                    <View style={{ flex: 0.2 }}>{this.generateIcon(this.state.selectedItem)}</View>
+                    <View style={{ flex: 0.2, ...styles.optionButtons }}>
+                        <Text style={{ fontSize: 18, textAlign: "center", paddingBottom: 10 }}
+                            adjustsFontSizeToFit={false}
+                            numberOfLines={2}
+                        >{this.state.selectedItem?.name?.trim()}</Text>
+                    </View>
+
+                    {this.state.analysisReport.status ? <Text style={{ flex: 0.1, fontSize: 17, textAlign: "left", padding: 4, fontWeight: 500 }}>Analysis : {this.state.analysisReport?.status?.toUpperCase()}</Text> :
+                        null}
+
+                    {this.state.analysisReport.isSafe ? <View style={{ flex: 0.1, flexDirection: "row", padding: 4, alignItems: "center", justifyContent: "center" }}>
+                        <Text style={{ fontSize: 17, textAlign: "left", paddingRight: 4, fontWeight: 500, color: success }}>Safe</Text>
+                        <MaterialCommunityIcons name={'marker-check'} size={30} color={success} />
+                    </View> :
+                        <View style={{ flex: 0.1, flexDirection: "row", padding: 4, alignItems: "center", justifyContent: "center" }}>
+                            <Text style={{ fontSize: 17, textAlign: "left", paddingRight: 4, color: danger }}>Thread found</Text>
+                            <MaterialCommunityIcons name={'bug'} size={30} color={danger} />
+                        </View>}
+
+                    <DataTable style={{ flex: 1 }}>
+                        <DataTable.Header >
+                            <DataTable.Title key={"Anti Virus Database"} style={{ flex: 0.7 }}>Anti Virus Database</DataTable.Title>
+                            <DataTable.Title key={"seperator"} style={{ flex: 0.1 }}></DataTable.Title>
+                            <DataTable.Title key={"Result"} style={{ flex: 0.4 }}>Result</DataTable.Title>
+                        </DataTable.Header>
+
+                        <FlatList
+                            style={{ flex: 1, width: 400 }}
+                            contentContainerStyle={{}}
+                            data={this.state.analysisReport?.results}
+                            keyExtractor={(item) => item?.database?.toString()}
+                            renderItem={({ item, index }) => (
+                                <DataTable.Row key={index}>
+                                    <DataTable.Cell key={index + "report-database"} style={{ flex: 0.5 }}>{item.database}</DataTable.Cell>
+                                    <DataTable.Cell key={index + "report-seperator"} style={{ flex: 0.1 }}>:</DataTable.Cell>
+                                    <DataTable.Cell key={index + "report-result"} style={{ flex: 0.4 }}>{item.result}</DataTable.Cell>
+                                </DataTable.Row>
+
+
+                                // <View style={{ flexDirection: "row" }}>
+                                //     <Text style={{ fontSize: 17, textAlign: "left", padding: 2 }}>{item.database}</Text>
+                                //     <Text style={{ fontSize: 17, textAlign: "center", padding: 2 }}> : </Text>
+                                //     <Text style={{ fontSize: 17, textAlign: "right", padding: 2 }}>{item.result}</Text>
+                                // </View>
+                            )
+                            }
+                            numColumns={1}
+                        />
+                    </DataTable>
+
+                </View>
+            </View>
+            {/* </TouchableOpacity> */}
+        </Modal >
+    }
+
     optionsModel() {
         return <Modal
             animationType="fade"
@@ -217,6 +326,10 @@ class CloudDirectory extends Component {
                     <TouchableOpacity style={styles.optionButtons}
                         onPress={this.onShare.bind(this)}
                     ><Text style={{ fontSize: 17, textAlign: "center" }}>Share Decryption key</Text></TouchableOpacity>
+
+                    <TouchableOpacity style={styles.optionButtons}
+                        onPress={this.getSecurityReportInfo.bind(this)}
+                    ><Text style={{ fontSize: 17, textAlign: "center" }}>View Security Report</Text></TouchableOpacity>
 
                     <TouchableOpacity style={styles.optionButtons}
                         onPress={() => { this.setState({ modalVisible: false, moreInfoModalVisible: true }) }}
@@ -320,6 +433,7 @@ class CloudDirectory extends Component {
 
                 {this.optionsModel()}
                 {this.getInfoModel()}
+                {this.getSecurityReportInfoModel()}
             </View >
         );
     }
@@ -384,6 +498,7 @@ const styles = StyleSheet.create({
         padding: 30
     },
     modalView: {
+        // flex: 1,
         // position: "absolute",
         // left: 10,
         // marginHorizontal: 30,

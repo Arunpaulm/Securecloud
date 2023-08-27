@@ -3,7 +3,7 @@ const axios = require("axios")
 const AntiVirusModel = require('../database/model/antivirus')
 
 
-function getAVreport(fileId) {
+function getAVreport(analysisId) {
     return new Promise((resolve, reject) => {
         const axiosInstance = axios.create({
             baseURL: process.env.ANTIVIRUSAPI,
@@ -17,7 +17,7 @@ function getAVreport(fileId) {
             }
         });
 
-        axiosInstance.get("/files/" + fileId).then(analysesresponse => {
+        axiosInstance.get("/analyses/" + analysisId).then(analysesresponse => {
             console.log("analysesresponse - ", analysesresponse.data)
             resolve(analysesresponse.data)
 
@@ -54,7 +54,7 @@ async function getAntiVirusReport(req, res) {
 
         console.log(AntiVirus)
 
-        const report = await getAVreport(AntiVirus.dataValues?.avfile_id)
+        const report = await getAVreport(AntiVirus.dataValues?.analysisId)
 
         res.status(200).json({
             status: true,

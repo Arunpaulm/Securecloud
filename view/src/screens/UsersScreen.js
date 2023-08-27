@@ -1,7 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, TextInput, View, Image, FlatList, TouchableOpacity, Alert, Modal } from 'react-native';
-import { DataTable } from 'react-native-paper';
-import { Snackbar } from 'react-native-paper';
+import { DataTable, Snackbar } from 'react-native-paper';
 
 import { ScrollView } from "react-native-gesture-handler";
 
@@ -141,7 +140,7 @@ const UsersScreen = (props) => {
                                         {
                                             [...Object.keys(clientList[0])
                                                 .map((listKey, index) => { if (allowedOuterTableHeadings.indexOf(listKey) > -1) return (<DataTable.Title key={index} style={{ flex: tableWidthFlex[index] }}><Text style={{ fontSize: 15 }}>{listKey?.toString()?.trim()?.toUpperCase()}</Text></DataTable.Title>) })
-                                                , <DataTable.Title key={"lastbutton"} style={{ flex: 0.8 }}> </DataTable.Title>]
+                                                , <DataTable.Title key={"lastbutton" + Math.random()} style={{ flex: 0.8 }}> </DataTable.Title>]
                                         }
                                     </DataTable.Header>
 
