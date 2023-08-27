@@ -10,6 +10,8 @@ router.use('/log', require('./logs.js'))
 
 router.use('/news', require('./news.js'))
 
+router.use('/antivirus', require('./antivirus.js'))
+
 router.get('/health', (req, res) =>
     res.send({
         message: "Welcome to SecureCloud API",

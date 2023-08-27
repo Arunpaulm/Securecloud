@@ -2,6 +2,10 @@ const fs = require('fs')
 const path = require('path');
 const moment = require("moment")
 const { Worker } = require("worker_threads");
+const axios = require("axios")
+const FormData = require('form-data');
+
+const AntiVirusModel = require('../database/model/antivirus')
 
 const decimals = 2
 const bucket = process.env.BUCKETPATH
@@ -112,6 +116,70 @@ async function getFiles(req, res) {
     }).catch(err => { res.status(500).send(err) })
 }
 
+async function createAntiVirusReport({ id: fileId, userId, filename, avfileid, size, status }) {
+    const antiVirusModel = await AntiVirusModel
+        .findOne({ where: { user_id: userId, file_id: fileId, } })
+        .then(function (obj) {
+            if (obj) {
+                return obj.update({
+                    file_id: fileId,
+                    user_id: userId,
+                    avfile_id: avfileid,
+                    filename,
+                    size,
+                    status
+                });
+            } else {
+                return AntiVirusModel.create({
+                    file_id: fileId,
+                    user_id: userId,
+                    avfile_id: avfileid,
+                    filename,
+                    size,
+                    status
+                });
+            }
+
+        })
+}
+
+function scanFile(inputFile, keyData) {
+    const axiosInstance = axios.create({
+        baseURL: process.env.ANTIVIRUSAPI,
+        timeout: 1000,
+        headers: {
+            "Access-Control-Allow-Headers": "Content-Type",
+            "Access-Control-Allow-Origin": "*",
+            "Access-Control-Allow-Methods": "OPTIONS,POST,GET",
+            'accept': 'application/json',
+            "x-apikey": process.env.ANTIVIRUSAPIKEY
+        }
+    });
+
+    const form = new FormData();
+    form.append("file", fs.createReadStream(inputFile))
+
+    axiosInstance.post("/files", form, {
+        headers: { ...form.getHeaders() }
+    }).then(filesresponse => {
+        const fileId = filesresponse.data?.data?.id
+        axiosInstance.get("/analyses/" + fileId).then(analysesresponse => {
+            console.log("analysesresponse - ", analysesresponse.data)
+            const size = analysesresponse.data?.meta?.file_info?.size
+            const sha256 = analysesresponse.data?.meta?.file_info?.sha256
+
+            const status = analysesresponse.data?.data?.attributes?.status
+            const payload = { ...keyData, size, avfileid: sha256, status }
+            return createAntiVirusReport(payload)
+
+        }).catch(anerr => {
+            console.log("anti virus analyses api  ", anerr)
+        })
+    }).catch(err => {
+        console.log("anti virus files api  ", err)
+    })
+}
+
 /**
  * 
  * @param {*} req 
@@ -146,13 +214,15 @@ async function uploadFile(req, res) {
                         workerData: { filename: { ...filename, filename: generatedFileName }, THREAD_COUNT, userId },
                     });
 
-                    worker.on("message", result => {
+                    worker.on("message", async result => {
                         const keyData = {
                             ...filename,
                             archivefileName: generatedFileName + ".arc",
                             key: result,
                             id: fieldname
                         }
+
+                        await scanFile(inputFile, { ...keyData, userId })
                         encryptedKeys.push(keyData)
                         console.log("worker encryptedKeys - ", encryptedKeys)
                         resolve(true)
