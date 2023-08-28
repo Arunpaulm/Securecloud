@@ -11,7 +11,7 @@ import { DataTable } from 'react-native-paper';
 
 import axios from "../api/index"
 
-import { background, filecolor, searchbarbg, searchicon, fileoptionsborder, black, fileoptionsbg, danger, babypowder, success } from "../../colorpalette"
+import { background, filecolor, searchbarbg, searchicon, fileoptionsborder, black, fileoptionsbg, danger, babypowder, success, warning } from "../../colorpalette"
 
 const SCREENWIDTH = Dimensions.get('window').width;
 const SCREEHEIGHT = Dimensions.get('window').height;
@@ -204,7 +204,7 @@ class CloudDirectory extends Component {
 
                     {this.state.analysisReport.isSafe ? <View style={{ flex: 0.1, flexDirection: "row", padding: 4, alignItems: "center", justifyContent: "center" }}>
                         <Text style={{ fontSize: 17, textAlign: "left", paddingRight: 4, fontWeight: 500, color: success }}>Safe</Text>
-                        <MaterialCommunityIcons name={'marker-check'} size={30} color={success} />
+                        <MaterialCommunityIcons name={'shield-check'} size={30} color={success} />
                     </View> :
                         <View style={{ flex: 0.1, flexDirection: "row", padding: 4, alignItems: "center", justifyContent: "center" }}>
                             <Text style={{ fontSize: 17, textAlign: "left", paddingRight: 4, color: danger }}>Thread found</Text>
@@ -219,7 +219,7 @@ class CloudDirectory extends Component {
                         </DataTable.Header>
 
                         <FlatList
-                            style={{ flex: 1, width: 400 }}
+                            style={{ flex: 1, width: 370 }}
                             contentContainerStyle={{}}
                             data={this.state.analysisReport?.results}
                             keyExtractor={(item) => item?.database?.toString()}
@@ -227,17 +227,15 @@ class CloudDirectory extends Component {
                                 <DataTable.Row key={index}>
                                     <DataTable.Cell key={index + "report-database"} style={{ flex: 0.5 }}>{item.database}</DataTable.Cell>
                                     <DataTable.Cell key={index + "report-seperator"} style={{ flex: 0.1 }}>:</DataTable.Cell>
-                                    <DataTable.Cell key={index + "report-result"} style={{ flex: 0.4 }}>{item.result}</DataTable.Cell>
+                                    <DataTable.Cell key={index + "report-result"} style={{ flex: 0.4 }}>{
+                                        (item.result === "undetected") ?
+                                            <View style={{ flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
+                                                <MaterialCommunityIcons name={'check'} size={30} color={success} />
+                                                <Text style={{ color: success }}>Pass</Text>
+                                            </View> : <Text style={{ color: warning }}>{item.result}</Text>
+                                    }</DataTable.Cell>
                                 </DataTable.Row>
-
-
-                                // <View style={{ flexDirection: "row" }}>
-                                //     <Text style={{ fontSize: 17, textAlign: "left", padding: 2 }}>{item.database}</Text>
-                                //     <Text style={{ fontSize: 17, textAlign: "center", padding: 2 }}> : </Text>
-                                //     <Text style={{ fontSize: 17, textAlign: "right", padding: 2 }}>{item.result}</Text>
-                                // </View>
-                            )
-                            }
+                            )}
                             numColumns={1}
                         />
                     </DataTable>
