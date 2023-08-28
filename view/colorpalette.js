@@ -3,7 +3,7 @@ const oxfordblue = "#0A2239"
 const blue = "#1D84B5"
 
 const moonstone = "#53A2BE"
-
+const aliceblue = "#EAF6FF"
 const gunmetal = "#132E32"
 
 const grey = "grey"
@@ -56,6 +56,7 @@ const inputInActive = grey
 
 export {
     oxfordblue,
+    aliceblue,
     white,
     black,
     blue,

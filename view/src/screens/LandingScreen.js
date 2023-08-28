@@ -37,7 +37,7 @@ class LandingScreen extends Component {
         return (
             <View style={styles.container}>
                 <Tab.Navigator
-                    initialRouteName="History"
+                    initialRouteName="Settings"
                     screenOptions={({ route }) => ({
                         tabBarIcon: ({ focused, color, size }) => {
                             let iconName;

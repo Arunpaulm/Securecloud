@@ -1,15 +1,18 @@
 import React, { Component } from "react";
-import { StyleSheet, Text, Platform, View, TouchableOpacity, Alert } from 'react-native';
+import { StyleSheet, Text, Platform, View, TouchableOpacity, Alert, Modal, FlatList, Image } from 'react-native';
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import Icon from "react-native-vector-icons/Ionicons";
-import { Avatar } from 'react-native-paper';
+import { DataTable, Avatar, TouchableRipple } from 'react-native-paper';
 // import * as SecureStore from 'expo-secure-store';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { avatarSettingicon, oxfordblue, white } from "../../colorpalette"
+import { aliceblue, avatarSettingicon, black, blue, fileoptionsbg, grey, gunmetal, lightgrey, moonstone, oxfordblue, white } from "../../colorpalette"
 import axios from "../api/index"
 
-import { background, logocolor, babypowder, primarybutton, primarybuttonbg, success, successBg, warning, warningBg, danger, dangerBg } from "../../colorpalette"
+import { babypowder, primarybutton, primarybuttonbg, success, successBg, warning, warningBg, danger, dangerBg } from "../../colorpalette"
+import { ScrollView } from "react-native-gesture-handler";
 
+MaterialCommunityIcons.loadFont();
 Icon.loadFont();
 
 class SettingScreen extends Component {
@@ -30,7 +33,26 @@ class SettingScreen extends Component {
                 { id: 8, title: "isActive", dbName: "is_active", placeholder: "password", value: "", active: false, type: "checkbox" },
 
             ],
-            screenLock: true
+            screenLock: true,
+            aboutUsModalVisible: false,
+            aboutus: [
+                {
+                    key: "Student Number",
+                    value: "1971435"
+                },
+                {
+                    key: "Student Name",
+                    value: "Arunpaul Muthupandian"
+                },
+                {
+                    key: "Supervisor Name",
+                    value: "Mahmoud Artemi"
+                },
+                {
+                    key: "Course Name",
+                    value: "MSc Software Engineering and Applications"
+                },
+            ]
         };
     }
 
@@ -60,6 +82,107 @@ class SettingScreen extends Component {
             this.setState(field)
             console.log("this.state.form ", this.state.form)
         }).catch(error => { console.log(error) })
+    }
+
+    getAboutUsModel() {
+        return <Modal
+            animationType="fade"
+            transparent={true}
+            visible={this.state.aboutUsModalVisible} // this.state.modalVisible
+            onRequestClose={() => {
+                // console.log('Modal has been closed.');
+                this.setState({ aboutUsModalVisible: false })
+            }}>
+            {/* <TouchableOpacity style={styles.centeredView} onPressIn={() => { this.setState({ securityModalVisible: false }) }}> */}
+            <View style={styles.centeredView} >
+                <View style={{ ...styles.modalView, flex: 0.9 }}>
+                    <View style={{
+                        flex: 0.4,
+                        width: "100%",
+                        paddingBottom: 3,
+                        borderTopLeftRadius: 15,
+                        borderTopRightRadius: 15,
+                        overflow: "hidden",
+                        backgroundColor: oxfordblue
+                    }}>
+                        <TouchableRipple style={{
+                            flexDirection: "row",
+                            alignSelf: "flex-end",
+                            padding: 4,
+                            shadowColor: white,
+                            shadowRadius: 10,
+                            shadowOffset: {
+                                width: 0,
+                                height: 2,
+                            },
+                            elevation: 5,
+                            justifyContent: "center",
+                            alignItems: "center"
+                        }} onPress={() => { this.setState({ aboutUsModalVisible: false }) }}>
+                            <MaterialCommunityIcons style={{}} name={'close'} size={30} color={danger} />
+                        </TouchableRipple>
+                        <View style={{ flex: 0.7, flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
+                            <MaterialCommunityIcons style={{ padding: 10, width: 70, height: 70, color: white }} name={'cloud-lock'} size={50} ></MaterialCommunityIcons>
+                            <View style={{ flexDirection: "row" }}>
+                                <Text style={{ fontSize: 30, fontWeight: 700, fontFamily: 'Roboto', color: white }}>Secure</Text>
+                                <Text style={{ fontSize: 30, fontWeight: 700, paddingLeft: 1, fontFamily: 'Roboto', color: white }}>cloud</Text>
+                            </View>
+                        </View>
+                        <Text style={{ flex: 0.4, fontSize: 16, textAlign: "center", fontWeight: 700, paddingLeft: 1, fontFamily: 'Roboto', color: white }}>A Cross-Platform Encrypted File Sharing Solution with Forensic Imaging Capability</Text>
+                    </View>
+
+                    <View style={{ flex: 0.1, flexDirection: "row", padding: 4, alignItems: "center", justifyContent: "center" }}>
+                        <Text style={{ fontSize: 17, textAlign: "left", paddingRight: 4, fontWeight: 500, color: success }}>Supervisor Verified</Text>
+                        <MaterialCommunityIcons name={'check-decagram'} size={20} color={success} />
+                    </View>
+
+
+                    <View style={{ flex: 0.35 }}>
+                        <ScrollView horizontal={true}>
+                            <DataTable style={{ flex: 1 }}>
+                                <FlatList
+                                    style={{ flex: 1, width: 490 }}
+                                    // horizontal={true}
+                                    scrollEnabled={false}
+                                    contentContainerStyle={{}}
+                                    data={this.state.aboutus}
+                                    keyExtractor={(item) => item?.key?.toString()}
+                                    renderItem={({ item, index }) => (
+                                        <DataTable.Row key={index}>
+                                            <DataTable.Cell key={index + "report-database"} style={{ flex: 0.4 }}>{item.key}</DataTable.Cell>
+                                            <DataTable.Cell key={index + "report-result"} style={{ flex: 0.8 }} ><Text style={{ flex: 1, flexWrap: "wrap" }} numberOfLines={2}>{item.value}</Text></DataTable.Cell>
+                                        </DataTable.Row>
+                                    )}
+                                    numColumns={1}
+                                />
+                            </DataTable>
+                        </ScrollView>
+                    </View>
+
+                    <View style={{
+                        flex: 0.5,
+                        width: "auto",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        alignContent: "center",
+                        backgroundColor: aliceblue,
+                        borderBottomLeftRadius: 15,
+                        borderBottomRightRadius: 15,
+                        overflow: "hidden",
+                    }}>
+                        <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", justifyContent: "center", alignItems: "center" }}>
+                            <Image style={{ width: 100, height: 100, objectFit: "contain", paddingHorizontal: 5 }} source={require('../assets/logos/reactnative.png')} />
+                            <Image style={{ width: 200, height: 100, objectFit: "contain", paddingHorizontal: 5 }} source={require('../assets/logos/node.png')} />
+                            <Image style={{ width: 200, height: 100, objectFit: "contain", paddingHorizontal: 5 }} source={require('../assets/logos/htmlcssjs.png')} />
+                            <Image style={{ width: 100, height: 100, objectFit: "contain", paddingHorizontal: 5 }} source={require('../assets/logos/mysql.png')} />
+                        </View>
+                        <Text style={{ paddingBottom: 10 }}> Powered By</Text>
+                    </View>
+
+                </View>
+            </View>
+            {/* </TouchableOpacity> */}
+        </Modal >
     }
 
     render() {
@@ -92,7 +215,7 @@ class SettingScreen extends Component {
                         </View>}
 
                     <View style={{ marginVertical: 10 }}>
-                        <TouchableOpacity style={{ ...styles.buttonContainer, ...styles.primaryButton }}>
+                        <TouchableOpacity style={{ ...styles.buttonContainer, ...styles.primaryButton }} onPress={() => this.setState({ aboutUsModalVisible: true })}>
                             <Text style={{ fontSize: 15, fontWeight: 600, color: white }}>ABOUT THIS APP</Text>
                         </TouchableOpacity>
                     </View>
@@ -126,7 +249,7 @@ class SettingScreen extends Component {
                         </TouchableOpacity>
                     </View>
                 </View>
-
+                {this.getAboutUsModel()}
             </View >
         );
     }
@@ -172,6 +295,31 @@ const styles = StyleSheet.create({
     warningButton: {
         borderColor: warning,
         backgroundColor: warningBg
+    },
+    centeredView: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        // marginTop: 35,
+        padding: 30,
+        backgroundColor: babypowder + "aa"
+    },
+    modalView: {
+        width: "100%",
+        height: "auto",
+        backgroundColor: babypowder,
+        borderRadius: 15,
+        // padding: 35,
+        alignItems: 'center',
+        justifyContent: "center",
+        shadowColor: black,
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5,
     }
 
 })
