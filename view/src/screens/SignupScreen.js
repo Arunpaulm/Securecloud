@@ -1,10 +1,15 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, Image, FlatList, TouchableOpacity } from 'react-native';
 import Icon from "react-native-vector-icons/Ionicons";
+import { Snackbar } from 'react-native-paper';
+import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
-import TextFieldComponent from '../components/TextFieldComponent';
+// import TextFieldComponent from '../components/TextFieldComponent';
+import FormComponents from '../components/FormComponents';
 
-import { white } from "../../colorpalette"
+import { babypowder, logocolor, oxfordblue, primarybutton, white } from "../../colorpalette"
+
+MaterialIcons.loadFont();
 
 Icon.loadFont();
 
@@ -15,14 +20,28 @@ class SignupScreen extends Component {
             welcomeText: "Signup",
             loginButtonText: "Signup",
             form: [
-                { id: 1, title: "Name", placeholder: "Enter your name", value: "", active: false },
-                { id: 2, title: "Date of birth", placeholder: "Date of birth", value: "", active: false },
-                { id: 3, title: "Phone number", placeholder: "Enter your phone number", value: "", active: false },
-                { id: 4, title: "E-Mail", placeholder: "example@mail.com", value: "", active: false },
-                { id: 5, title: "Password", placeholder: "password", value: "", active: false },
-                { id: 6, title: "Confirm Password", placeholder: "password", value: "", active: false }
-            ]
+                { id: 0, title: "userId", dbName: "user_id", value: "", active: false, type: null },
+                { id: 1, title: "Name", dbName: "username", placeholder: "Enter your name", value: "", active: false, type: "text" },
+                // { id: 2, title: "Date of birth", placeholder: "Date of birth", value: "", active: false, type: "text" },
+                { id: 3, title: "Phone number", dbName: "phone", placeholder: "Enter your phone number", value: "", active: false, type: "text" },
+                { id: 4, title: "E-Mail", dbName: "email", placeholder: "example@mail.com", value: "", active: false, type: "text" },
+                { id: 5, title: "Password", dbName: "password", placeholder: "password", value: "", active: false, type: "text" },
+                { id: 6, title: "Confirm Password", placeholder: "password", value: "", active: false, type: "text" }
+
+            ],
+            snackbarVisible: false,
+            snackbarValue: "Hi"
         };
+    }
+
+    editFormValues = (field, value) => {
+        this.state.form.forEach(formData => {
+            if ((formData.id === field.id) && (formData.title === field.title)) {
+                formData.value = value
+            }
+        })
+
+        this.setState({ form: this.state.form })
     }
 
     getActiveTextBox(activeid) {
@@ -31,14 +50,13 @@ class SignupScreen extends Component {
             frm.active = false
             if (frm.id === activeid) frm.active = true
         })
-        this.refresh += 1
         this.setState({ form: form })
     }
 
     onSubmit() {
         console.log("clicked")
         console.log(this.state.form)
-        this.props.navigation.navigate('Home')
+        this.props.navigation.navigate('Landing')
     }
 
     onClickRememberMe() {
@@ -46,7 +64,17 @@ class SignupScreen extends Component {
     }
 
     onClickForgotPassword() {
-
+        if (this.state.form[0]?.value) {
+            this.setState({
+                snackbarVisible: true,
+                snackbarValue: "Email sent to " + this.state.form[0]?.value
+            })
+        } else {
+            this.setState({
+                snackbarVisible: true,
+                snackbarValue: "Enter valid email"
+            })
+        }
     }
 
 
@@ -54,28 +82,29 @@ class SignupScreen extends Component {
         return (
             <View style={styles.container}>
 
-                <>
-                    <View style={{ flex: 0.2 }} />
-                    <Image
+                <View style={{ flex: 2, width: "100%", justifyContent: "center", alignItems: "center", backgroundColor: oxfordblue, borderBottomRightRadius: 25, borderBottomLeftRadius: 25 }}>
+                    <MaterialIcons style={{ width: 100, height: 100, color: logocolor }} name={'cloud-lock'} size={100} ></MaterialIcons>
+                    <View style={{ flex: 1, flexDirection: "row" }}>
+                        <Text style={{ color: logocolor, fontSize: 25, fontWeight: 700, fontFamily: 'Roboto' }}>Secure</Text>
+                        <Text style={{ fontSize: 25, fontWeight: 700, paddingLeft: 1, fontFamily: 'Roboto', color: babypowder }}>cloud</Text>
+                    </View>
+                    {/* <Image
                         style={styles.welcomeLogo}
                         source={require('../assets/logo.png')}
-                    />
-                    <View style={{ flex: 0.2 }} />
-                    <Text style={styles.welcomeText}>{this.state.welcomeText}</Text>
-                </>
+                    /> */}
+                    {/* <Text style={styles.welcomeText}>{this.state.welcomeText}</Text> */}
+                </View>
 
                 <View style={styles.loginTextBoxContainer}>
                     <FlatList
                         style={styles.loginTextBox}
                         data={this.state.form}
-                        // scrollEnabled={false}
+                        scrollEnabled={false}
                         keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item, index }) => <TextFieldComponent field={item} getActiveTextBox={this.getActiveTextBox.bind(this)} />}
+                        renderItem={({ item, index }) => FormComponents({ field: item, index, getActiveTextBox: this.getActiveTextBox.bind(this), editable: true, editFormValues: this.editFormValues.bind(this) })}
                         ItemSeparatorComponent={() => (<View style={styles.loginTextBoxSeperator}></View>)}
                     />
                 </View>
-
-                <View style={{ flex: 0.4 }} />
 
                 <View style={styles.loginButtonContainer}>
                     <TouchableOpacity
@@ -85,7 +114,13 @@ class SignupScreen extends Component {
                         <Text style={styles.loginButtonText}>{this.state.loginButtonText}</Text>
                     </TouchableOpacity>
                 </View>
-                <View style={styles.footerSpace} />
+                {/* <View style={styles.footerSpace} /> */}
+                <Snackbar
+                    visible={this.state.snackbarVisible}
+                    onDismiss={() => { this.setState({ snackbarVisible: false }) }}
+                    duration={2000}>
+                    {this.state.snackbarValue}
+                </Snackbar>
             </View>
         );
     }
@@ -93,10 +128,10 @@ class SignupScreen extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 10,
         height: "100%",
         backgroundColor: '#fff',
         alignItems: 'center',
+        justifyContent: "center"
     },
     welcomeLogo: {
         // flex: 1,
@@ -113,9 +148,10 @@ const styles = StyleSheet.create({
 
     },
     loginTextBoxContainer: {
-        flex: 70,
+        flex: 6,
         flexDirection: "column",
         width: "100%",
+        paddingVertical: 20
     },
     loginTextBox: {
         padding: 20
@@ -130,10 +166,9 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: 'space-between',
         // backgroundColor: danger,
-
     },
     loginButtonContainer: {
-        flex: 10,
+        flex: 1,
         width: "100%",
         padding: 20,
         // backgroundColor: "green",
@@ -141,7 +176,7 @@ const styles = StyleSheet.create({
     },
     loginButton: {
         alignItems: "center",
-        backgroundColor: "#003399",
+        backgroundColor: primarybutton,
         padding: 25,
         borderRadius: 10
     },

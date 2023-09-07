@@ -29,6 +29,16 @@ class LoginScreen extends Component {
         };
     }
 
+    editFormValues = (field, value) => {
+        this.state.form.forEach(formData => {
+            if ((formData.id === field.id) && (formData.title === field.title)) {
+                formData.value = value
+            }
+        })
+
+        this.setState({ form: this.state.form })
+    }
+
     getActiveTextBox(activeid) {
         const form = this.state.form
         form.map(frm => {
@@ -87,7 +97,7 @@ class LoginScreen extends Component {
                         data={this.state.form}
                         scrollEnabled={false}
                         keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item, index }) => FormComponents({ field: item, index, getActiveTextBox: this.getActiveTextBox.bind(this) })}
+                        renderItem={({ item, index }) => FormComponents({ field: item, index, getActiveTextBox: this.getActiveTextBox.bind(this), editable: true, editFormValues: this.editFormValues.bind(this) })}
                         ItemSeparatorComponent={() => (<View style={styles.loginTextBoxSeperator}></View>)}
                     />
                 </View>
