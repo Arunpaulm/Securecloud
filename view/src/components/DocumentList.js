@@ -141,6 +141,7 @@ class DocumentList extends Component {
             const fileType = mime.contentType(fileName)
             if (fileDetail?.uri) {
                 const cloudfiles = await AsyncStorage.getItem("cloudfiles") || "[]";
+                console.log(cloudfiles)
                 const hashtable = JSON.parse(cloudfiles)
                 const hashTableCF = {}
                 hashtable.map(htt => {
@@ -287,6 +288,15 @@ class DocumentList extends Component {
                     <TouchableOpacity style={styles.optionButtons} onPress={() => {
                         this.uploadFileDirApi()
                     }}><Text style={{ fontSize: 17, textAlign: "center" }}>Upload</Text></TouchableOpacity>
+
+                    <TouchableOpacity style={styles.optionButtons} onPress={() => {
+                        if (!this.state.selectedItem?.isDirectory) {
+                            Sharing.shareAsync(this.state.selectedItem?.uri)
+                        } else {
+                            this.setState({ currentPath: this.state.selectedItem?.uri })
+                            this.props.getDirectoryInfo(this.state.selectedItem?.uri)
+                        }
+                    }}><Text style={{ fontSize: 17, textAlign: "center" }}>Share</Text></TouchableOpacity>
 
                     {this.state.selectedItem.isDirectory ? null :
                         <TouchableOpacity style={styles.optionButtons} onPress={() => {

@@ -1,10 +1,15 @@
 import React, { Component } from "react";
 import { StyleSheet, Text, View, Image, FlatList, TouchableOpacity } from 'react-native';
 import Icon from "react-native-vector-icons/Ionicons";
+import { Snackbar } from 'react-native-paper';
+import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
-import TextFieldComponent from '../components/TextFieldComponent';
+// import TextFieldComponent from '../components/TextFieldComponent';
+import FormComponents from '../components/FormComponents';
 
-import { white } from "../../colorpalette"
+import { babypowder, logocolor, oxfordblue, primarybutton, white } from "../../colorpalette"
+
+MaterialIcons.loadFont();
 
 Icon.loadFont();
 
@@ -15,10 +20,12 @@ class LoginScreen extends Component {
             welcomeText: "Login",
             loginButtonText: "Login",
             form: [
-                { id: 1, title: "E-Mail", placeholder: "example@mail.com", value: "", active: false },
-                { id: 2, title: "Password", placeholder: "example@mail.com", value: "", active: false }
+                { id: 1, type: "text", title: "E-Mail", placeholder: "example@mail.com", value: "", active: false },
+                { id: 2, type: "text", title: "Password", placeholder: "Enter the password", value: "", active: false }
             ],
-            rememberMe: false
+            rememberMe: false,
+            snackbarVisible: false,
+            snackbarValue: "Hi"
         };
     }
 
@@ -43,31 +50,48 @@ class LoginScreen extends Component {
     }
 
     onClickForgotPassword() {
-
+        if (this.state.form[0]?.value) {
+            this.setState({
+                snackbarVisible: true,
+                snackbarValue: "Email sent to " + this.state.form[0]?.value
+            })
+        } else {
+            this.setState({
+                snackbarVisible: true,
+                snackbarValue: "Enter valid email"
+            })
+        }
     }
 
 
     render() {
         return (
             <View style={styles.container}>
-                <View style={{ flex: 0.2 }} />
-                <Image
-                    style={styles.welcomeLogo}
-                    source={require('../assets/logo.png')}
-                />
-                <View style={{ flex: 0.2 }} />
-                <Text style={styles.welcomeText}>{this.state.welcomeText}</Text>
+
+                <View style={{ flex: 3, width: "100%", padding: 100, justifyContent: "center", alignItems: "center", backgroundColor: oxfordblue, borderBottomRightRadius: 25, borderBottomLeftRadius: 25 }}>
+                    <MaterialIcons style={{ width: 100, height: 100, color: logocolor }} name={'cloud-lock'} size={100} ></MaterialIcons>
+                    <View style={{ flex: 1, flexDirection: "row" }}>
+                        <Text style={{ color: logocolor, fontSize: 25, fontWeight: 700, fontFamily: 'Roboto' }}>Secure</Text>
+                        <Text style={{ fontSize: 25, fontWeight: 700, paddingLeft: 1, fontFamily: 'Roboto', color: babypowder }}>cloud</Text>
+                    </View>
+                    {/* <Image
+                        style={styles.welcomeLogo}
+                        source={require('../assets/logo.png')}
+                    /> */}
+                    {/* <Text style={styles.welcomeText}>{this.state.welcomeText}</Text> */}
+                </View>
+
                 <View style={styles.loginTextBoxContainer}>
                     <FlatList
                         style={styles.loginTextBox}
                         data={this.state.form}
                         scrollEnabled={false}
                         keyExtractor={(item) => item.id.toString()}
-                        renderItem={({ item, index }) => <TextFieldComponent field={item} getActiveTextBox={this.getActiveTextBox.bind(this)} />}
+                        renderItem={({ item, index }) => FormComponents({ field: item, index, getActiveTextBox: this.getActiveTextBox.bind(this) })}
                         ItemSeparatorComponent={() => (<View style={styles.loginTextBoxSeperator}></View>)}
                     />
                 </View>
-                <View style={{ flex: 0.2 }} />
+
                 <View style={styles.textLinkContainer}>
                     <TouchableOpacity
                         style={{ flexDirection: 'row', alignContent: "center", justifyContent: "center" }}
@@ -82,6 +106,7 @@ class LoginScreen extends Component {
                         <Text>Forgot Password?</Text>
                     </TouchableOpacity>
                 </View>
+
                 <View style={styles.loginButtonContainer}>
                     <TouchableOpacity
                         style={styles.loginButton}
@@ -90,7 +115,13 @@ class LoginScreen extends Component {
                         <Text style={styles.loginButtonText}>{this.state.loginButtonText}</Text>
                     </TouchableOpacity>
                 </View>
-                <View style={styles.footerSpace} />
+                {/* <View style={styles.footerSpace} /> */}
+                <Snackbar
+                    visible={this.state.snackbarVisible}
+                    onDismiss={() => { this.setState({ snackbarVisible: false }) }}
+                    duration={2000}>
+                    {this.state.snackbarValue}
+                </Snackbar>
             </View>
         );
     }
@@ -98,10 +129,10 @@ class LoginScreen extends Component {
 
 const styles = StyleSheet.create({
     container: {
-        flex: 10,
         height: "100%",
         backgroundColor: '#fff',
         alignItems: 'center',
+        justifyContent: "center"
     },
     welcomeLogo: {
         // flex: 1,
@@ -118,9 +149,10 @@ const styles = StyleSheet.create({
 
     },
     loginTextBoxContainer: {
-        flex: 5,
+        flex: 3,
         flexDirection: "column",
         width: "100%",
+        paddingVertical: 20
     },
     loginTextBox: {
         padding: 20
@@ -135,10 +167,9 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: 'space-between',
         // backgroundColor: danger,
-
     },
     loginButtonContainer: {
-        flex: 3,
+        flex: 2,
         width: "100%",
         padding: 20,
         // backgroundColor: "green",
@@ -146,7 +177,7 @@ const styles = StyleSheet.create({
     },
     loginButton: {
         alignItems: "center",
-        backgroundColor: "#6A6EEE",
+        backgroundColor: primarybutton,
         padding: 25,
         borderRadius: 10
     },

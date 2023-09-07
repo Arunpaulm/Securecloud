@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from "react";
-import { SafeAreaView, StyleSheet, View, StatusBar } from 'react-native';
+import { SafeAreaView, StyleSheet, View, StatusBar, LogBox } from 'react-native';
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
 import {
@@ -17,6 +17,8 @@ import crypto from './crypto'
 SplashScreen.preventAutoHideAsync();
 
 function App() {
+    LogBox.ignoreLogs(['Warning: ...']); // Ignore log notification by message
+    LogBox.ignoreAllLogs();
     // crypto()
     const customTextInputProps = {
         style: {

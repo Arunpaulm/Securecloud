@@ -56,12 +56,12 @@ class NewsScreen extends Component {
                             }}>
                             <List.Item
                                 style={{ height: 150 }}
-                                key={"log list" + index}
+                                key={"log list" + item.publishedAt + item.title}
                                 title={item.title}
                                 titleNumberOfLines={3}
                                 titleStyle={{ color: oxfordblue }}
                                 description={
-                                    <View style={{ padding: 5 }}>
+                                    <View style={{ padding: 5 }} key={"log view" + item.publishedAt + item.title}>
                                         <Text style={{ paddingTop: 15 }}>Source: {item.source.Name}</Text>
                                         <Text style={{ paddingTop: 5 }}>Published on: {moment(item.publishedAt).format("DD/MM/YYYY hh:mm:ss a")}</Text>
 

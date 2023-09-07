@@ -213,7 +213,7 @@ class CloudDirectory extends Component {
 
                     <DataTable style={{ flex: 1 }}>
                         <DataTable.Header >
-                            <DataTable.Title key={"Anti Virus Database"} style={{ flex: 0.7 }}>Anti Virus Database</DataTable.Title>
+                            <DataTable.Title key={"Anti Virus Database"} style={{ flex: 0.7 }}>Anti Virus Database ({this.state.analysisReport?.results?.length})</DataTable.Title>
                             <DataTable.Title key={"seperator"} style={{ flex: 0.1 }}></DataTable.Title>
                             <DataTable.Title key={"Result"} style={{ flex: 0.4 }}>Result</DataTable.Title>
                         </DataTable.Header>

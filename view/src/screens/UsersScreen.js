@@ -7,7 +7,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import axios from "../api/index"
 import ModelComponent from "../components/ModelComponent";
 
-import { background, lightgrey, primarybutton, babypowder } from "../../colorpalette"
+import { background, lightgrey, primarybutton, babypowder, moonstone, success, white, aliceblue } from "../../colorpalette"
 
 const UsersScreen = (props) => {
 
@@ -30,6 +30,8 @@ const UsersScreen = (props) => {
     const allowedOuterTableHeadings = ["", "username", "role"]
     const tableWidthFlex = [2, 2, 1]
     const [modalVisible, setModalVisible] = React.useState(false)
+    const [newUserData, setNewUserData] = React.useState({})
+    const [createModalVisible, setCreateModalVisible] = React.useState(false)
 
     const [, updateState] = React.useState();
     const forceUpdate = React.useCallback(() => updateState({}), []);
@@ -64,6 +66,19 @@ const UsersScreen = (props) => {
         setSnackbarValue(" User updated successfully ")
     }
 
+    async function onCreateNewUser() {
+        setTimeout(loadApi, 500)
+        console.log("clicked")
+        // setSearchBarActive(true)
+        setSnackbarVisible(true)
+        setSnackbarValue(" User Created successfully ")
+    }
+
+    function onHandleError(error) {
+        setSnackbarVisible(true)
+        setSnackbarValue(error.toString())
+    }
+
     async function handleDelete() {
         setTimeout(loadApi, 500)
         console.log("clicked")
@@ -78,6 +93,10 @@ const UsersScreen = (props) => {
             setSearchBarActive(false)
             return
         }
+    }
+
+    function onClickCreateUser(index, data) {
+        setCreateModalVisible(true)
     }
 
     function _alertIndex(index, data) {
@@ -160,8 +179,10 @@ const UsersScreen = (props) => {
                         </View>
 
 
-                        <View style={{ flex: 6 }}>
+                        <View style={{ flex: 6, flexDirection: "row", justifyContent: "center", alignContent: "center" }}>
+                            <TouchableOpacity style={{ flex: 1 }} onPress={onClickCreateUser}><View style={{ borderRadius: 4, borderWidth: 1, padding: 2, paddingVertical: 5, borderColor: success, backgroundColor: aliceblue }}><Text style={{ textAlign: "center", color: success }}>Add New User</Text></View></TouchableOpacity>
                             <DataTable.Pagination
+                                style={{ flex: 3 }}
                                 page={page}
                                 numberOfPages={Math.ceil(clientList.length / itemsPerPage)}
                                 onPageChange={(page) => {
@@ -178,7 +199,7 @@ const UsersScreen = (props) => {
                         </View>
                     </DataTable>
                     : null}
-            </View>
+            </View >
             <Snackbar
                 visible={snackbarVisible}
                 onDismiss={() => { setSnackbarVisible(false) }}
@@ -187,9 +208,13 @@ const UsersScreen = (props) => {
             </Snackbar>
             {
                 modalVisible ?
-                    <ModelComponent modalVisible={modalVisible} setModalVisible={(value) => { setModalVisible(value) }} editable={true} selectedTableRow={selectedTableRow} selectedTableRowIndex={selectedTableRowIndex} onSubmit={onSubmit} handleDelete={handleDelete} /> : null
+                    <ModelComponent modalVisible={modalVisible} setModalVisible={(value) => { setModalVisible(value) }} editable={true} selectedTableRow={selectedTableRow} selectedTableRowIndex={selectedTableRowIndex} onSubmit={onSubmit} handleDelete={handleDelete} mode={"Edit"} onHandleError={onHandleError} /> : null
             }
-        </View>
+            {
+                createModalVisible ?
+                    <ModelComponent modalVisible={createModalVisible} setModalVisible={(value) => { setCreateModalVisible(value) }} editable={true} selectedTableRow={newUserData} selectedTableRowIndex={selectedTableRowIndex} onSubmit={onCreateNewUser} handleDelete={false} mode={"Create"} onHandleError={onHandleError} /> : null
+            }
+        </View >
     );
 }
 

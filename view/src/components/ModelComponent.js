@@ -30,7 +30,7 @@ class ModelComponent extends Component {
                     id: 7, title: "Role", dbName: "role", placeholder: "Customer", value: "", active: false, type: "picker",
                     options: ["Admin", "Customer", "Developer"]
                 },
-                { id: 8, title: "isActive", dbName: "is_active", placeholder: "password", value: "", active: false, type: "checkbox" },
+                { id: 8, title: "isActive", dbName: "is_active", placeholder: "password", value: true, active: false, type: "checkbox" },
 
             ],
             confirmButtonText: "Confirm changes",
@@ -38,7 +38,7 @@ class ModelComponent extends Component {
             closeButtonText: "Close",
             editable: this.props?.route?.params?.editable === undefined ? this.props.editable : this.props?.route?.params?.editable,
             // modalVisible: false
-            snackbarVisible: true,
+            snackbarVisible: false,
             snackbarValue: "Hi"
         };
     }
@@ -87,13 +87,34 @@ class ModelComponent extends Component {
         console.log("formData - ", formData)
         axios.patch("/user/" + formData.user_id, formData).then((response) => {
             console.log(response)
-
-        }).catch(error => { console.log(error) })
+            this.props.onSubmit()
+        }).catch(error => {
+            console.log(error)
+            const errorMsg = error.response.data.map(err => err.message)
+            this.props.onHandleError(errorMsg.join(","))
+        })
 
         this.props.setModalVisible(false)
         this.setState({ modalVisible: false })
         console.log(this.state.form)
-        this.props.onSubmit()
+    }
+
+    onCreateNewUser() {
+        const formData = this.buildApiBody()
+        console.log("formData - ", formData)
+        axios.post("/user/", formData).then((response) => {
+            console.log(response)
+            this.props.onSubmit()
+        }).catch(error => {
+            console.log(error)
+            console.log(error.response.data)
+            const errorMsg = error.response.data?.errors?.map(err => err.message)
+            this.props.onHandleError(errorMsg.join(","))
+        })
+
+        console.log(this.state.form)
+        this.props.setModalVisible(false)
+        this.setState({ modalVisible: false })
     }
 
 
@@ -137,7 +158,7 @@ class ModelComponent extends Component {
                         </View> */}
 
                         <View style={{ flex: 5, width: "100%", flexDirection: "row", paddingTop: 5, justifyContent: "center", alignItems: "center" }} >
-                            <Text style={{ fontSize: 20, paddingTop: 5 }}>Edit User</Text>
+                            <Text style={{ fontSize: 20, paddingTop: 5 }}>{this.props.mode} User</Text>
                             <TouchableOpacity
                                 style={styles.closeButton}
                                 onPress={() => {
@@ -165,16 +186,23 @@ class ModelComponent extends Component {
                             <View style={styles.confirmContainer}>
                                 <TouchableOpacity
                                     style={styles.confirmButton}
-                                    onPress={() => this.onSubmit()}
+                                    onPress={() => {
+                                        if (this.props.mode === "Edit") {
+                                            this.onSubmit()
+                                        } else if (this.props.mode === "Create") {
+                                            this.onCreateNewUser()
+                                        }
+                                    }}
                                 >
                                     <Text style={styles.confirmButtonText}>{this.state.confirmButtonText}</Text>
                                 </TouchableOpacity>
-                                <TouchableOpacity
-                                    style={styles.deleteButton}
-                                    onPress={() => this.handleDelete()}
-                                >
-                                    <Text style={styles.confirmButtonText}>{this.state.deleteButtonText}</Text>
-                                </TouchableOpacity>
+                                {this.props.handleDelete ?
+                                    <TouchableOpacity
+                                        style={styles.deleteButton}
+                                        onPress={() => this.handleDelete()}
+                                    >
+                                        <Text style={styles.confirmButtonText}>{this.state.deleteButtonText}</Text>
+                                    </TouchableOpacity> : null}
                             </View>
                         </> : null}
                     </View>
