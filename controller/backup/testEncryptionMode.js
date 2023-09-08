@@ -42,12 +42,11 @@ const encryptionTypes = [
     },
 ];
 
-const iterations = 5
-const file = "./Free_Test_Data_1MB_PDF.pdf"
+const iterations = 100
+const file = "./Free_Test_Data_10.5MB_PDF.pdf"
 
 var stats = fs.statSync(file)
 var fileSizeInBytes = stats.size;
-// Convert the file size to megabytes (optional)
 var fileSizeInMegabytes = fileSizeInBytes / (1024 * 1024);
 
 fs.readFile(file, (err, data) => {
@@ -63,7 +62,7 @@ fs.readFile(file, (err, data) => {
     encryptionTypes.map(en => results[`${en.name}`] = [])
 
     for (let i = 1; i <= iterations; i++) {
-
+        console.log(" iteration no : ", i)
         for (const encryptionType of encryptionTypes) {
 
             const start = performance.now();
@@ -76,22 +75,21 @@ fs.readFile(file, (err, data) => {
 
             const latency = (end - start)
             const time = (endTime - startTime)
-            const throughput = (plaintext.length / time) / (1024 * 1024)
+            const throughput = fileSizeInMegabytes / latency
 
             results[encryptionType.name].push({
                 name: encryptionType.name,
                 latency,
                 throughput,
-                time: moment(time).millisecond()
+                time: moment(time).millisecond() * 0.001
             });
         }
-
-        // results.push(result)
     }
 
     // console.log(results)
 
     const finalResult = []
+    // logic to aggregate the test results
     for (const enType in results) {
         const name = enType
         let latency = 0
