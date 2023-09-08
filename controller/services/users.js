@@ -1,4 +1,5 @@
 const UserModel = require('../database/model/users')
+const RoleModel = require('../database/model/roles')
 const bcrypt = require('bcrypt')
 
 const {
@@ -16,16 +17,20 @@ const saltRounds = 10
 async function createUser(req, res) {
     try {
         console.log(" create user ")
-        const { username, password, email, phone, type = "client", is_active = true, profile_photo } = req.body;
+        const { username, password, email, phone, type = "Customer", is_active = true, profile_photo } = req.body;
 
         const passwordHash = await bcrypt.hash(password, saltRounds)
+
+        const role = await RoleModel.findOne({ where: { name: type } })
+
+        console.log("role - ", role)
 
         const user = await UserModel.create({
             username,
             password: passwordHash,
             email,
             phone,
-            type,
+            role_id: role.role_id,
             is_active,
             profile_photo
         });
@@ -127,7 +132,15 @@ async function getOneUser(req, res) {
             });
         }
 
-        const user = await UserModel.findByPk(req.params.user_id);
+        const user = await UserModel.findByPk(req.params.user_id, {
+            attributes: ["*"],
+            raw: true,
+            include: [
+                { model: RoleModel, foreignKey: "role_id", as: "role", attributes: ["name"] }
+            ]
+        });
+
+        user.type = user?.role?.name
 
         if (!user) {
             return res.status(404).json({
@@ -200,7 +213,18 @@ async function getAllUsers(req, res) {
         const limit = req.query.limit || 20;
         const skip = (page - 1) * limit;
 
-        const users = await UserModel.findAll({ limit, offset: skip });
+        const users = await UserModel.findAll({
+            limit, offset: skip,
+            attributes: ["*"],
+            raw: true,
+            include: [
+                { model: RoleModel }
+            ]
+        });
+
+        users?.forEach(usr => {
+            usr.type = usr?.role?.name
+        })
 
         res.status(200).json({
             status: true,

@@ -1,14 +1,16 @@
 const { sequelize, DataTypes } = require('../index')
 
-const roleModel = sequelize.define("role", {
-    id: {
+const UserModel = require('./users')
+
+const RoleModel = sequelize.define("roles", {
+    role_id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
     },
     name: {
         type: DataTypes.STRING,
-        allowNull: false
+        defaultValue: "Customer",
     },
     createdAt: {
         type: DataTypes.DATE,
@@ -22,4 +24,8 @@ const roleModel = sequelize.define("role", {
     },
 });
 
-module.exports = roleModel 
+RoleModel.belongsTo(UserModel, {
+    foreignKey: 'role_id'
+});
+
+module.exports = RoleModel 

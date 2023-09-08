@@ -1,10 +1,19 @@
 const { sequelize, DataTypes } = require('../index')
 
-const usersModel = sequelize.define("users", {
+const RoleModel = require("./roles")
+
+const UserModel = sequelize.define("users", {
     user_id: {
         type: DataTypes.UUID,
         defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
+    },
+    role_id: {
+        type: DataTypes.UUID,
+        references: {
+            model: 'roles',
+            key: 'role_id'
+        }
     },
     username: {
         type: DataTypes.STRING,
@@ -22,10 +31,6 @@ const usersModel = sequelize.define("users", {
     },
     phone: {
         type: DataTypes.STRING
-    },
-    role: {
-        type: DataTypes.STRING,
-        defaultValue: "Customer",
     },
     is_active: {
         type: DataTypes.BOOLEAN,
@@ -46,4 +51,10 @@ const usersModel = sequelize.define("users", {
     },
 });
 
-module.exports = usersModel
+UserModel.hasOne(RoleModel, {
+    foreignKey: 'role_id'
+})
+
+
+
+module.exports = UserModel

@@ -1,6 +1,6 @@
 const { dbConnect, sequelize, DataTypes } = require('./index')
 const usersModel = require('./model/users')
-const roleModel = require('./model/role')
+const roleModel = require('./model/roles')
 const logsModel = require('./model/logs')
 const antiVirusModel = require('./model/antivirus')
 
@@ -37,3 +37,16 @@ sequelize.sync().then(() => {
 // }).catch((error) => {
 //     console.error('Unable to create the table : ', error);
 // });
+
+const roles_data = [
+    { name: "Customer" },
+    { name: "Admin" }
+]
+
+sequelize.sync({ force: true }).then(() => {
+    roleModel.bulkCreate(roles_data, { validate: true }).then(() => {
+        console.log("Roles created")
+    }).catch((err) => { console.log(err); });
+}).catch((error) => {
+    console.error('Unable to create the table : ', error);
+});
