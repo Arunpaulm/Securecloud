@@ -17,7 +17,7 @@ class Axios {
     getInstance() {
         axiosInstance = axios.create({
             baseURL: 'http://localhost:2021/',
-            timeout: 1000,
+            timeout: 4000,
             headers: {
                 'X-Custom-Header': 'Securecloud',
                 "Access-Control-Allow-Headers": "Content-Type",

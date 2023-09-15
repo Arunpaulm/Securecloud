@@ -3,11 +3,14 @@ import { StyleSheet, Text, View, Image, FlatList, TouchableOpacity } from 'react
 import Icon from "react-native-vector-icons/Ionicons";
 import { Snackbar } from 'react-native-paper';
 import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
+import axios from "../api/index"
 
 // import TextFieldComponent from '../components/TextFieldComponent';
 import FormComponents from '../components/FormComponents';
 
-import { babypowder, logocolor, oxfordblue, primarybutton, white } from "../../colorpalette"
+import { babypowder, lightgrey, logocolor, oxfordblue, primarybutton, white } from "../../colorpalette"
 
 MaterialIcons.loadFont();
 
@@ -17,15 +20,17 @@ class LoginScreen extends Component {
     constructor (props) {
         super(props);
         this.state = {
-            welcomeText: "Login",
+            welcomeText: "Welcome",
             loginButtonText: "Login",
             form: [
-                { id: 1, type: "text", title: "E-Mail", placeholder: "example@mail.com", value: "", active: false },
-                { id: 2, type: "text", title: "Password", placeholder: "Enter the password", value: "", active: false }
+                { id: 1, title: "E-Mail", dbName: "email", placeholder: "example@mail.com", value: "", active: false, type: "text" },
+                { id: 2, title: "Password", dbName: "password", placeholder: "password", value: "", active: false, type: "text" },
             ],
-            rememberMe: false,
+            rememberMe: true,
             snackbarVisible: false,
-            snackbarValue: "Hi"
+            snackbarValue: "Hi",
+            auth: false,
+            loginTimeout: 1000
         };
     }
 
@@ -49,28 +54,57 @@ class LoginScreen extends Component {
         this.setState({ form: form })
     }
 
+    buildApiBody() {
+        const body = {}
+        this.state.form.map(formData => {
+            if (formData.dbName) {
+                body[formData.dbName] = formData.value
+            }
+        })
+        return body
+    }
+
     onSubmit() {
         console.log("clicked")
-        console.log(this.state.form)
-        this.props.navigation.navigate('Landing')
+        // console.log(this.state.form)
+        axios.post("/user/auth", this.buildApiBody()).then(async (response) => {
+            console.log(response)
+            if (response?.data?.status === true) {
+                this.setState({ welcomeText: "Welcome " + response?.data?.user?.username, auth: true })
+                if (this.state.rememberMe) {
+                    await AsyncStorage.setItem("user_id", response?.data?.user?.user_id);
+                }
+                setTimeout(() => { this.props.navigation.replace('Landing') }, this.state.loginTimeout)
+            }
+        }).catch(error => {
+            console.log(error)
+            console.log(error?.response?.data)
+            if (error?.response?.data?.status === false) {
+                this.setState({
+                    snackbarVisible: true,
+                    snackbarValue: error.response?.data?.error
+                })
+            }
+        })
     }
 
     onClickRememberMe() {
         this.setState({ rememberMe: !this.state.rememberMe })
     }
 
-    onClickForgotPassword() {
-        if (this.state.form[0]?.value) {
-            this.setState({
-                snackbarVisible: true,
-                snackbarValue: "Email sent to " + this.state.form[0]?.value
-            })
-        } else {
-            this.setState({
-                snackbarVisible: true,
-                snackbarValue: "Enter valid email"
-            })
-        }
+    onClickSignUp() {
+        this.props.navigation.navigate('Signup')
+        // if (this.state.form[0]?.value) {
+        //     this.setState({
+        //         snackbarVisible: true,
+        //         snackbarValue: "Email sent to " + this.state.form[0]?.value
+        //     })
+        // } else {
+        //     this.setState({
+        //         snackbarVisible: true,
+        //         snackbarValue: "Enter valid email"
+        //     })
+        // }
     }
 
 
@@ -88,7 +122,7 @@ class LoginScreen extends Component {
                         style={styles.welcomeLogo}
                         source={require('../assets/logo.png')}
                     /> */}
-                    {/* <Text style={styles.welcomeText}>{this.state.welcomeText}</Text> */}
+                    {this.state.auth ? <Text style={styles.welcomeText}>{this.state.welcomeText}</Text> : null}
                 </View>
 
                 <View style={styles.loginTextBoxContainer}>
@@ -107,13 +141,13 @@ class LoginScreen extends Component {
                         style={{ flexDirection: 'row', alignContent: "center", justifyContent: "center" }}
                         onPress={() => this.onClickRememberMe()}
                     >
-                        <Icon style={{ paddingHorizontal: 5 }} name={this.state.rememberMe ? 'radio-button-on-sharp' : 'radio-button-off-sharp'} size={16} color={"#D9D9D9"} />
+                        <Icon style={{ paddingHorizontal: 5 }} name={this.state.rememberMe ? 'radio-button-on-sharp' : 'radio-button-off-sharp'} size={16} color={oxfordblue} />
                         <Text>Remember me</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
-                        onPress={() => this.onClickForgotPassword()}
+                        onPress={() => this.onClickSignUp()}
                     >
-                        <Text>Forgot Password?</Text>
+                        <Text>Create new account?</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -152,10 +186,11 @@ const styles = StyleSheet.create({
     },
     welcomeText: {
         flex: 3,
-        color: "#333866",
+        color: white,
         fontSize: 21,
         textAlign: "center",
-        fontWeight: "600"
+        fontWeight: "600",
+        top: 110
 
     },
     loginTextBoxContainer: {

@@ -35,7 +35,11 @@ function getSize(size) {
  */
 function readDir(userId) {
     return new Promise((resolve, reject) => {
-        fs.readdir(path.join(bucket, userId), (err, files) => {
+        const folderName = path.join(bucket, userId)
+        if (!fs.existsSync(folderName)) {
+            fs.mkdirSync(folderName);
+        }
+        fs.readdir(folderName, (err, files) => {
             if (err) {
                 console.log(err);
                 return reject(err)

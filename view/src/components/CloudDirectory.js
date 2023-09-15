@@ -336,7 +336,8 @@ class CloudDirectory extends Component {
                     <TouchableOpacity style={styles.bottomOptionButtons} onPress={() => {
                         FileSystem.deleteAsync(this.state.selectedItem?.uri)
                         this.setState({ modalVisible: false })
-                        this.props.getDirectoryInfo(this.state.currentPath)
+                        this.loadDirApi()
+                        // this.props.getDirectoryInfo(this.state.currentPath)
                     }}><Text style={{ fontSize: 17, color: danger, textAlign: "center" }}>Delete</Text></TouchableOpacity>
                 </View>
             </TouchableOpacity>

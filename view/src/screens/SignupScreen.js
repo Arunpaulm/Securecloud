@@ -4,6 +4,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import { Snackbar } from 'react-native-paper';
 import MaterialIcons from "react-native-vector-icons/MaterialCommunityIcons";
 
+import axios from "../api/index"
 // import TextFieldComponent from '../components/TextFieldComponent';
 import FormComponents from '../components/FormComponents';
 
@@ -22,15 +23,16 @@ class SignupScreen extends Component {
             form: [
                 { id: 0, title: "userId", dbName: "user_id", value: "", active: false, type: null },
                 { id: 1, title: "Name", dbName: "username", placeholder: "Enter your name", value: "", active: false, type: "text" },
-                // { id: 2, title: "Date of birth", placeholder: "Date of birth", value: "", active: false, type: "text" },
                 { id: 3, title: "Phone number", dbName: "phone", placeholder: "Enter your phone number", value: "", active: false, type: "text" },
                 { id: 4, title: "E-Mail", dbName: "email", placeholder: "example@mail.com", value: "", active: false, type: "text" },
                 { id: 5, title: "Password", dbName: "password", placeholder: "password", value: "", active: false, type: "text" },
-                { id: 6, title: "Confirm Password", placeholder: "password", value: "", active: false, type: "text" }
-
+                { id: 6, title: "Confirm Password", placeholder: "password", value: "", active: false, type: "text" },
+                { id: 7, title: "Role", dbName: "role", placeholder: "Customer", value: "Customer", active: false },
+                { id: 8, title: "isActive", dbName: "is_active", placeholder: "password", value: true, active: true },
             ],
             snackbarVisible: false,
-            snackbarValue: "Hi"
+            snackbarValue: "Hi",
+            signupTimeout: 1000
         };
     }
 
@@ -53,10 +55,40 @@ class SignupScreen extends Component {
         this.setState({ form: form })
     }
 
+    buildApiBody() {
+        const body = {}
+        this.state.form.map(formData => {
+            if (formData.dbName) {
+                body[formData.dbName] = formData.value
+            }
+        })
+        return body
+    }
+
     onSubmit() {
         console.log("clicked")
         console.log(this.state.form)
-        this.props.navigation.navigate('Landing')
+        axios.post("/user", this.buildApiBody()).then(async (response) => {
+            console.log(response)
+            if (response?.data?.status === true) {
+                this.setState({
+                    snackbarVisible: true,
+                    snackbarValue: "User created"
+                })
+                setTimeout(() => { this.props.navigation.goBack() }, this.state.signupTimeout)
+
+            }
+        }).catch(error => {
+            console.log(error)
+            console.log(error?.response?.data)
+            if (error?.response?.data?.status === false) {
+                this.setState({
+                    snackbarVisible: true,
+                    snackbarValue: error.response?.data?.error
+                })
+            }
+        })
+
     }
 
     onClickRememberMe() {

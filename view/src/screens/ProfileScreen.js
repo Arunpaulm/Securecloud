@@ -22,7 +22,7 @@ class ProfileScreen extends Component {
                 // { id: 2, title: "Date of birth", placeholder: "Date of birth", value: "", active: false, type: "text" },
                 { id: 3, title: "Phone number", dbName: "phone", placeholder: "Enter your phone number", value: "", active: false, type: "text" },
                 { id: 4, title: "E-Mail", dbName: "email", placeholder: "example@mail.com", value: "", active: false, type: "text" },
-                { id: 5, title: "Password", placeholder: "password", value: "", active: false, type: "text" },
+                { id: 5, title: "Password", dbName: "password", placeholder: "password", value: "", active: false, type: "text" },
                 { id: 6, title: "Confirm Password", placeholder: "password", value: "", active: false, type: "text" },
                 // {
                 //     id: 7, title: "Role", dbName: "type", placeholder: "Customer", value: "", active: false, type: "picker",

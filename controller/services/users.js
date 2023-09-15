@@ -5,7 +5,7 @@ const {
     createUsersSchema
 } = require("../database/schema/users");
 
-const saltRounds = 10
+const saltRounds = bcrypt.genSaltSync(10);
 
 /**
  * 
@@ -31,7 +31,7 @@ async function createUser(req, res) {
         });
         console.log("here user - ", user)
         res.status(201).json({
-            status: "success",
+            status: true,
             data: {
                 user,
             },
@@ -81,7 +81,7 @@ async function updateUser(req, res) {
             { ...req.body, updatedAt: Date.now() },
             {
                 where: {
-                    user_id: req.body.user_id,
+                    user_id: req.body.user_id || req.params.user_id,
                 },
             }
         );
@@ -157,25 +157,41 @@ async function getOneUser(req, res) {
 async function authUser(req, res) {
     try {
         console.log(" authUser user ")
-        const { username, password } = req.body;
+        const { email, password } = req.body;
 
-        const [user] = await UserModel.findAll({ where: { username } });
+        if (!email || !password) {
+            return res.status(400).json({
+                status: false,
+                error: "Invalid credentials"
+            });
+        }
 
-        const isValidUser = await bcrypt.compare(password, user?.password)
+        const [user] = await UserModel.findAll({ where: { email } });
 
-        delete username.password
-        delete username.phone
-        delete username.type
-        delete username.profile_photo
-        delete username.createdAt
-        delete username.updatedAt
+        let isValidUser = false
+
+        if (user?.password) {
+            isValidUser = await bcrypt.compare(password, user?.password)
+
+            delete user.password
+            delete user.phone
+            delete user.type
+            delete user.profile_photo
+            delete user.createdAt
+            delete user.updatedAt
+        }
+
 
         if (isValidUser) {
-
             res.status(200).json({
                 status: true,
                 message: "username found",
-
+                user
+            });
+        } else {
+            res.status(401).json({
+                status: false,
+                error: "Invalid credentials"
             });
         }
 

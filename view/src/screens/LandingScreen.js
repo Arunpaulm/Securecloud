@@ -13,7 +13,7 @@ import VaultScreen from './VaultScreen';
 import HomeScreen from './HomeScreen';
 import HistoryScreen from './HistoryScreen';
 import NewsScreen from './NewsScreen';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// import AsyncStorage from '@react-native-async-storage/async-storage';
 // import * as SecureStore from 'expo-secure-store';
 
 import { babypowder, black, blue, oxfordblue, tabactive, tabinactive } from "../../colorpalette"
@@ -29,7 +29,6 @@ class LandingScreen extends Component {
         };
     }
     async componentDidMount() {
-        await AsyncStorage.setItem("user_id", "d4084131-7b0c-4196-9803-a59b47c58853");
         // await SecureStore.setItemAsync("user_id", "d4084131-7b0c-4196-9803-a59b47c58853");
     }
 
