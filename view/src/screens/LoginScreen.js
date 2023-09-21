@@ -34,6 +34,13 @@ class LoginScreen extends Component {
         };
     }
 
+    async componentDidMount() {
+        const userID = await AsyncStorage.getItem("user_id");
+        if (userID) {
+            this.props.navigation.replace('Landing')
+        }
+    }
+
     editFormValues = (field, value) => {
         this.state.form.forEach(formData => {
             if ((formData.id === field.id) && (formData.title === field.title)) {
@@ -73,6 +80,7 @@ class LoginScreen extends Component {
                 this.setState({ welcomeText: "Welcome " + response?.data?.user?.username, auth: true })
                 if (this.state.rememberMe) {
                     await AsyncStorage.setItem("user_id", response?.data?.user?.user_id);
+                    await AsyncStorage.setItem("user_data", JSON.stringify(response?.data?.user));
                 }
                 setTimeout(() => { this.props.navigation.replace('Landing') }, this.state.loginTimeout)
             }

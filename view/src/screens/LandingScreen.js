@@ -5,6 +5,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import MIcon from "react-native-vector-icons/MaterialCommunityIcons";
 // import { BlurView } from 'expo-blur';
 import { View, StyleSheet, Platform } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 import SettingScreen from './SettingScreen';
@@ -13,7 +14,6 @@ import VaultScreen from './VaultScreen';
 import HomeScreen from './HomeScreen';
 import HistoryScreen from './HistoryScreen';
 import NewsScreen from './NewsScreen';
-// import AsyncStorage from '@react-native-async-storage/async-storage';
 // import * as SecureStore from 'expo-secure-store';
 
 import { babypowder, black, blue, oxfordblue, tabactive, tabinactive } from "../../colorpalette"
@@ -29,6 +29,11 @@ class LandingScreen extends Component {
         };
     }
     async componentDidMount() {
+        const userData = await AsyncStorage.getItem("user_data");
+
+        const uData = JSON.parse(userData)
+        console.log("uData - ", uData)
+        this.setState({ user: uData })
         // await SecureStore.setItemAsync("user_id", "d4084131-7b0c-4196-9803-a59b47c58853");
     }
 
@@ -95,11 +100,13 @@ class LandingScreen extends Component {
                         headerTitleStyle: { fontWeight: 'bold' },
                         unmountOnBlur: true
                     }} />
-                    <Tab.Screen name="Users" component={UsersScreen} options={{
-                        title: "All Users", headerStyle: { backgroundColor: oxfordblue },
-                        headerTintColor: babypowder,
-                        headerTitleStyle: { fontWeight: 'bold' }
-                    }} />
+                    {this.state.user?.role === "Admin" ?
+                        <Tab.Screen name="Users" component={UsersScreen} options={{
+                            title: "All Users", headerStyle: { backgroundColor: oxfordblue },
+                            headerTintColor: babypowder,
+                            headerTitleStyle: { fontWeight: 'bold' }
+                        }} /> : null
+                    }
                     <Tab.Screen name="Settings" component={SettingScreen} options={{
                         headerStyle: { backgroundColor: oxfordblue },
                         headerTintColor: babypowder,

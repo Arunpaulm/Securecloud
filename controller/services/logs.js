@@ -1,4 +1,5 @@
 const LogsModel = require('../database/model/logs')
+const UserModel = require('../database/model/users')
 
 /**
  * 
@@ -63,7 +64,15 @@ async function getAllLogs(req, res) {
         const limit = req.query.limit || 20;
         const skip = (page - 1) * limit;
 
-        const logs = await LogsModel.findAll({ where: { user_id: userId }, limit, offset: skip });
+        const user = await UserModel.findByPk(userId);
+
+        let logs = {}
+        if (user.role === "Admin") {
+            logs = await LogsModel.findAll({ limit, offset: skip });
+        } else[
+            logs = await LogsModel.findAll({ where: { user_id: userId }, limit, offset: skip })
+        ]
+
 
         res.status(200).json({
             status: true,

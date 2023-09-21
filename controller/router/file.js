@@ -1,6 +1,6 @@
 const router = require('express').Router()
 const busboy = require('connect-busboy');
-const { getFiles, uploadFile, downloadFile } = require('../services/files')
+const { getFiles, uploadFile, downloadFile, deleteFile } = require('../services/files')
 
 router
     .use(busboy())
@@ -8,6 +8,7 @@ router
 router
     .route("/")
     .get(getFiles)
+    .post(deleteFile)
 
 router
     .route("/upload")

@@ -175,7 +175,7 @@ async function authUser(req, res) {
 
             delete user.password
             delete user.phone
-            delete user.type
+            // delete user.type
             delete user.profile_photo
             delete user.createdAt
             delete user.updatedAt

@@ -81,6 +81,14 @@ class CloudDirectory extends Component {
         }).catch(error => { console.log(error) })
     }
 
+    async deleteDirApi(fileURL) {
+        this.setState({ onLoading: true })
+        return axios.post("/file", { fileURL })
+            .then((response) => {
+                console.log(fileURL + " was deleted")
+            }).catch(error => { console.log(error) })
+    }
+
     async downloadFileApi() {
         const cloudfiles = await AsyncStorage.getItem("cloudfiles") || "[]";
         const hashtable = JSON.parse(cloudfiles)
@@ -176,7 +184,6 @@ class CloudDirectory extends Component {
 
         })
     }
-
 
     getSecurityReportInfoModel() {
         return <Modal
@@ -334,7 +341,8 @@ class CloudDirectory extends Component {
                     ><Text style={{ fontSize: 17, textAlign: "center" }}>Get Info</Text></TouchableOpacity>
 
                     <TouchableOpacity style={styles.bottomOptionButtons} onPress={() => {
-                        FileSystem.deleteAsync(this.state.selectedItem?.uri)
+                        // FileSystem.deleteAsync(this.state.selectedItem?.uri)
+                        this.deleteDirApi(this.state.selectedItem?.uri)
                         this.setState({ modalVisible: false })
                         this.loadDirApi()
                         // this.props.getDirectoryInfo(this.state.currentPath)

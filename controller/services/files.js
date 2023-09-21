@@ -324,8 +324,38 @@ function downloadFile(req, res) {
     }
 }
 
+function deleteFileFS(fileURL) {
+    return new Promise((resolve, reject) => {
+        fs.unlink(fileURL, (err) => {
+            if (err) return reject(err)
+            resolve(fileURL + ' was deleted');
+        });
+    })
+}
+
+/**
+ * 
+ * @param {*} req 
+ * @param {*} res 
+ */
+async function deleteFile(req, res) {
+    const userId = req.headers["x-api-key"]
+    const fileURL = req.body.fileURL
+
+    console.log("delete operation")
+    console.log(fileURL)
+
+    deleteFileFS(fileURL).then(dirDetails => {
+        res.status(200).json({
+            status: true,
+            data: dirDetails,
+        });
+    }).catch(err => { res.status(500).send(err) })
+}
+
 module.exports = {
     getFiles,
     uploadFile,
-    downloadFile
+    downloadFile,
+    deleteFile
 }
