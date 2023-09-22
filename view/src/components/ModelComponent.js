@@ -92,8 +92,8 @@ class ModelComponent extends Component {
             this.props.onSubmit()
         }).catch(error => {
             console.log(error)
-            const errorMsg = error.response.data.map(err => err.message)
-            this.props.onHandleError(errorMsg.join(","))
+            const errorMsg = error.response?.data?.errors?.map(err => err.message).join(", ")
+            this.props.onHandleError(errorMsg)
         })
 
         this.props.setModalVisible(false)
@@ -110,8 +110,8 @@ class ModelComponent extends Component {
         }).catch(error => {
             console.log(error)
             console.log(error.response.data)
-            const errorMsg = error.response.data?.errors?.map(err => err.message)
-            this.props.onHandleError(errorMsg.join(","))
+            const errorMsg = error.response?.data?.errors?.map(err => err.message).join(", ")
+            this.props.onHandleError(errorMsg)
         })
 
         console.log(this.state.form)

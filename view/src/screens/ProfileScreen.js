@@ -108,10 +108,13 @@ class ProfileScreen extends Component {
         axios.patch("/user/" + formData.user_id, formData).then((response) => {
             console.log(response)
 
-        }).catch(error => { console.log(error) })
+            this.setState({ snackbarVisible: true, snackbarValue: "User updated successfully" })
+        }).catch(error => {
+            // console.log(error)
+            this.setState({ snackbarVisible: true, snackbarValue: JSON.stringify(error.response?.data?.errors?.map(err => err.message)?.join(", ")) })
+        })
 
         console.log(this.state.form)
-        this.setState({ snackbarVisible: true, snackbarValue: "User updated successfully" })
     }
 
     editFormValues(field, value) {

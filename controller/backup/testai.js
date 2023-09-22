@@ -7,7 +7,6 @@ const nfClient = new Nightfall();
 const funa = async () => {
     const response = await nfClient.scanText([
         `
-        My credit card number is 4242-4242-4242-4242
         My Email is arerfer@gmail.com 
         The customer social security number is 458-02-6124
     `], {

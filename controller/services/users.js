@@ -72,13 +72,17 @@ async function updateUser(req, res) {
 
         const { password } = req.body;
 
+        const userData = await UserModel.findByPk(req.params.user_id);
+
         if (password) {
             const passwordHash = await bcrypt.hash(password, saltRounds)
             req.body.password = passwordHash
+        } else {
+            delete req.body.password
         }
 
         const result = await UserModel.update(
-            { ...req.body, updatedAt: Date.now() },
+            { ...userData, ...req.body, updatedAt: Date.now() },
             {
                 where: {
                     user_id: req.body.user_id || req.params.user_id,
