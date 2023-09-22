@@ -18,6 +18,7 @@ const textComponent = ({ editable, field, getActiveTextBox, editFormValues }) =>
             key={field.id + field.title + "text"}
             style={[styles.textInput, { color: field.active || !editable ? themeColorActive : themeColorIdle, borderColor: field.active || !editable ? themeColorActive : themeColorIdle }]}
             selectionColor={field.active || !editable ? themeColorActive : themeColorIdle}
+            secureTextEntry={!field?.active && field?.title === "Password"}
             onChangeText={(inputValue) => {
                 console.log("inputValue ", inputValue)
                 // field.value = inputValue

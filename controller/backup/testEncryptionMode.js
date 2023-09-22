@@ -42,7 +42,7 @@ const encryptionTypes = [
     },
 ];
 
-const iterations = 100
+const iterations = 10
 const file = "./Free_Test_Data_10.5MB_PDF.pdf"
 
 var stats = fs.statSync(file)

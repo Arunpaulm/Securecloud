@@ -28,7 +28,7 @@ class ModelComponent extends Component {
                 { id: 6, title: "Confirm Password", placeholder: "password", value: "", active: false, type: "text" },
                 {
                     id: 7, title: "Role", dbName: "role", placeholder: "Customer", value: "", active: false, type: "picker",
-                    options: ["Admin", "Customer", "Developer"]
+                    options: ["Admin", "Customer"]
                 },
                 { id: 8, title: "isActive", dbName: "is_active", placeholder: "password", value: true, active: false, type: "checkbox" },
 
@@ -48,8 +48,10 @@ class ModelComponent extends Component {
         field.form = this.state.form.map(form => {
             Object.keys(field.selectedTableRow).map(index => {
                 if (form.dbName === index) {
-                    form.placeholder = field.selectedTableRow[index]
-                    form.value = field.selectedTableRow[index]
+                    if (form.dbName !== "password") {
+                        form.placeholder = field.selectedTableRow[index]
+                        form.value = field.selectedTableRow[index]
+                    }
                 }
             })
             return form

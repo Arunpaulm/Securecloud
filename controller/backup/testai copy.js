@@ -5,14 +5,14 @@ const { Detector } = require("nightfall-js/dist/types/detectors.js")
 const nfClient = new Nightfall();
 
 const funa = async () => {
-    // const response = await nfClient.scanFile('./backup/FreeTestData1MBDOCX1.docx', {
+    // const response = await nfClient.scanFile('./FreeTestData1MBDOCX1.docx', {
     //     detectionRules: [
     //         {
     //             name: 'Secrets Scanner',
     //             logicalOp: 'ANY',
     //             detectors: [
     //                 {
-    //                     minNumFindings: 1,
+    //                     // minNumFindings: 1,
     //                     minConfidence: Detector.Confidence.Possible,
     //                     displayName: 'File',
     //                     detectorType: Detector.Type.Nightfall,
@@ -52,9 +52,9 @@ const funa = async () => {
     //     // ],
     // });
 
-    const response = await nfClient.scanText(['My credit card number is  arerfer@gmail.com'], {
-        detectionRuleUUIDs: ["ef554ad8-1a9a-403a-aaa8-74d252b452ad"]
-    });
+    // const response = await nfClient.scanText(['My credit card number is  arerfer@gmail.com'], {
+    //     detectionRuleUUIDs: ["ef554ad8-1a9a-403a-aaa8-74d252b452ad"]
+    // });
 
     if (response.isError) {
         console.log(response.getError());
