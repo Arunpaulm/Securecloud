@@ -66,8 +66,10 @@ class ProfileScreen extends Component {
             field.form = this.state.form.map(form => {
                 Object.keys(field.form).map(index => {
                     if (form.dbName === index) {
-                        form.placeholder = field.form[index]
-                        form.value = field.form[index]
+                        if (index !== "password") {
+                            form.placeholder = field.form[index]
+                            form.value = field.form[index]
+                        }
                     }
                 })
                 return form

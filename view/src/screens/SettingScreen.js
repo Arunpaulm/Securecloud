@@ -207,7 +207,7 @@ class SettingScreen extends Component {
                         <View style={{ marginVertical: 10 }}>
                             <TouchableOpacity style={{ ...styles.buttonContainer, ...(this.state.screenLock ? styles.successButton : styles.warningButton) }} onPress={async () => {
                                 // await SecureStore.setItemAsync("screen_lock", String(!this.state.screenLock));
-                                await AsyncStorage.getItem("screen_lock", String(!this.state.screenLock));
+                                await AsyncStorage.setItem("screen_lock", String(!this.state.screenLock));
                                 this.setState({ screenLock: !this.state.screenLock })
                             }}>
                                 <Text style={{ fontSize: 15, fontWeight: 600, color: white }}>SCREEN LOCK - {this.state.screenLock ? "ON" : "OFF"}</Text>

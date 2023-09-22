@@ -195,10 +195,10 @@ class DocumentList extends Component {
             let hashtable = JSON.parse(cloudfiles)
             const hashTableCF = {}
             hashtable.map(htt => { hashTableCF[htt.id] = htt.uri })
-            response.data.encryptedKeys.map(enFiles => {
+            response.data.encryptedKeys.map(async enFiles => {
                 const formFileLocalData = formData[enFiles.id]
                 console.log("formFileLocalData - ", formFileLocalData)
-                this.createLog({ ...enFiles, size: formFileLocalData.size, action: "upload" })
+                await this.createLog({ ...enFiles, size: formFileLocalData.size, action: "upload" })
                 if (hashTableCF[enFiles.id]) {
                     hashtable = hashtable.filter(fil => fil.id !== enFiles.id)
                     hashtable.push({ ...enFiles, uri: formFileLocalData?.uri })

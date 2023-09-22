@@ -65,6 +65,10 @@ class HomeScreen extends Component {
         this.setState({ snackbarVisible: true, snackbarValue: "File downloaded successfully. saved to Download folder." })
     }
 
+    onFileDelete() {
+        this.setState({ snackbarVisible: true, snackbarValue: "File deleted successfully" })
+    }
+
     async loadApi() {
         this.setState({ onLoading: true })
         // const userId = await SecureStore.getItemAsync("user_id");
@@ -110,7 +114,7 @@ class HomeScreen extends Component {
                 </View> */}
 
                 <View style={{ flex: 10, borderTopLeftRadius: 30, borderTopRightRadius: 30, overflow: "hidden" }}>
-                    <CloudDirectory onDownload={this.onDownload.bind(this)} />
+                    <CloudDirectory onDownload={this.onDownload.bind(this)} onFileDelete={this.onFileDelete.bind(this)} />
                 </View>
 
                 <Snackbar

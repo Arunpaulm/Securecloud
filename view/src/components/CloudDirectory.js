@@ -85,6 +85,7 @@ class CloudDirectory extends Component {
         this.setState({ onLoading: true })
         return axios.post("/file", { fileURL })
             .then((response) => {
+                this.props.onFileDelete()
                 console.log(fileURL + " was deleted")
             }).catch(error => { console.log(error) })
     }
